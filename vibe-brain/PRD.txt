@@ -1,14 +1,14 @@
 # VibeSec Lab by Andy — Product Requirements Document
 
-## 1. Product Overview
+## 1. Ringkasan Produk
 
-**VibeSec Lab by Andy** adalah interactive cybersecurity playground berbasis **SvelteKit + Tailwind CSS + Magic UI-style animation**. Produk ini berisi **10 mini-apps** bertema security system, CVE intelligence, patch planning, dan incident response.
+VibeSec Lab by Andy adalah premium cyber command center playground untuk CVE intelligence, security header hardening, patch planning, incident response, defensive AI workflows, security habits, dan security portfolio building.
 
-Project ini dibuat untuk demo vibe coding yang lebih matang: bukan hanya tampilan keren, tetapi punya PRD, scope jelas, route map, AI integration plan, QA plan, dan deployment path ke Google Cloud Run.
+Produk ini dibuat untuk demo vibe coding yang matang: visualnya cinematic, scope-nya jelas, AI-nya defensif, navigasinya route-safe, dan deploy-nya siap Cloud Run.
 
-VibeSec Lab harus terasa seperti **cyber terminal command center**: modern, cinematic, command-line inspired, banyak animasi ala hacking, tetapi tetap premium, readable, responsive, dan demo-ready.
+## 2. Visi dan Narasi Produk
 
-## 2. Core Narrative
+VibeSec Lab harus terasa seperti command center security modern: dark glass UI, cyber bento grid, terminal-inspired, premium, readable, dan demo-ready.
 
 ### Security Flow
 
@@ -16,232 +16,152 @@ VibeSec Lab harus terasa seperti **cyber terminal command center**: modern, cine
 Detect → Triage → Patch → Verify → Deploy
 ```
 
-### Build Story
+### Story Produksi
 
 ```txt
-Think  → Security PRD + product scope
-Build  → Antigravity + Gemini CLI + SvelteKit
-Launch → Google Cloud Run
+Design → Security PRD + system scope
+Build  → Antigravity + Gemini + SvelteKit
+Launch → Cloud Run
 ```
 
-### Video Angle
+### Pesan Utama
 
-Project ini menunjukkan perbedaan antara:
+VibeSec Lab menunjukkan perbedaan antara:
 
-* **Raw vibe coding:** cepat, langsung prompt, tapi scope bisa drift.
-* **Mature vibe coding:** pakai PRD, design system, route map, AI contracts, QA, dan deploy plan.
+- **Raw vibe coding:** cepat, tapi scope mudah drift.
+- **Mature vibe coding:** pakai PRD, design system, route map, AI contracts, QA, dan deployment plan.
 
-## 3. Goals
+## 3. Tujuan dan Non-Tujuan
 
-* Membuat satu SvelteKit app berisi 10 mini-apps security-themed.
-* Menggunakan design command-line / hacker command center yang premium.
-* Menyediakan selectable color themes.
-* Mengintegrasikan Gemini AI di semua 10 apps melalui server-side endpoint.
-* Menjaga output AI dalam Bahasa Indonesia.
-* Fokus AI pada defensive security: mitigasi, patching, hardening, monitoring, incident response, dan edukasi.
-* Membuat app demo-ready dan Cloud Run-ready.
-* Menyediakan QA flow yang jelas sebelum refinement.
+### Tujuan
 
-## 4. Non-Goals
+- Membangun satu SvelteKit app berisi 10 mini-app security-themed.
+- Menghadirkan cyber command center yang premium dan modern.
+- Menyediakan global ThemeSwitcher dengan persistensi tema.
+- Mengintegrasikan Gemini AI server-side untuk seluruh app.
+- Menjaga output AI dalam Bahasa Indonesia.
+- Fokus AI pada defensive security.
+- Menjaga app demo-ready, Cloud Run-ready, dan route-safe.
 
-* Tidak membuat platform SIEM sungguhan.
-* Tidak membuat vulnerability scanner sungguhan.
-* Tidak mengambil real CVE feed di MVP.
-* Tidak membuat exploit generator.
-* Tidak membuat offensive hacking tool.
-* Tidak membuat auth, RBAC, database enterprise, Kubernetes, Terraform, payment system, atau compliance platform penuh.
-* Tidak membuat multi-tenant SaaS.
+### Non-Tujuan
 
-## 5. Target Audience
+- Bukan SIEM sungguhan.
+- Bukan vulnerability scanner produksi.
+- Bukan exploit generator.
+- Bukan offensive hacking tool.
+- Bukan platform auth/RBAC/database enterprise penuh.
+- Bukan multi-tenant SaaS.
 
-* Reviewer event / juri demo vibe coding.
-* Recruiter/client yang melihat portfolio Andy.
-* Developer yang tertarik pada AI-assisted security tooling.
-* Cloud/security audience yang ingin melihat CVE response workflow dalam bentuk interaktif.
+## 4. Audiens
 
-## 6. Tech Stack
+- Reviewer demo / juri vibe coding.
+- Recruiter / client yang melihat portfolio Andy.
+- Developer yang tertarik pada AI-assisted security tooling.
+- Audience cloud/security yang ingin melihat workflow defensif dalam bentuk interaktif.
 
-* SvelteKit
-* Svelte 5
-* Tailwind CSS
-* Magic UI-style animated components
-* Gemini API via server-side SvelteKit endpoint
-* localStorage / IndexedDB for local persistence
-* HTML Canvas or SVG/DOM animation for game-like screens
-* Google Cloud Run deployment target
-* Optional: Gemini CLI / Antigravity for development workflow
+## 5. Stack dan Arsitektur
 
-## 7. Visual Design Direction
+### Stack
 
-### Theme Name
+- SvelteKit
+- Svelte 5
+- Tailwind CSS
+- Magic UI-style motion polish
+- Gemini API via server-side SvelteKit routes
+- localStorage untuk persistence
+- Web Audio API untuk Threat Runner local sound effects
+- SvelteKit adapter-node
+- Google Cloud Run target
 
-```txt
-Cyber Terminal Command Center
-```
-
-### Visual Language
-
-* Premium dark cybersecurity dashboard.
-* Command-line inspired UI.
-* Modern hacker aesthetic, not old-school plain green terminal.
-* Aurora/cosmic glow background.
-* Subtle scanlines and grid overlays.
-* Glassmorphism panels.
-* Glowing borders.
-* Terminal logs.
-* Blinking cursor.
-* Typewriter AI output.
-* Radar/pulse animation.
-* Bento grid cards.
-* Shimmer buttons.
-* Hover glow.
-* Responsive layout.
-
-### Typography
-
-* Main UI: Inter or Manrope.
-* Terminal/log labels: JetBrains Mono, IBM Plex Mono, or monospace fallback.
-
-### Theme Color Options
-
-Users must be able to select a color theme. The selected theme should persist in localStorage.
-
-| Theme           | Description              | Accent Direction      |
-| --------------- | ------------------------ | --------------------- |
-| Matrix Green    | Classic hacker/SOC look  | emerald / neon green  |
-| Cyan SOC        | Cloud/SOC dashboard feel | cyan / electric blue  |
-| Purple Zero-Day | Premium cyber aura       | violet / purple       |
-| Red Alert       | Incident/critical mode   | red / amber           |
-| Aurora Mixed    | Cosmic cyber glow        | green + cyan + purple |
-
-Theme affects:
-
-* Accent color
-* Glow color
-* Border highlight
-* Active badge
-* Primary button
-* Terminal cursor
-* AI panel accent
-* Status widgets
-
-## 8. Security and AI Principles
-
-Gemini AI must be used for **defensive security only**.
-
-Allowed AI outputs:
-
-* Risk explanation
-* Mitigation plan
-* Patch plan
-* Hardening checklist
-* Monitoring suggestions
-* Incident response checklist
-* Stakeholder update
-* Postmortem template
-* Education/explanation of concepts
-
-Disallowed AI outputs:
-
-* Exploit instructions
-* Malware guidance
-* Payload generation
-* Credential theft guidance
-* Bypass/evasion steps
-* Offensive attack playbooks
-
-Global AI instruction:
-
-```txt
-Jawab selalu dalam Bahasa Indonesia yang jelas, ringkas, dan praktis. Fokus pada defensive security: mitigasi, patching, hardening, monitoring, incident response, dan edukasi. Jangan memberikan instruksi eksploitasi ofensif, malware, bypass, atau penyalahgunaan sistem.
-```
-
-## 9. Runtime Model Strategy
-
-Development/coding can use Gemini Chat, Gemini CLI, or Antigravity.
-
-Runtime app models:
-
-| Purpose                        | Model                   |
-| ------------------------------ | ----------------------- |
-| Main security text AI          | `gemini-2.5-flash`      |
-| Cheap fallback/simple response | `gemini-2.5-flash-lite` |
-
-Environment variables:
-
-```env
-GEMINI_API_KEY=
-GEMINI_TEXT_MODEL=gemini-2.5-flash
-GEMINI_CHEAP_MODEL=gemini-2.5-flash-lite
-```
-
-Do not use public client-side API key variables.
-
-## 10. AI Architecture
-
-### Server-side Only
-
-Gemini must be called only from server-side SvelteKit routes.
-
-Client flow:
+### Runtime AI Flow
 
 ```txt
 Svelte UI → /api/ai/security → Gemini server helper → Gemini API
 ```
 
-### Suggested Files
+### Server-only AI Rules
 
-```txt
-src/lib/server/gemini.ts
-src/routes/api/ai/security/+server.ts
-src/lib/utils/ai-client.ts
-```
+- Gemini hanya dipanggil dari server-side routes.
+- `GEMINI_API_KEY` dibaca dari private server env.
+- Tidak boleh ada `PUBLIC_` atau `NEXT_PUBLIC_` Gemini key.
+- `/api/ai/health` hanya boleh menampilkan keberadaan key, panjang key, dan nama model.
+- Tidak pernah menampilkan nilai key.
+- Error provider mentah tidak boleh bocor ke UI.
 
-### API Request Shape
+## 6. Theme Engine
 
-```json
-{
-  "app": "cvss-calculator",
-  "action": "explain-cvss-risk",
-  "input": {
-    "severity": "critical",
-    "internetExposed": true,
-    "assetCriticality": "high",
-    "exploitAvailable": true
-  }
-}
-```
+VibeSec Lab memakai **satu** global Theme Engine dan **satu** global ThemeSwitcher.
 
-### API Response Shape
+### Final 10 Theme
 
-```json
-{
-  "ok": true,
-  "app": "cvss-calculator",
-  "action": "explain-cvss-risk",
-  "summary": "Risiko masuk kategori Critical karena...",
-  "recommendations": [
-    "Aktifkan mitigasi sementara",
-    "Patch maksimal 24 jam",
-    "Monitor log akses"
-  ],
-  "warnings": []
-}
-```
+| Theme | Deskripsi |
+| --- | --- |
+| Terminal Klasik | gaya terminal hijau klasik |
+| Cyberpunk Neon | neon cyber yang tajam |
+| Arch Linux Terminal | terminal modern biru |
+| Matrix Rain | hijau matriks yang lebih gelap |
+| Red Alert SOC | mode incident / high alert |
+| Ice Blue Defense | biru-es untuk defense dashboard |
+| Purple Zero-Day | aura premium zero-day |
+| Amber Ops | warna amber ops / escalation |
+| Emerald Secure | hijau emerald yang bersih |
+| Monochrome Hacker | hitam-putih minimal |
 
-### AI UX Requirements
+### Aturan Theme Engine
 
-Every AI action must include:
+- Theme disimpan di `localStorage` dan dipulihkan saat refresh.
+- Theme memengaruhi background, app shell, cards, borders, glows, buttons, badges, AI panels, scanner animations, game HUD, tutorial sections, category tags, dan electric border effects.
+- Tidak ada second theme system.
+- Tidak ada page-specific theme system.
 
-* Loading state
-* Success state
-* Error state
-* Retry option where useful
-* Indonesian response
-* Defensive security output
-* No raw model error shown to user
+## 7. Visual Direction
 
-## 11. Route Map
+### Arah Visual
+
+- premium cyber command center look
+- cinematic dan enterprise demo-ready
+- dark glass UI
+- cyber bento grid
+- Magic UI-style motion polish
+- animated page transitions where practical
+- boot/loading scanner animation jika diimplementasikan
+- animated electric glow border / running neon edge effect
+- hover lift dan glow
+- shimmer buttons
+- glassmorphism panels
+- responsive layout
+- readable contrast lintas theme
+- reduced-motion support
+
+### Prinsip Visual
+
+- jangan terasa old plain green terminal
+- jangan noisy atau childish
+- glow harus terasa terkontrol dan premium
+- status penting tetap harus terbaca lewat label dan warna
+
+## 8. 10 Pola App Vibe Coding
+
+VibeSec Lab demonstrates that one security theme can be expressed through multiple simple application patterns: game, dashboard, calculator, portfolio, media player, resource library, countdown, habit tracker, productivity utility, dan interactive storyboard.
+
+### Category Mapping
+
+| App | Familiar Vibe Coding Category |
+| --- | --- |
+| Threat Runner | Retro Arcade Games |
+| Risk Dashboard | Interactive Dashboards |
+| CVSS Risk Calculator | Smart Calculators |
+| Patch Monitor Status | Productivity Utilities |
+| Analyst Portfolio Builder | Personal Portfolios |
+| Threat Briefing Player | Custom Media Players |
+| Incident Response Journey | Interactive Storyboards |
+| CVE Resource Library | Resource Libraries |
+| Patch Deadline Countdown | Event Countdowners |
+| SecureOps Habit Tracker | Daily Habit Logs |
+
+## 9. Route Map
+
+### Public Routes
 
 ```txt
 /
@@ -258,619 +178,419 @@ Every AI action must include:
 /apps/patch-deadline-countdown
 ```
 
-## 12. Mini-App Scope
-
-### 1. Threat Runner
-
-**Category:** Game
-**Purpose:** Modern cyber arcade mini-game where the player protects a server core.
-
-#### MVP Features
-
-* Start game
-* Player movement
-* Server core
-* Patch tokens
-* Malware packets / corrupted nodes
-* Score
-* Health
-* Timer
-* Threat level
-* Game over state
-* Local high score
-* Glassmorphism HUD
-* Mobile-friendly controls if practical
-
-#### Gemini AI Feature
-
-* Generate daily mission
-* Generate incident report after game over
-* Generate remediation checklist
-
-#### AI Actions
-
-* `generate-threat-mission`
-* `summarize-incident`
-
-#### Definition of Done
-
-* Game starts and ends.
-* Score/health/timer update.
-* AI mission works.
-* AI incident summary works or fails gracefully.
-
----
-
-### 2. Analyst Portfolio Builder
-
-**Category:** Portfolio
-**Purpose:** Build a cybersecurity analyst/devsecops profile.
-
-#### MVP Features
-
-* Name
-* Role
-* Skills
-* Tools
-* Certifications
-* Projects
-* Achievements
-* Links
-* Live preview card
-* Security operator dossier style
-* Local persistence
-
-#### Gemini AI Feature
-
-* Generate cybersecurity bio
-* Improve project summaries
-* Generate recruiter-friendly security profile
-* Generate achievement wording
-
-#### AI Actions
-
-* `generate-security-bio`
-* `improve-security-projects`
-* `review-analyst-profile`
-
-#### Definition of Done
-
-* Form updates preview.
-* AI improves profile.
-* Output is Indonesian.
-
----
-
-### 3. Risk Dashboard
-
-**Category:** Security Ops
-**Purpose:** Track mock findings/assets and get remediation priority.
-
-#### MVP Features
-
-* Add/edit/remove finding or asset
-* Asset name
-* Owner
-* Severity
-* Exposure
-* Business impact
-* Patch effort
-* Status
-* Summary cards:
-
-  * total findings
-  * critical findings
-  * exposed assets
-  * estimated remediation cost
-  * risk score
-* Severity distribution / heatmap
-* Recent findings table
-
-#### Gemini AI Feature
-
-* Analyze current risk data
-* Recommend remediation priority
-* Generate manager-friendly summary
-
-#### AI Action
-
-* `analyze-risk-dashboard`
-
-#### Definition of Done
-
-* User can add findings.
-* Metrics update.
-* AI gives Indonesian recommendations.
-
----
-
-### 4. CVSS Risk Calculator
-
-**Category:** Calculator
-**Purpose:** Estimate vulnerability severity and patch priority.
-
-#### MVP Features
-
-Inputs:
-
-* Severity
-* Asset criticality
-* Internet exposed
-* Exploit available
-* Sensitive data
-* Patch complexity
-* Compensating controls
-
-Outputs:
-
-* Risk score
-* Low / Medium / High / Critical badge
-* Recommended SLA
-* Mitigation summary
-
-#### Gemini AI Feature
-
-* Explain score
-* Explain risk reason
-* Recommend patch SLA
-* Recommend mitigation plan
-
-#### AI Action
-
-* `explain-cvss-risk`
-
-#### Definition of Done
-
-* Calculator updates score.
-* Severity badge updates.
-* AI explanation works.
-
----
-
-### 5. Patch Monitor
-
-**Category:** Productivity
-**Purpose:** Track patch lifecycle across assets.
-
-#### MVP Features
-
-* Add/update patch item
-* Asset
-* CVE ID
-* Severity
-* Owner
-* Due date
-* Patch status:
-
-  * detected
-  * triaged
-  * scheduled
-  * patched
-  * verified
-* Progress board
-* System health indicators
-* Local persistence
-
-#### Gemini AI Feature
-
-* Generate daily patch plan
-* Generate stakeholder update
-* Explain blocked remediation
-
-#### AI Actions
-
-* `generate-patch-plan`
-* `generate-stakeholder-update`
-
-#### Definition of Done
-
-* User can add/update patch item.
-* Status changes work.
-* AI patch plan works.
-
----
-
-### 6. SecureOps Habit Tracker
-
-**Category:** Habit
-**Purpose:** Track daily defensive security habits.
-
-#### MVP Features
-
-Checklist:
-
-* Review log
-* Dependency scan
-* Secret scan
-* Backup verification
-* Access review
-* CVE feed review
-
-Other features:
-
-* Streak counter
-* Weekly contribution grid
-* Progress summary
-* Local persistence
-
-#### Gemini AI Feature
-
-* Weekly habit review
-* Security coach suggestions
-* Next improvement plan
-
-#### AI Action
-
-* `generate-security-coaching`
-
-#### Definition of Done
-
-* Checklist works.
-* Streak/progress works.
-* AI coach works.
-
----
-
-### 7. Threat Briefing Player
-
-**Category:** Media
-**Purpose:** Play or simulate daily security briefing.
-
-#### MVP Features
-
-* Playlist of mock briefings:
-
-  * Critical CVE briefing
-  * Cloud Run hardening
-  * Dependency risk update
-  * Secret leak prevention
-* Play/pause
-* Progress bar
-* Waveform/visualizer
-* Transcript panel
-* Briefing category
-
-#### Gemini AI Feature
-
-* Summarize transcript
-* Extract action items
-* Generate executive summary
-* Generate Slack-style update
-
-#### AI Actions
-
-* `summarize-threat-briefing`
-* `extract-briefing-actions`
-
-#### Definition of Done
-
-* Player interaction or simulation works.
-* Transcript visible.
-* AI summary works.
-
----
-
-### 8. Incident Response Journey
-
-**Category:** Story
-**Purpose:** Explain incident response workflow interactively.
-
-#### MVP Features
-
-Flow:
+### API Routes
 
 ```txt
-Detect → Triage → Contain → Patch → Verify → Deploy → Postmortem
+/api/ai/security
+/api/ai/health
+/api/security-headers
 ```
 
-Features:
+## 10. Navigation dan App Shell
 
-* Animated timeline
-* Step cards
-* Terminal log style
-* Progress indicator
-* Cyber tracing-beam style if practical
+- `/apps` adalah Command Center app directory.
+- Semua app card harus visible dan clickable.
+- Semua app page harus punya top-left back button.
+- Back button harus bertuliskan / terasa sebagai **Kembali ke Command Center**.
+- Optional prev/next app navigation boleh ada jika sudah diimplementasikan.
+- Navigasi harus route-safe.
+- Navigasi normal tidak boleh menghasilkan 404.
 
-#### Gemini AI Feature
+## 11. Tutorial Requirement
 
-* Explain selected step
-* Generate quiz
-* Generate postmortem template
+Setiap app page wajib punya section bottom bernama **Tutorial**.
 
-#### AI Actions
+Tutorial harus menjelaskan:
 
-* `explain-ir-step`
-* `generate-ir-quiz`
-* `generate-postmortem-template`
+- tujuan
+- cara pakai
+- aksi AI
+- output
+- catatan security
 
-#### Definition of Done
+## 12. AI Architecture dan Safety
 
-* Timeline is interactive.
-* Selected step updates content.
-* AI explanation/quiz works.
-
----
-
-### 9. CVE Resource Library
-
-**Category:** Library
-**Purpose:** Searchable security knowledge base.
-
-#### MVP Features
-
-Resources:
-
-* CVE basics
-* CVSS basics
-* OWASP Top 10
-* Docker hardening
-* Cloud Run security
-* SvelteKit security headers
-* Secret management
-* Dependency scanning
-* Incident response template
-* Patch SLA guide
-
-Other features:
-
-* Search/filter
-* Resource cards
-* Tag chips
-* Detail panel
-
-#### Gemini AI Feature
-
-* Explain selected resource
-* Explain command/snippet
-* Generate checklist from resource
-* Simplify security concept
-
-#### AI Action
-
-* `explain-security-resource`
-
-#### Definition of Done
-
-* Search/filter works.
-* AI explanation works.
-* No Gemma comparison.
-
----
-
-### 10. Patch Deadline Countdown
-
-**Category:** Countdown
-**Purpose:** Track SLA countdown and remediation deadlines.
-
-#### MVP Features
-
-* Create deadline
-* Title
-* Asset
-* CVE ID
-* Severity
-* Owner
-* Due date
-* Countdown timer
-* Urgency state:
-
-  * normal
-  * warning
-  * critical
-  * overdue
-* Remediation checklist
-* Local persistence
-
-#### Gemini AI Feature
-
-* Generate remediation checklist
-* Generate stakeholder update
-* Generate Slack-style escalation message
-
-#### AI Actions
-
-* `generate-deadline-checklist`
-* `generate-stakeholder-message`
-
-#### Definition of Done
-
-* User can create deadline.
-* Countdown works.
-* Urgency state updates.
-* AI checklist/message works.
-
-## 13. Shared Components
-
-Recommended components:
+### Architecture
 
 ```txt
-AppShell.svelte
-AppNav.svelte
-ThemeSwitcher.svelte
-CyberCard.svelte
-CyberButton.svelte
-StatusBadge.svelte
-TerminalPanel.svelte
-CommandLog.svelte
-TypewriterText.svelte
-LoadingScanner.svelte
-AIResponsePanel.svelte
-ErrorState.svelte
-EmptyState.svelte
-MetricCard.svelte
-RiskBadge.svelte
-ProgressBar.svelte
-BentoAppCard.svelte
+Svelte UI → /api/ai/security → Gemini server helper → Gemini API
 ```
 
-## 14. Enterprise-Ready MVP Definition
+### Health Endpoint
 
-For this event/demo, “enterprise-ready” means:
+`/api/ai/health` dipakai untuk diagnostics aman.
 
-* Stable route architecture
-* Clear app metadata
-* Reusable components
-* Server-side AI only
-* No API key exposure
-* Safe defensive AI prompts
-* Strong loading/error states
-* Local persistence where useful
-* Responsive design
-* Build/check passes
-* No obvious placeholders
-* Demo-ready UX
+Health endpoint boleh menampilkan:
 
-It does **not** mean:
+- `hasGeminiKey`
+- `geminiKeyLength`
+- nama model
 
-* Real SIEM integration
-* Real CVE feed
-* Production database
-* Auth/RBAC
-* Kubernetes/Terraform
-* Compliance automation
+Health endpoint tidak boleh menampilkan:
 
-## 15. Acceptance Criteria
+- nilai API key
+- stack trace
+- secret
 
-The project is accepted when:
+### Error Handling
 
-* Landing page loads.
-* `/apps` gallery loads.
-* All 10 routes load.
-* Theme selector works and persists.
-* Every app has at least one real interaction.
-* Every app has at least one Gemini AI action.
-* All AI outputs are Indonesian.
-* AI is defensive-security only.
-* API key is server-side only.
-* No normal navigation causes 404.
-* `npm run check` passes.
-* `npm run build` passes.
-* App is ready for manual feedback/refine.
+- Jika key hilang / invalid / expired, tampilkan error Bahasa Indonesia yang ramah.
+- Raw Gemini/provider errors tidak boleh diekspos.
+- Response harus tetap structured.
 
-## 16. QA Checklist
+### AI Safety Principles
 
-### Route QA
+#### Allowed
 
-* `/`
-* `/apps`
-* `/apps/threat-runner`
-* `/apps/analyst-portfolio-builder`
-* `/apps/risk-dashboard`
-* `/apps/cvss-calculator`
-* `/apps/patch-monitor`
-* `/apps/secureops-habit-tracker`
-* `/apps/threat-briefing-player`
-* `/apps/incident-response-journey`
-* `/apps/cve-resource-library`
-* `/apps/patch-deadline-countdown`
+- mitigation
+- patching
+- hardening
+- monitoring
+- incident response
+- education
+- stakeholder updates
+- postmortem templates
+- defensive portfolio/CV content
 
-### AI QA
+#### Disallowed
 
-* AI endpoint works.
-* API key is not exposed.
-* Loading state appears.
-* Success state appears.
-* Error state is friendly.
-* AI response is Indonesian.
-* AI output is defensive only.
+- exploit instructions
+- malware guidance
+- payload generation
+- credential theft
+- bypass / evasion guidance
+- persistence guidance
+- weaponization
+- offensive playbooks
 
-### UX QA
-
-* Navigation works.
-* Back buttons work.
-* Theme selector works.
-* Mobile layout is usable.
-* Text contrast is readable.
-* Terminal animations do not overwhelm.
-* Empty states exist.
-* Error states exist.
-
-### Build QA
-
-* `npm install`
-* `npm run check`
-* `npm run build`
-
-## 17. Build Plan
-
-### Prompt 1 — Design Template
-
-Build design system, app shell, theme engine, route scaffolding, app metadata, shared components.
-
-### Prompt 2 — Core Apps + QA
-
-Build standout apps:
-
-* Threat Runner
-* Risk Dashboard
-* CVSS Risk Calculator
-* Patch Monitor
-* Incident Response Journey
-
-Add real Gemini AI integration.
-
-### Prompt 3 — Remaining Apps + QA
-
-Build remaining apps:
-
-* Analyst Portfolio Builder
-* SecureOps Habit Tracker
-* Threat Briefing Player
-* CVE Resource Library
-* Patch Deadline Countdown
-
-Reuse Gemini AI integration.
-
-### Prompt 4 — Bug Audit + Demo Readiness
-
-Audit all routes, AI actions, theme, local persistence, mobile layout, build/check errors.
-
-### Prompt 5 — Final QA + Bug Fixing
-
-Full final QA and last blocking bug fixes.
-
-### Prompt 6 — Feedback/Refine
-
-Reserved for Andy’s manual feedback after reviewing the app.
-
-## 18. Deployment Plan Later
-
-Deployment is not part of the first 5 prompts unless explicitly requested.
-
-Target:
-
-* Google Cloud Run
-* Project: `still-summit-254413`
-* Region: `asia-southeast2`
-
-Required services:
+### Global AI Instruction
 
 ```txt
-run.googleapis.com
-artifactregistry.googleapis.com
-cloudbuild.googleapis.com
-generativelanguage.googleapis.com
+Jawab selalu dalam Bahasa Indonesia yang jelas, ringkas, dan praktis. Fokus pada defensive security: mitigasi, patching, hardening, monitoring, incident response, dan edukasi. Jangan memberikan instruksi eksploitasi ofensif, malware, bypass, credential theft, atau penyalahgunaan sistem.
 ```
 
-Required env vars:
+## 13. Final AI Action List
 
-```env
-GEMINI_API_KEY=
-GEMINI_TEXT_MODEL=gemini-2.5-flash
-GEMINI_CHEAP_MODEL=gemini-2.5-flash-lite
-```
+### Threat Runner
 
-## 19. Manual Feedback Notes
+- `generate-threat-mission`
+- `summarize-incident`
 
-Prompt 6 should be used only after manual review.
+### Risk Dashboard
 
-Possible feedback categories:
+- `analyze-risk-dashboard`
 
-* Design refine
-* Animation balance
-* Color theme adjustment
-* Specific app interaction fixes
-* AI response style
-* Mobile layout
-* Demo script alignment
-* Cloud Run deploy readiness
+### CVSS Risk Calculator
+
+- `explain-cvss-risk`
+
+### Patch Monitor Status
+
+- `generate-patch-plan`
+- `generate-stakeholder-update`
+
+### Incident Response Journey
+
+- `explain-ir-step`
+- `generate-ir-quiz`
+- `generate-postmortem-template`
+
+### Analyst Portfolio Builder
+
+- `generate-security-bio`
+- `improve-security-projects`
+- `review-analyst-profile`
+- `generate-ats-cv`
+
+### SecureOps Habit Tracker
+
+- `generate-security-coaching`
+
+### Threat Briefing Player
+
+- `summarize-threat-briefing`
+- `extract-briefing-actions`
+
+### CVE Resource Library
+
+- `explain-security-resource`
+
+### Patch Deadline Countdown
+
+- `generate-deadline-checklist`
+- `generate-stakeholder-message`
+
+## 14. Mini-App Requirements
+
+### 14.1 Threat Runner
+
+Category: Retro Arcade Games
+
+Scope:
+
+- cyber defense arcade shooter
+- visible robot / defense bot di bagian bawah
+- player bergerak kiri/kanan
+- player menembak threat dari bawah ke atas
+- threat turun dari atas
+- player mengumpulkan stars / patch tokens untuk score
+- health, score, timer, threat level, high score
+- local sound effects
+- sound toggle
+- sound hanya mulai setelah user interaction
+- Web Audio API / local browser audio only
+- tidak ada external audio API
+
+### 14.2 Risk Dashboard
+
+Route: `/apps/risk-dashboard`
+
+Konsep: **Security Header Scanner**
+
+Scope:
+
+- user memasukkan domain atau URL
+- server-side security header scan
+- checks headers:
+  - Content-Security-Policy
+  - Strict-Transport-Security
+  - X-Content-Type-Options
+  - X-Frame-Options
+  - Referrer-Policy
+  - Permissions-Policy
+  - Cross-Origin-Opener-Policy
+  - Cross-Origin-Resource-Policy
+  - Cross-Origin-Embedder-Policy
+- grade A/B/C/D
+- score
+- present headers
+- missing headers
+- Gemini hardening suggestions dalam Bahasa Indonesia
+- defensive only
+
+### 14.3 CVSS Risk Calculator
+
+Scope:
+
+- menghitung priority risk secara contextual
+- menampilkan severity, asset criticality, exposure, exploit availability, data sensitivity, patch complexity
+- output risk score + severity + mitigation explanation
+
+### 14.4 Patch Monitor Status
+
+Route: `/apps/patch-monitor`
+
+User-facing title: **Patch Monitor Status**
+
+Scope:
+
+- add / update / remove patch item
+- local persistence
+- board-style lifecycle view
+- AI patch plan atau stakeholder update
+
+### 14.5 SecureOps Habit Tracker
+
+Scope:
+
+- daily checklist
+- check/uncheck habits
+- progress updates
+- streak updates
+- weekly contribution grid
+- local persistence
+- AI security coaching
+
+### 14.6 Analyst Portfolio Builder
+
+Scope:
+
+- AI bisa generate ATS-friendly CV / portfolio content
+- export button
+- export sebagai local text / markdown / print-friendly content
+- tidak butuh backend storage
+- fokus pada defensive security portfolio
+
+### 14.7 Threat Briefing Player
+
+Scope:
+
+- media-style threat briefing player
+- summary
+- action extraction
+- defensive intelligence playback
+
+### 14.8 Incident Response Journey
+
+Scope:
+
+- interactive storyboard / timeline
+- langkah Detect → Triage → Contain → Patch → Verify → Deploy
+- quiz / postmortem generator
+
+### 14.9 CVE Resource Library
+
+Scope:
+
+- resource library untuk konsep security, snippet, hardening, dan CVE knowledge
+- explanation + checklist defensif
+
+### 14.10 Patch Deadline Countdown
+
+Scope:
+
+- countdown SLA patch
+- escalation checklist
+- stakeholder message generator
+
+## 15. Theme Behavior in UI
+
+Theme harus memengaruhi:
+
+- app shell
+- app cards
+- buttons
+- badges
+- tutorial sections
+- back buttons
+- AI panels
+- category tags
+- header scanner results
+- game HUD
+- progress bars
+- tables / cards
+- electric border effects
+
+## 16. Persistence dan Responsiveness
+
+- Theme disimpan di `localStorage`.
+- App state lokal boleh memakai `localStorage`.
+- Tidak ada requirement backend storage untuk MVP.
+- Layout harus usable di mobile.
+- Form, table, cards, dan top-left back button harus tetap tappable.
+
+## 17. Deployment dan Runtime
+
+### Final Runtime
+
+- SvelteKit adapter-node
+- `npm run build`
+- `npm run start`
+- `PORT` env support
+- Cloud Run-ready
+
+### Packaging
+
+- Dockerfile boleh tersedia sebagai opsi deploy.
+- Secret Manager direkomendasikan untuk `GEMINI_API_KEY`.
+- `.env.example` hanya boleh berisi placeholder.
+- Tidak boleh ada secrets yang committed.
+
+## 18. QA Checklist
+
+### Build / Runtime
+
+- `npm run check`
+- `npm run build`
+- `npm run start`
+
+### API
+
+- `/api/ai/health`
+- `/api/ai/security`
+- `/api/security-headers`
+
+### UI / UX
+
+- favicon loads tanpa 404
+- ThemeSwitcher works
+- semua 10 theme work
+- browser tab icon works
+- mobile layout usable
+- reduced motion respected
+
+### AI Safety
+
+- no API key exposure
+- no raw provider errors shown
+- AI output tetap Bahasa Indonesia
+- defensive-only responses
+
+### App Behavior
+
+- Threat Runner audio tidak autoplay
+- Threat Runner gameplay works
+- ATS CV export works
+- security header scanner works atau fail gracefully
+- semua route load
+- no normal navigation causes 404
+
+## 19. Acceptance Criteria
+
+Produk dianggap selesai jika:
+
+- landing page loads
+- `/apps` menampilkan semua 10 app card
+- setiap route app load
+- setiap app punya category tag
+- setiap app punya Tutorial section
+- setiap app punya top-left back button
+- ThemeSwitcher bekerja dan persist
+- Gemini AI bekerja atau fail gracefully
+- `/api/ai/health` aman dan tidak bocorkan secret
+- security header scanner bekerja atau fail gracefully
+- Threat Runner gameplay dan audio bekerja
+- ATS CV export bekerja
+- production start bekerja
+- favicon/browser tab icon load
+- app siap Cloud Run
+- tidak ada API key exposure
+- tidak ada raw provider errors
+- tidak ada normal navigation 404
+
+## 20. Build Plan
+
+- **Prompt 1:** Design system, app shell, theme engine, route scaffolding, metadata, shared components.
+- **Prompt 2:** Core apps dan server-side Gemini integration.
+- **Prompt 3:** Remaining apps dan AI actions.
+- **Prompt 3.5–3.10:** Navigation, app discovery, category tags, audio, tutorials, security header scanner, ATS export, production start.
+- **Prompt 4:** Bug audit dan demo readiness.
+- **Prompt 4.1:** Top-left back button polish.
+- **Prompt 5:** Deployment readiness, README, Cloud Run packaging.
+- **Prompt 5.2:** Gemini runtime env loading dan AI health endpoint.
+- **Prompt 5.3:** Final engineering QA dan regression check.
+- **Prompt 5.5:** Animated electric glow border polish.
+- **Final Antigravity polish:** final visual polish pass untuk membuat UI makin premium, animated, cinematic, dan demo-ready.
+- **Prompt 6:** Manual feedback refinement.
+
+## 21. Final Visual Polish Plan
+
+Antigravity with Sonnet 4.6 Thinking akan dipakai untuk final UI polish.
+
+Fokus polish:
+
+- spacing
+- hierarchy
+- animated borders
+- motion
+- card polish
+- AI panels
+- app headers
+- category tags
+- tutorials
+- mobile layout
+
+Aturan polish:
+
+- jangan mengubah Gemini/API/env logic
+- jangan menambah major features
+- jangan menambah route baru
+- harus mempertahankan Theme Engine dan seluruh route yang ada
+
+## 22. Definition of Done
+
+- App terasa premium, cinematic, dan enterprise demo-ready.
+- Semua route dan API route utama berfungsi.
+- AI aman, defensif, dan server-side only.
+- Theme system final stabil dan persist.
+- QA, build, dan deployment path jelas.
