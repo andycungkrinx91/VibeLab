@@ -1,0 +1,673 @@
+@import 'tailwindcss';
+
+@theme {
+	--color-bg-base: var(--bg-base);
+	--color-bg-panel: var(--bg-panel);
+	--color-accent: var(--accent);
+	--color-accent-secondary: var(--accent-secondary);
+	--color-accent-glow: var(--accent-glow);
+	--color-text-base: var(--text-base);
+	--color-text-muted: var(--text-muted);
+	--color-border: var(--border);
+	--color-border-highlight: var(--border-highlight);
+	--color-scanline: var(--scanline);
+	--color-grid: var(--grid);
+	--color-warning: var(--warning);
+	--color-critical: var(--critical);
+}
+
+:root,
+[data-theme='terminal-klasik'] {
+	--bg-base: #0a0a0a;
+	--bg-panel: #111111;
+	--accent: #00ff00;
+	--accent-secondary: #0088ff;
+	--accent-glow: rgba(0, 255, 0, 0.2);
+	--text-base: #e0e0e0;
+	--text-muted: #888888;
+	--border: #222222;
+	--border-highlight: #33ff33;
+	--scanline: rgba(0, 255, 0, 0.03);
+	--grid: rgba(0, 255, 0, 0.05);
+	--warning: #ffcc00;
+	--critical: #ff3333;
+}
+
+[data-theme='cyberpunk-neon'] {
+	--bg-base: #090014;
+	--bg-panel: #150030;
+	--accent: #ff00ff;
+	--accent-secondary: #00ffff;
+	--accent-glow: rgba(255, 0, 255, 0.3);
+	--text-base: #f0f0f0;
+	--text-muted: #a080d0;
+	--border: #3a0066;
+	--border-highlight: #ff66ff;
+	--scanline: rgba(255, 0, 255, 0.03);
+	--grid: rgba(0, 255, 255, 0.05);
+	--warning: #ffaa00;
+	--critical: #ff0055;
+}
+
+[data-theme='arch-linux'] {
+	--bg-base: #0f1419;
+	--bg-panel: #171f26;
+	--accent: #1793d1;
+	--accent-secondary: #00ffff;
+	--accent-glow: rgba(23, 147, 209, 0.2);
+	--text-base: #e6e6e6;
+	--text-muted: #8a9ba8;
+	--border: #253340;
+	--border-highlight: #2ba1df;
+	--scanline: rgba(23, 147, 209, 0.03);
+	--grid: rgba(23, 147, 209, 0.05);
+	--warning: #f29c38;
+	--critical: #f24e4e;
+}
+
+[data-theme='matrix-rain'] {
+	--bg-base: #000000;
+	--bg-panel: #001100;
+	--accent: #03a062;
+	--accent-secondary: #00ff00;
+	--accent-glow: rgba(3, 160, 98, 0.2);
+	--text-base: #00e600;
+	--text-muted: #006600;
+	--border: #003300;
+	--border-highlight: #009900;
+	--scanline: rgba(0, 255, 0, 0.04);
+	--grid: rgba(0, 255, 0, 0.06);
+	--warning: #cccc00;
+	--critical: #cc0000;
+}
+
+[data-theme='red-alert-soc'] {
+	--bg-base: #110000;
+	--bg-panel: #1a0000;
+	--accent: #ff3333;
+	--accent-secondary: #ff8800;
+	--accent-glow: rgba(255, 51, 51, 0.2);
+	--text-base: #ffcccc;
+	--text-muted: #995555;
+	--border: #440000;
+	--border-highlight: #ff6666;
+	--scanline: rgba(255, 51, 51, 0.03);
+	--grid: rgba(255, 136, 0, 0.05);
+	--warning: #ffaa00;
+	--critical: #ff0000;
+}
+
+[data-theme='ice-blue-defense'] {
+	--bg-base: #000b18;
+	--bg-panel: #00152b;
+	--accent: #00ffff;
+	--accent-secondary: #00aaff;
+	--accent-glow: rgba(0, 255, 255, 0.2);
+	--text-base: #e0f8ff;
+	--text-muted: #6699cc;
+	--border: #003366;
+	--border-highlight: #33ccff;
+	--scanline: rgba(0, 255, 255, 0.03);
+	--grid: rgba(0, 170, 255, 0.05);
+	--warning: #ffcc00;
+	--critical: #ff3333;
+}
+
+[data-theme='purple-zero-day'] {
+	--bg-base: #0a001a;
+	--bg-panel: #140033;
+	--accent: #9d00ff;
+	--accent-secondary: #5500ff;
+	--accent-glow: rgba(157, 0, 255, 0.2);
+	--text-base: #e6ccff;
+	--text-muted: #8866cc;
+	--border: #330066;
+	--border-highlight: #bb33ff;
+	--scanline: rgba(157, 0, 255, 0.03);
+	--grid: rgba(85, 0, 255, 0.05);
+	--warning: #ffbb00;
+	--critical: #ff0044;
+}
+
+[data-theme='amber-ops'] {
+	--bg-base: #1a1100;
+	--bg-panel: #261a00;
+	--accent: #ffb000;
+	--accent-secondary: #ff8800;
+	--accent-glow: rgba(255, 176, 0, 0.2);
+	--text-base: #ffeecc;
+	--text-muted: #aa8855;
+	--border: #4d3300;
+	--border-highlight: #ffcc33;
+	--scanline: rgba(255, 176, 0, 0.03);
+	--grid: rgba(255, 136, 0, 0.05);
+	--warning: #ffea00;
+	--critical: #ff3300;
+}
+
+[data-theme='emerald-secure'] {
+	--bg-base: #00140a;
+	--bg-panel: #002211;
+	--accent: #00fa9a;
+	--accent-secondary: #00ccaa;
+	--accent-glow: rgba(0, 250, 154, 0.2);
+	--text-base: #ccffea;
+	--text-muted: #66aa88;
+	--border: #004d26;
+	--border-highlight: #33ffaa;
+	--scanline: rgba(0, 250, 154, 0.03);
+	--grid: rgba(0, 204, 170, 0.05);
+	--warning: #ffdd00;
+	--critical: #ff2222;
+}
+
+[data-theme='monochrome-hacker'] {
+	--bg-base: #000000;
+	--bg-panel: #0f0f0f;
+	--accent: #ffffff;
+	--accent-secondary: #cccccc;
+	--accent-glow: rgba(255, 255, 255, 0.15);
+	--text-base: #e0e0e0;
+	--text-muted: #777777;
+	--border: #333333;
+	--border-highlight: #666666;
+	--scanline: rgba(255, 255, 255, 0.02);
+	--grid: rgba(255, 255, 255, 0.03);
+	--warning: #aaaaaa;
+	--critical: #dddddd;
+}
+
+body {
+	background-color: var(--color-bg-base);
+	color: var(--color-text-base);
+	font-family:
+		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+		monospace;
+}
+
+/* ─── Background Patterns ──────────────────────────────────────────────────── */
+.bg-scanlines {
+	background-image: linear-gradient(to bottom, transparent 50%, var(--color-scanline) 50%);
+	background-size: 100% 4px;
+}
+
+.bg-grid {
+	background-image:
+		linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
+		linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+	background-size: 30px 30px;
+}
+
+/* ─── Keyframes ────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes spin-slow {
+		from { transform: rotate(0deg); }
+		to   { transform: rotate(360deg); }
+	}
+
+	@keyframes pulse-ring {
+		0%   { transform: scale(0.8); opacity: 0.5; }
+		50%  { transform: scale(1);   opacity: 1;   }
+		100% { transform: scale(0.8); opacity: 0.5; }
+	}
+
+	@keyframes burst {
+		0%   { transform: scale(0.9); opacity: 1; }
+		100% { transform: scale(2);   opacity: 0; }
+	}
+
+	/* Page fade + rise — slightly more travel for cinematic feel */
+	@keyframes fade-in-up {
+		0%   { opacity: 0; transform: translateY(24px); }
+		100% { opacity: 1; transform: translateY(0);    }
+	}
+
+	@keyframes shimmer {
+		0%   { transform: translateX(-100%); }
+		100% { transform: translateX(100%);  }
+	}
+
+	@keyframes electric-spin {
+		from { transform: rotate(0deg); }
+		to   { transform: rotate(360deg); }
+	}
+
+	@keyframes electric-sheen {
+		0%   { transform: translateX(-120%); }
+		100% { transform: translateX(120%); }
+	}
+
+	/* AI loading pulse — beacon-style */
+	@keyframes ai-pulse {
+		0%, 100% { opacity: 0.4; transform: scaleX(0.97); }
+		50%       { opacity: 1;   transform: scaleX(1);    }
+	}
+
+	/* Glow breathe for active/hover buttons */
+	@keyframes glow-breathe {
+		0%, 100% { box-shadow: 0 0 8px  var(--color-accent-glow); }
+		50%       { box-shadow: 0 0 22px var(--color-accent-glow); }
+	}
+
+	/* Back-button border sweep */
+	@keyframes border-pulse {
+		0%, 100% { border-color: rgba(var(--accent), 0.3); }
+		50%       { border-color: var(--color-accent); }
+	}
+
+	.animate-spin-slow    { animation: spin-slow    4s linear infinite; }
+	.animate-pulse-ring   { animation: pulse-ring   2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+	.animate-burst        { animation: burst        0.6s ease-out forwards; }
+	.animate-fade-in-up   { animation: fade-in-up   0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+	.animate-shimmer      { animation: shimmer      2s infinite; }
+	.animate-ai-pulse     { animation: ai-pulse     1.6s ease-in-out infinite; }
+	.animate-glow-breathe { animation: glow-breathe 2.4s ease-in-out infinite; }
+}
+
+/* Reduced-motion fallbacks */
+@media (prefers-reduced-motion: reduce) {
+	.animate-spin-slow,
+	.animate-pulse-ring,
+	.animate-burst,
+	.animate-fade-in-up,
+	.animate-shimmer,
+	.animate-ai-pulse,
+	.animate-glow-breathe {
+		animation: none;
+		opacity: 1;
+		transform: none;
+	}
+
+	@keyframes simple-fade {
+		0%   { opacity: 0; }
+		100% { opacity: 1; }
+	}
+	.animate-fade-in-up {
+		animation: simple-fade 0.4s ease-out forwards;
+	}
+}
+
+/* ─── Animation Delays ─────────────────────────────────────────────────────── */
+.delay-50  { animation-delay: 50ms;  }
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+
+/* ─── Hover Lift — card float + glow ──────────────────────────────────────── */
+.hover-lift {
+	transition:
+		transform   0.28s cubic-bezier(0.16, 1, 0.3, 1),
+		box-shadow  0.28s cubic-bezier(0.16, 1, 0.3, 1),
+		border-color 0.28s ease;
+}
+.hover-lift:hover {
+	transform:    translateY(-5px);
+	box-shadow:   0 12px 32px -6px var(--color-accent-glow);
+	border-color: var(--color-border-highlight);
+}
+
+/* ─── Button shimmer / electric pulse ─────────────────────────────────────── */
+/*
+ * Applied to: .electric-button, .btn-shimmer
+ * Spinning conic-gradient border-only effect via mask trick.
+ * No transform on hover — let each element manage its own translate
+ * to avoid conflict with Tailwind hover:-translate-y-* utilities.
+ */
+:where(.electric-button, .btn-shimmer) {
+	--electric-accent: var(--color-accent);
+	--electric-accent-secondary: var(--color-accent-secondary);
+	--electric-speed: 7s; /* slowed down from 5.8s — feels more premium, less frantic */
+	--electric-opacity: 0.38;
+	--electric-border-glow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 24%, transparent), 0 0 14px var(--color-accent-glow);
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	transition:
+		box-shadow 0.22s ease,
+		border-color 0.22s ease,
+		background-color 0.22s ease,
+		color 0.22s ease;
+	/* NOTE: no transform transition here — each element defines its own hover transform */
+}
+
+:where(.electric-button, .btn-shimmer) > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* Spinning conic-gradient — border-only via mask */
+:where(.electric-button, .btn-shimmer)::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	padding: 1px;
+	background: conic-gradient(
+		from 0deg,
+		transparent 0deg,
+		color-mix(in srgb, var(--electric-accent) 92%, white 8%) 20deg,
+		transparent 60deg,
+		color-mix(in srgb, var(--electric-accent-secondary) 78%, transparent) 108deg,
+		transparent 178deg,
+		color-mix(in srgb, var(--electric-accent) 94%, transparent) 248deg,
+		transparent 320deg,
+		transparent 360deg
+	);
+	opacity: var(--electric-opacity);
+	filter: drop-shadow(0 0 6px var(--color-accent-glow));
+	pointer-events: none;
+	z-index: 0;
+	-webkit-mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+}
+
+/* Sheen sweep — only on hover, triggered by animation rule below */
+:where(.electric-button, .btn-shimmer)::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: linear-gradient(115deg, transparent 0%, rgba(255, 255, 255, 0.11) 16%, transparent 32%, transparent 100%);
+	opacity: 0.5;
+	pointer-events: none;
+	z-index: 0;
+	transform: translateX(-120%);
+}
+
+/* Hover/focus: glow only, no transform (each element handles its own) */
+:where(.electric-button, .btn-shimmer):hover,
+:where(.electric-button, .btn-shimmer):focus-visible {
+	box-shadow: var(--electric-border-glow);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	:where(.electric-button, .btn-shimmer)::before {
+		animation: electric-spin var(--electric-speed) linear infinite;
+	}
+
+	:where(.electric-button, .btn-shimmer):hover::after,
+	:where(.electric-button, .btn-shimmer):focus-visible::after {
+		animation: electric-sheen 1.5s ease-in-out infinite;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:where(.electric-button, .btn-shimmer)::before {
+		animation: none;
+		opacity: 0.22; /* keep a faint static border ring */
+	}
+	:where(.electric-button, .btn-shimmer)::after {
+		display: none;
+	}
+	/* No glow on reduced motion to avoid any flicker */
+	:where(.electric-button, .btn-shimmer):hover,
+	:where(.electric-button, .btn-shimmer):focus-visible {
+		box-shadow: none;
+	}
+}
+
+/* ─── AI Panel skeleton bars ────────────────────────────────────────────────  */
+.ai-skeleton-bar {
+	border-radius: 4px;
+	background-color: var(--color-border);
+}
+@media (prefers-reduced-motion: no-preference) {
+	.ai-skeleton-bar {
+		animation: ai-pulse 1.6s ease-in-out infinite;
+	}
+}
+
+/* ─── Back-button active glow ───────────────────────────────────────────────  */
+.back-btn-glow {
+	transition:
+		transform    0.2s cubic-bezier(0.16, 1, 0.3, 1),
+		box-shadow   0.2s ease,
+		border-color 0.2s ease,
+		background   0.2s ease;
+}
+.back-btn-glow:hover {
+	transform:    translateY(-2px);
+	box-shadow:   0 0 28px var(--color-accent-glow);
+	border-color: var(--color-accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+	.back-btn-glow {
+		animation: glow-breathe 3s ease-in-out infinite;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.back-btn-glow { animation: none; }
+}
+
+/* ─── Category tag polish ───────────────────────────────────────────────────  */
+.tag-pill {
+	display: inline-flex;
+	align-items: center;
+	border-radius: 9999px;
+	border: 1px solid var(--color-accent);
+	background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
+	color: var(--color-accent);
+	font-size: 0.625rem;
+	font-weight: 700;
+	letter-spacing: 0.18em;
+	padding: 0.2rem 0.65rem;
+	text-transform: uppercase;
+	transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.tag-pill:hover,
+.tag-pill-active {
+	background-color: color-mix(in srgb, var(--color-accent) 22%, transparent);
+	box-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+/* ─── Input / select focus ring ─────────────────────────────────────────────  */
+.input-field {
+	background-color: var(--color-bg-base);
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	color: var(--color-text-base);
+	outline: none;
+	padding: 0.5rem 0.75rem;
+	font-size: 0.875rem;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	width: 100%;
+}
+.input-field:focus {
+	border-color: var(--color-accent);
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+.input-field::placeholder {
+	color: var(--color-text-muted);
+	opacity: 0.7;
+}
+
+/* ─── Electric panel / card borders ────────────────────────────────────────── */
+/*
+ * Used on: hero panel, BentoAppCard, key dashboard cards
+ *
+ * Design decisions:
+ * • NO border or background override — elements define their own base styles.
+ *   The electric effect is purely the ::before conic-gradient + ::after ambient glow.
+ * • NO transform here — BentoAppCard and other cards manage translate via Tailwind.
+ * • box-shadow + border-color applied on hover via CSS variable.
+ */
+:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static) {
+	--electric-accent: var(--color-accent);
+	--electric-accent-secondary: var(--color-accent-secondary);
+	--electric-speed: 8s; /* slower = more premium, less frantic */
+	--electric-opacity: 0.44; /* reduced from 0.52 — subtler baseline */
+	--electric-border-glow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 22%, transparent), 0 0 18px var(--color-accent-glow);
+	position: relative;
+	isolation: isolate;
+	/* No border/background override: each element keeps its own base styles */
+	transition:
+		box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+		border-color 0.28s ease;
+	/* NO transform here — cards control their own hover translate */
+}
+
+/* Ensure content stays above pseudo-elements */
+:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static) > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* Spinning conic-gradient — rendered as border-only via mask */
+:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static)::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	padding: 1px;
+	background: conic-gradient(
+		from 0deg,
+		transparent 0deg,
+		color-mix(in srgb, var(--electric-accent) 92%, white 8%) 26deg,
+		transparent 68deg,
+		color-mix(in srgb, var(--electric-accent-secondary) 80%, transparent) 114deg,
+		transparent 180deg,
+		color-mix(in srgb, var(--electric-accent) 94%, transparent) 248deg,
+		transparent 318deg,
+		transparent 360deg
+	);
+	opacity: var(--electric-opacity);
+	filter:
+		drop-shadow(0 0 6px var(--color-accent-glow))
+		drop-shadow(0 0 14px color-mix(in srgb, var(--electric-accent) 18%, transparent));
+	pointer-events: none;
+	z-index: 0;
+	-webkit-mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+}
+
+/* Ambient corner glows — adds depth without being loud */
+:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static)::after {
+	content: '';
+	position: absolute;
+	inset: 2px;
+	border-radius: inherit;
+	background:
+		radial-gradient(circle at 16% 16%, color-mix(in srgb, var(--electric-accent) 14%, transparent) 0%, transparent 40%),
+		radial-gradient(circle at 84% 10%, color-mix(in srgb, var(--electric-accent-secondary) 11%, transparent) 0%, transparent 36%),
+		radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--electric-accent) 8%, transparent) 0%, transparent 32%);
+	opacity: 0.18;
+	filter: blur(16px);
+	pointer-events: none;
+	z-index: 0;
+}
+
+/* Hover/focus-within: bump glow + border-color, no transform */
+:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static):hover,
+:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static):focus-within {
+	box-shadow: var(--electric-border-glow);
+	border-color: var(--color-border-highlight);
+}
+
+/* ── Variant: active (hero panel — stronger, slightly faster) ── */
+.electric-border-active {
+	--electric-opacity: 0.62; /* reduced from 0.8 — was too aggressive */
+	--electric-speed: 6s;
+	--electric-border-glow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 28%, transparent), 0 0 24px var(--color-accent-glow);
+}
+
+/* ── Variant: danger (critical state cards) ── */
+.electric-border-danger {
+	--electric-accent: var(--color-critical);
+	--electric-accent-secondary: var(--color-warning);
+	--electric-opacity: 0.64;
+	--electric-speed: 5.5s;
+	--electric-border-glow: 0 0 0 1px color-mix(in srgb, var(--color-critical) 28%, transparent), 0 0 22px color-mix(in srgb, var(--color-critical) 16%, transparent);
+}
+
+/* ── Variant: static (tutorial sections — no animation, faint ring) ── */
+.electric-border-static {
+	--electric-opacity: 0.28;
+}
+.electric-border-static::before {
+	animation: none !important;
+	animation-play-state: paused !important;
+}
+
+/* ── Animated variants: spin on main loop ── */
+@media (prefers-reduced-motion: no-preference) {
+	:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger)::before {
+		animation: electric-spin var(--electric-speed) linear infinite;
+	}
+}
+
+/* ── Reduced motion: freeze animation, keep faint static ring ── */
+@media (prefers-reduced-motion: reduce) {
+	:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static)::before {
+		animation: none;
+		opacity: 0.22; /* very faint static ring — still elegant, not moving */
+	}
+	:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static)::after {
+		display: none; /* remove ambient glow — saves paint/composite */
+	}
+	:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static):hover,
+	:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static):focus-within {
+		box-shadow: 0 0 0 1px var(--color-border-highlight); /* simple static ring on hover */
+	}
+}
+
+/* ─── Global link / nav transitions ─────────────────────────────────────────  */
+.nav-link {
+	transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* ─── Empty / error / loading state helper ──────────────────────────────────  */
+.state-empty {
+	border: 1px dashed var(--color-border);
+	border-radius: 0.75rem;
+	background-color: color-mix(in srgb, var(--color-bg-panel) 60%, transparent);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 3rem 1.5rem;
+	text-align: center;
+	color: var(--color-text-muted);
+	font-size: 0.875rem;
+}
+.state-error {
+	border: 1px solid color-mix(in srgb, var(--color-critical) 40%, transparent);
+	border-radius: 0.75rem;
+	background-color: color-mix(in srgb, var(--color-critical) 8%, transparent);
+	color: var(--color-critical);
+	padding: 1rem 1.25rem;
+	font-size: 0.875rem;
+	line-height: 1.6;
+}
+
+/* ─── Mobile layout helpers ─────────────────────────────────────────────────  */
+@media (max-width: 640px) {
+	/* Cards: suppress hover lift on touch screens to prevent sticky translateY */
+	.electric-border:hover,
+	.card-premium:hover,
+	.hover-lift:hover {
+		transform: none;
+	}
+	/* Suppress electric-spin ambient glow blurs on mobile for performance */
+	:where(.electric-border, .card-premium, .electric-border-active, .electric-border-danger, .electric-border-static)::after {
+		display: none;
+	}
+	/* Keep electric-button/btn-shimmer without spin on mobile */
+	:where(.electric-button, .btn-shimmer)::after {
+		display: none;
+	}
+}

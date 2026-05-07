@@ -1,0 +1,671 @@
+```text id="prompt-3-9"
+Prompt 3.9: Refinement, App Behavior Fixes, Header Scanner Pivot, Tutorial Sections & AI Endpoint Repair
+
+Task:
+Refine VibeSec Lab based on the manual review feedback below.
+
+Feedback to address:
+1. Design:
+   - In all apps use buttons instead of plain href links.
+
+2. How to:
+   - Add simple how-to docs in every app.
+   - The tutorial section must be placed at the bottom of every app page.
+   - Use label: “Tutorial”.
+
+3. Risk Dashboard:
+   - Change Risk Dashboard into a domain security header scanner concept, similar in spirit to securityheaders.com.
+   - User enters a domain or URL.
+   - App returns a header security scan result.
+   - Result shows what security headers are present/missing.
+   - Result includes a grade like A, B, C, or D.
+   - AI generates suggestions for hardening security headers.
+
+4. Patch Monitor:
+   - Change app name to: “Patch Monitor Status”.
+
+5. SecureOps Habit Tracker:
+   - App does not work properly.
+   - Fix interactions, checklist, streak/progress, local persistence, and AI coaching.
+
+6. Analyst Portfolio Builder:
+   - Make AI able to generate ATS-friendly CV/portfolio content.
+   - Add export button.
+
+7. Fix AI error:
+   - Curl with API key works, but AI features inside the app cannot interact properly.
+   - Current server error exposed:
+     Gemini API Error: ApiError: API key expired. Please renew the API key.
+   - Fix the app-side AI interaction flow and error handling.
+   - Do not expose raw Gemini provider errors to the UI or console logs.
+   - Make friendly Indonesian fallback errors.
+   - Ensure frontend AI buttons work or fail gracefully.
+
+Important:
+This is a refinement prompt.
+Do not rebuild from scratch.
+Do not redesign the full app.
+Do not remove working features.
+Do not remove existing routes.
+Do not break Gemini AI integration.
+Do not create new app routes.
+Do not create a second ThemeSwitcher.
+Do not create a new theme system.
+Do not add auth/database/payment systems.
+Do not implement offensive security functionality.
+
+Before editing:
+1. Inspect current project state.
+2. Inspect app metadata.
+3. Inspect app shell/navigation.
+4. Inspect shared components.
+5. Inspect all 10 app route pages.
+6. Inspect Risk Dashboard route.
+7. Inspect Patch Monitor route and metadata.
+8. Inspect SecureOps Habit Tracker route.
+9. Inspect Analyst Portfolio Builder route.
+10. Inspect Gemini server helper:
+   - src/lib/server/gemini.ts
+11. Inspect AI API route:
+   - src/routes/api/ai/security/+server.ts
+12. Inspect frontend AI call logic in all app pages.
+13. Preserve all working functionality.
+14. Preserve global Theme Engine.
+15. Preserve ThemeSwitcher.
+16. Preserve Bahasa Indonesia AI output.
+17. Preserve defensive security AI rules.
+
+Routes that must remain valid:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+Part 1 — Replace plain href links with button-style navigation in all apps
+
+Requirement:
+In every app page, replace plain text href links with button components or button-styled links.
+
+Use:
+- existing CyberButton component if available
+- or a consistent button-style anchor/link component if SvelteKit navigation requires href
+- do not leave raw plain links for primary actions/navigation
+
+Affected navigation/actions:
+- Kembali ke Command Center
+- Sebelumnya
+- Berikutnya
+- Masuk Command Center
+- app card CTAs
+- AI action triggers
+- export actions
+- tutorial action links if any
+
+Important:
+- Navigation can still use <a href="..."> internally for SvelteKit routing if needed, but it must visually appear and behave like a button.
+- Do not break routing.
+- Do not replace navigation with non-semantic broken buttons.
+- Buttons must be keyboard accessible.
+- Keep active/focus/hover states theme-aware.
+
+Part 2 — Add bottom “Tutorial” section to every app
+
+Requirement:
+Every app page must include a simple how-to documentation section at the bottom.
+
+Label:
+“Tutorial”
+
+Placement:
+- Bottom of the app page content.
+- After main interaction panels and AI panels.
+- Must not block the main app UI.
+
+Each Tutorial section must include:
+- What this app does
+- How to use it
+- What the AI button does
+- What result to expect
+- Defensive security learning point
+
+Keep it concise, practical, and in Bahasa Indonesia.
+
+Suggested structure:
+Title:
+Tutorial
+
+Content:
+1. Tujuan
+2. Cara Pakai
+3. Aksi AI
+4. Output
+5. Catatan Security
+
+Add a reusable component if useful:
+- AppTutorial.svelte
+
+Use the component across all 10 apps if practical.
+
+Tutorial content per app:
+
+1. Threat Runner
+- Tujuan: simulasi melindungi server core dari threat.
+- Cara Pakai: gerakkan robot, tembak threat, ambil patch token/bintang, jaga health.
+- Aksi AI: generate mission dan incident report.
+- Output: skor, high score, laporan insiden, checklist remediation.
+- Catatan Security: fokus pada deteksi, respon, dan remediation.
+
+2. Analyst Portfolio Builder
+- Tujuan: membuat profil profesional security.
+- Cara Pakai: isi nama, role, skill, tools, sertifikasi, project, achievement, link.
+- Aksi AI: generate bio, improve project, review profile, generate ATS CV.
+- Output: profil portfolio dan CV/summary ATS-friendly.
+- Catatan Security: tampilkan pengalaman defensif dan impact yang terukur.
+
+3. Risk Dashboard / Security Header Scanner
+- Tujuan: mengecek security headers dari domain/URL.
+- Cara Pakai: masukkan domain atau URL lalu scan.
+- Aksi AI: generate rekomendasi hardening header.
+- Output: grade A/B/C/D, header yang ada, header yang hilang, rekomendasi.
+- Catatan Security: security headers membantu hardening browser-side protection.
+
+4. CVSS Risk Calculator
+- Tujuan: menghitung prioritas risiko vulnerability.
+- Cara Pakai: pilih severity, criticality, exposure, exploit availability, sensitive data, patch complexity, controls.
+- Aksi AI: jelaskan risiko dan rekomendasi mitigasi.
+- Output: risk score, badge severity, SLA patch, mitigation summary.
+- Catatan Security: gunakan risk scoring untuk triage defensif.
+
+5. Patch Monitor Status
+- Tujuan: memantau lifecycle patch.
+- Cara Pakai: tambah item patch, update status, pantau progress.
+- Aksi AI: generate patch plan dan stakeholder update.
+- Output: status patch, progress board, update stakeholder.
+- Catatan Security: patch lifecycle membantu mengurangi window of exposure.
+
+6. SecureOps Habit Tracker
+- Tujuan: membangun kebiasaan operasi security harian.
+- Cara Pakai: centang checklist harian, pantau streak dan progress mingguan.
+- Aksi AI: generate coaching dan improvement plan.
+- Output: progress, streak, rekomendasi kebiasaan berikutnya.
+- Catatan Security: security hygiene konsisten mengurangi risiko operasional.
+
+7. Threat Briefing Player
+- Tujuan: memutar briefing threat intelligence simulasi.
+- Cara Pakai: pilih briefing, play/pause, baca transcript.
+- Aksi AI: summarize briefing dan extract action items.
+- Output: ringkasan, key takeaways, action items.
+- Catatan Security: briefing membantu awareness dan response planning.
+
+8. Incident Response Journey
+- Tujuan: memahami alur incident response.
+- Cara Pakai: pilih step timeline dari Detect sampai Postmortem.
+- Aksi AI: explain step, generate quiz, generate postmortem.
+- Output: penjelasan, quiz, template postmortem.
+- Catatan Security: IR yang baik butuh alur jelas dan dokumentasi.
+
+9. CVE Resource Library
+- Tujuan: mencari referensi CVE dan hardening.
+- Cara Pakai: search/filter resource, pilih detail.
+- Aksi AI: explain resource dan generate checklist.
+- Output: penjelasan konsep, checklist, simplifikasi.
+- Catatan Security: resource library membantu pembelajaran defensif.
+
+10. Patch Deadline Countdown
+- Tujuan: memantau deadline SLA patch.
+- Cara Pakai: buat deadline, isi asset/CVE/severity/owner/due date.
+- Aksi AI: generate checklist dan stakeholder message.
+- Output: countdown, urgency state, checklist, escalation message.
+- Catatan Security: deadline tracking membantu governance patch.
+
+Part 3 — Pivot Risk Dashboard into Security Header Scanner
+
+Current app:
+Risk Dashboard
+
+Refined concept:
+Domain Security Header Scanner
+
+Route remains:
+- /apps/risk-dashboard
+
+Display name can be:
+- “Risk Dashboard”
+- subtitle/feature name: “Security Header Scanner”
+
+Do not change the route.
+Do not create a new route.
+
+Build requirements:
+- User can input a domain or URL.
+- Example placeholder:
+  - https://example.com
+  - example.com
+- Add scan button:
+  - “Scan Security Headers”
+- Validate input:
+  - must be non-empty
+  - must look like a domain or URL
+  - normalize domain if needed
+- Produce a scan result.
+
+Important implementation note:
+Because browser-side fetching arbitrary domains can fail due to CORS, implement the scan server-side using a SvelteKit API route if practical.
+
+Suggested internal route:
+- src/routes/api/security-headers/+server.ts
+
+Expected request:
+{
+  url: string
+}
+
+Expected response:
+{
+  ok: boolean,
+  url: string,
+  grade: "A" | "B" | "C" | "D",
+  score: number,
+  presentHeaders: string[],
+  missingHeaders: string[],
+  checkedHeaders: array,
+  summary: string,
+  error?: string
+}
+
+Headers to check:
+- Content-Security-Policy
+- Strict-Transport-Security
+- X-Content-Type-Options
+- X-Frame-Options
+- Referrer-Policy
+- Permissions-Policy
+- Cross-Origin-Opener-Policy
+- Cross-Origin-Resource-Policy
+- Cross-Origin-Embedder-Policy
+
+Grade suggestion:
+- A: score >= 85
+- B: score >= 70
+- C: score >= 50
+- D: score < 50
+
+Scoring:
+- Weight important headers higher:
+  - Content-Security-Policy
+  - Strict-Transport-Security
+  - X-Content-Type-Options
+  - X-Frame-Options
+  - Referrer-Policy
+  - Permissions-Policy
+- Other headers can add smaller points.
+- Keep scoring simple and transparent.
+
+If real server-side fetch fails:
+- show friendly Indonesian error
+- do not crash
+- do not expose stack trace
+- allow fallback demo sample result if practical
+
+UI requirements:
+- Header input card
+- Scan result grade card
+- Present/missing headers table
+- Header recommendation list
+- AI hardening suggestion panel
+- Loading scanner state
+- Error state
+- Empty state with sample domain suggestion
+
+AI action:
+Use existing AI endpoint action:
+- app: risk-dashboard
+- action: analyze-risk-dashboard
+
+Update AI prompt/context so it understands header scan data:
+Input should include:
+{
+  url: string,
+  grade: string,
+  score: number,
+  presentHeaders: string[],
+  missingHeaders: string[],
+  checkedHeaders: array
+}
+
+AI should generate:
+- short Indonesian summary
+- priority hardening recommendations
+- recommended header examples at high level
+- stakeholder-friendly risk explanation
+
+Safety:
+- AI must not generate offensive exploitation steps.
+- AI can explain missing headers and hardening only.
+
+Part 4 — Rename Patch Monitor to Patch Monitor Status
+
+Requirement:
+Change user-facing app name from:
+“Patch Monitor”
+to:
+“Patch Monitor Status”
+
+Apply consistently in:
+- app metadata
+- /apps cards
+- landing page cards
+- app page header
+- navigation labels
+- page title
+- Tutorial section
+- AI panel label if applicable
+
+Do not change route:
+- /apps/patch-monitor
+
+Do not break existing local persistence or AI actions.
+
+Part 5 — Fix SecureOps Habit Tracker
+
+Problem:
+SecureOps Habit Tracker does not work properly.
+
+Fix requirements:
+- Checklist items must be clickable.
+- Completed state must update visually.
+- Daily progress must update.
+- Streak counter must update predictably.
+- Weekly contribution grid must update.
+- Local persistence must work safely.
+- No SSR localStorage crash.
+- Reset/new day behavior should be sane.
+- AI coaching button must work or fail gracefully.
+- Empty/default state must be usable.
+
+Checklist items:
+- review log
+- dependency scan
+- secret scan
+- backup verification
+- access review
+- CVE feed review
+
+Expected behavior:
+- User can check/uncheck each item.
+- Progress percentage updates immediately.
+- If all items completed for the day, daily completion state is true.
+- Streak reflects consecutive completed days if implemented.
+- Weekly grid shows completion states.
+- Data persists after refresh.
+- Malformed localStorage data does not crash the app.
+
+AI action:
+- app: secureops-habit-tracker
+- action: generate-security-coaching
+
+AI input should include:
+{
+  completedItems: string[],
+  missedItems: string[],
+  progressPercent: number,
+  streak: number,
+  weeklyProgress: array,
+  currentDate: string
+}
+
+AI output:
+- coaching summary
+- next improvement plan
+- practical defensive habit recommendation
+
+Part 6 — Analyst Portfolio Builder ATS CV generation and export
+
+Requirement:
+Make Analyst Portfolio Builder able to generate ATS-friendly CV/portfolio content with AI and export.
+
+Route:
+- /apps/analyst-portfolio-builder
+
+Add AI action if needed:
+- app: analyst-portfolio-builder
+- action: generate-ats-cv
+
+If adding new action, update AI route validation safely.
+
+AI should generate:
+- ATS-friendly professional summary
+- skill highlights
+- project impact bullets
+- security experience bullets
+- tools/certification section
+- concise recruiter-friendly CV content in Bahasa Indonesia
+- optionally include English technical terms where natural
+
+UI requirements:
+- Add button:
+  - “Generate CV ATS”
+- Show generated ATS CV result in a polished panel.
+- Add export button:
+  - “Export CV”
+- Export can be simple and local:
+  - download as .txt or .md
+  - or print-friendly HTML using window.print
+  - choose the simplest reliable implementation
+- Do not require backend storage.
+- Do not require external PDF services.
+- Do not add paid APIs.
+- Export must not break SSR.
+- Guard browser APIs safely.
+
+Suggested export:
+- Generate a Markdown or text file from profile + AI result.
+- Use Blob and URL.createObjectURL in browser only.
+- Filename example:
+  - vibesec-ats-cv-[nama].md
+
+Existing AI actions must still work:
+- generate-security-bio
+- improve-security-projects
+- review-analyst-profile
+
+New AI action:
+- generate-ats-cv
+
+Expected AI input:
+{
+  nama: string,
+  role: string,
+  skills: string[],
+  tools: string[],
+  certifications: string[],
+  projects: array,
+  achievements: string[],
+  links: string[]
+}
+
+Expected AI output:
+- summary
+- sections
+- bullets
+- recommendations
+
+Part 7 — Fix app-side AI interaction and Gemini error handling
+
+Problem:
+AI endpoint returns provider error:
+API key expired. Please renew the API key.
+
+Need to fix:
+- raw Gemini provider error is visible
+- app AI buttons cannot interact properly
+- curl with API key works but app features fail
+- app should show friendly Indonesian error if server AI fails
+- frontend should not break
+- backend should not leak raw error
+
+Important:
+Do not hardcode API keys.
+Do not expose API keys to client.
+Do not add PUBLIC_ or NEXT_PUBLIC_ Gemini key.
+Do not log API key.
+Do not require client to pass API key.
+
+Audit:
+- .env loading
+- GEMINI_API_KEY usage
+- GEMINI_TEXT_MODEL usage
+- GEMINI_CHEAP_MODEL usage
+- src/lib/server/gemini.ts
+- src/routes/api/ai/security/+server.ts
+- frontend fetch calls to /api/ai/security
+- request payload app/action/input
+- response handling in all app pages
+
+Fix requirements:
+1. Server-side helper:
+   - catch provider errors
+   - map expired/invalid API key errors to friendly Indonesian message
+   - do not expose raw stack trace
+   - do not expose raw provider JSON
+   - return structured failure
+   - optionally log sanitized message only
+
+2. API route:
+   - always return expected response shape
+   - ok: false on failure
+   - error: friendly Indonesian message
+   - summary: friendly fallback summary if useful
+   - recommendations: fallback recommendations if useful
+   - HTTP status can be 200 for handled AI failure or appropriate non-500, but frontend must handle it gracefully
+   - do not leak raw Gemini error
+
+3. Frontend:
+   - AI buttons must show loading state
+   - AI buttons must handle ok:false
+   - AI buttons must show ErrorState or friendly message
+   - UI must remain interactive after failure
+   - Retry button should work if present
+   - No unhandled promise rejection
+
+4. Environment:
+   - Ensure expected env variable name is GEMINI_API_KEY
+   - Ensure docs/message mention that developer must renew .env key if expired
+   - Do not write actual key into repo
+   - .env should not be committed if gitignored; if existing .env is created for local demo, keep only placeholder if appropriate
+
+Friendly Indonesian error examples:
+- “Koneksi AI belum bisa digunakan. Periksa kembali GEMINI_API_KEY di server.”
+- “API key Gemini tidak valid atau sudah kedaluwarsa. Perbarui nilai GEMINI_API_KEY lalu jalankan ulang server.”
+- “Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.”
+
+Do not show:
+- ApiError stack trace
+- google.rpc.ErrorInfo JSON
+- node_modules stack trace
+- raw provider response
+- API key
+- environment variables
+
+Part 8 — Theme Engine integration
+
+All refinements must follow existing global Theme Engine.
+
+Requirements:
+- No second ThemeSwitcher.
+- No page-specific theme toggles.
+- No duplicated hardcoded color system.
+- Buttons, tutorial cards, header scanner results, grade badges, CV export panel, error states, and AI panels must use existing theme tokens/classes/CSS variables.
+- Selected theme must persist after refresh.
+- All 10 themes must still work.
+
+Part 9 — Defensive security scope
+
+Security Header Scanner must be defensive only.
+
+Allowed:
+- explain missing headers
+- recommend hardening
+- describe browser protection
+- generate checklist
+- generate stakeholder summary
+- show grade
+
+Not allowed:
+- offensive exploit guidance
+- payload generation
+- bypass instructions
+- malware
+- credential theft
+- exploitation steps
+
+All AI output must be Bahasa Indonesia.
+
+Part 10 — QA
+
+Run:
+1. npm run check
+2. npm run build
+
+Manual verification:
+1. Open /
+2. Open /apps
+3. Confirm all 10 app cards still work.
+4. Confirm buttons replace plain primary href links visually.
+5. Confirm every app has bottom “Tutorial” section.
+6. Open /apps/risk-dashboard:
+   - enter a domain/URL
+   - scan headers
+   - see grade A/B/C/D
+   - see present/missing headers
+   - click AI hardening suggestion
+   - see result or friendly AI error
+7. Open /apps/patch-monitor:
+   - confirm user-facing title says “Patch Monitor Status”
+   - route remains /apps/patch-monitor
+8. Open /apps/secureops-habit-tracker:
+   - click checklist items
+   - verify progress/streak/grid update
+   - refresh and verify persistence
+   - test AI coaching
+9. Open /apps/analyst-portfolio-builder:
+   - fill profile
+   - click Generate CV ATS
+   - verify AI result or friendly error
+   - click Export CV
+   - verify file download or print flow works
+10. Trigger AI failure if key is invalid/expired:
+   - confirm raw Gemini error is not shown
+   - confirm friendly Indonesian message is shown
+   - confirm UI remains usable
+11. Confirm ThemeSwitcher still works.
+12. Confirm selected theme persists after refresh.
+13. Confirm no route becomes 404.
+14. Confirm Gemini key is not exposed in client code.
+
+Fix only blocking bugs caused by this refinement.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Button/navigation refinement summary.
+4. Tutorial sections added.
+5. Risk Dashboard header scanner changes.
+6. Patch Monitor rename summary.
+7. SecureOps Habit Tracker fixes.
+8. Analyst Portfolio ATS/export changes.
+9. AI error handling fixes.
+10. Theme Engine verification.
+11. AI/security verification.
+12. QA result.
+13. Known limitations.
+14. Ready/not ready for Prompt 4.
+```

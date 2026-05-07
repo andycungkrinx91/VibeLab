@@ -1,0 +1,174 @@
+Prompt 3.5: Fix App Discovery, Landing Navigation & Feature Access
+
+Task:
+Fix VibeSec Lab so all implemented apps are clearly visible and accessible from the landing page and /apps page.
+
+Problem:
+The app routes may exist, but the landing page currently looks like a static dashboard shell and does not clearly expose the implemented mini-apps. Users should immediately see and access all available VibeSec Lab apps.
+
+Do not rebuild from scratch.
+Do not remove working routes.
+Do not remove existing app pages.
+Do not break Gemini AI integration.
+Do not redesign the full app.
+Do not create new app routes.
+Focus only on app discovery, navigation, landing page completeness, and /apps page usability.
+
+Before editing:
+1. Inspect current project state after Prompt 3.
+2. Inspect src/routes/+page.svelte.
+3. Inspect src/routes/apps/+page.svelte.
+4. Inspect app metadata.
+5. Inspect AppShell/AppNav if they exist.
+6. Inspect all existing app routes.
+7. Preserve all working features.
+8. Preserve the global Theme Engine.
+9. Preserve ThemeSwitcher.
+10. Preserve all Gemini AI actions.
+11. Preserve all defensive AI safety rules.
+
+Routes that must be visible and accessible:
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+Landing page requirements:
+Update / so it clearly looks like the VibeSec Lab landing command center, not only a static mock dashboard.
+
+The landing page must include:
+1. Hero section:
+   - title: VibeSec Lab by Andy
+   - subtitle: Playground interaktif untuk CVE intelligence, patch planning, dan incident response.
+   - CTA button: “Masuk Command Center”
+   - CTA must navigate to /apps
+
+2. Workflow section:
+   - Detect
+   - Triage
+   - Patch
+   - Verify
+   - Deploy
+
+3. Bento grid preview:
+   - show all 10 mini-app cards
+   - each card must link to the correct route
+   - each card must show:
+     - title
+     - category
+     - description
+     - status/risk badge
+     - AI action label
+     - priority level
+   - cards must be clickable
+   - no broken links
+
+4. System widgets:
+   - Status Sistem
+   - Threat Level
+   - Patch Queue
+   - Command Log
+
+5. ThemeSwitcher:
+   - must remain visible and usable
+   - must continue to persist selected theme
+
+6. Short narrative section:
+   - raw vibe coding vs mature vibe coding with PRD
+   - explain briefly in Bahasa Indonesia
+
+/apps page requirements:
+Update /apps so it acts as the main Command Center app directory.
+
+The /apps page must include:
+1. Page title:
+   - Command Center Apps
+
+2. Subtitle:
+   - Pilih mini-app untuk menjalankan workflow security: Detect, Triage, Patch, Verify, Deploy.
+
+3. Full app grid:
+   - show all 10 app cards
+   - each card links to correct route
+   - use app metadata as single source of truth
+   - use BentoAppCard/CyberCard if available
+   - show category, description, badge, priority, and AI action
+
+4. Search/filter if already available or easy:
+   - filter by category/status/priority if practical
+   - do not overbuild
+
+5. Empty state:
+   - should never look broken
+   - if metadata missing, show friendly fallback
+
+Navigation requirements:
+- Add clear navigation from landing page to /apps.
+- Add app shell nav item for “Apps” or “Command Center”.
+- Add safe back navigation from each app page to /apps.
+- Back buttons must not cause 404.
+- All app card links must use correct route paths.
+- Browser back/forward must still work.
+
+Theme Engine requirements:
+- Reuse the existing global Theme Engine.
+- Do not create a second ThemeSwitcher.
+- Do not create route-specific theme toggles.
+- Do not hardcode a new color system.
+- Landing page, /apps page, app cards, buttons, badges, and hover states must follow selected global theme.
+- Selected theme must persist after refresh.
+
+Visual requirements:
+- Keep cyber command center identity.
+- Make landing page feel premium and demo-ready.
+- Add clear visual hierarchy.
+- Add clickable bento app cards.
+- Add hover glow/lift on app cards.
+- Keep mobile responsive.
+- Avoid plain static dashboard-only appearance.
+
+AI/security requirements:
+- Do not change Gemini server-side helper unless required.
+- Do not expose GEMINI_API_KEY.
+- Do not add client-side Gemini calls.
+- Do not change AI safety behavior.
+- All AI output must remain Bahasa Indonesia.
+- Defensive security only.
+
+Manual route checks:
+Verify these load:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+QA:
+Run:
+1. npm run check
+2. npm run build
+
+Fix only blocking bugs caused by this navigation/discovery fix.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Landing page updates.
+4. /apps page updates.
+5. Route/link verification.
+6. Theme Engine verification.
+7. QA result.
+8. Ready/not ready for Prompt 4.

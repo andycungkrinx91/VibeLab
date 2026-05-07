@@ -1,0 +1,429 @@
+```text id="prompt-3-8"
+Prompt 3.8: App Category Tags, Game Audio FX & Mini-App Identity Polish
+
+Task:
+Improve VibeSec Lab by adding clear category labels/tags to every mini-app and adding sound effects to the Threat Runner game.
+
+Goal:
+Make every app feel easier to understand by mapping each VibeSec Lab mini-app to a familiar app category, and make Threat Runner feel more fun and interactive with safe local game audio.
+
+Do not rebuild from scratch.
+Do not redesign the full app.
+Do not remove working features.
+Do not remove existing routes.
+Do not break Gemini AI integration.
+Do not create new app routes.
+Do not create a second ThemeSwitcher.
+Do not create a new theme system.
+Do not add real external audio APIs.
+Do not add paid services.
+Do not add offensive security functionality.
+
+Before editing:
+1. Inspect current project state.
+2. Inspect app metadata.
+3. Inspect /apps page.
+4. Inspect landing page app cards.
+5. Inspect all app cards and app page headers.
+6. Inspect Threat Runner implementation.
+7. Preserve all working app functionality.
+8. Preserve the global Theme Engine.
+9. Preserve ThemeSwitcher.
+10. Preserve Gemini server-side AI integration.
+11. Preserve Bahasa Indonesia AI output.
+12. Preserve defensive security AI rules.
+
+Routes that must remain valid:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+Part 1 — Add familiar category labels/tags to every app
+
+Add a clear “Jenis App” / “Kategori App” tag to every mini-app based on these familiar vibe coding categories:
+
+Reference category labels:
+1. Retro Arcade Games
+2. Interactive Dashboards
+3. Productivity Utilities
+4. Personal Portfolios
+5. Custom Media Players
+6. Smart Calculators
+7. Interactive Storyboards
+8. Resource Libraries
+9. Event Countdowners
+10. Daily Habit Logs
+
+Map VibeSec Lab apps to these labels:
+
+1. Threat Runner
+- Familiar category tag: Retro Arcade Games
+- Security identity: Cyber Defense Game
+- Bahasa label shown in UI:
+  - “Retro Arcade Games”
+  - optional small subtitle: “Game pertahanan cyber”
+
+2. Risk Dashboard
+- Familiar category tag: Interactive Dashboards
+- Security identity: Security Ops Dashboard
+- Bahasa label shown in UI:
+  - “Interactive Dashboards”
+  - optional small subtitle: “Dashboard risiko security”
+
+3. CVSS Risk Calculator
+- Familiar category tag: Smart Calculators
+- Security identity: Vulnerability Risk Calculator
+- Bahasa label shown in UI:
+  - “Smart Calculators”
+  - optional small subtitle: “Kalkulator prioritas patch”
+
+4. Patch Monitor
+- Familiar category tag: Productivity Utilities
+- Security identity: Patch Lifecycle Tracker
+- Bahasa label shown in UI:
+  - “Productivity Utilities”
+  - optional small subtitle: “Tracker lifecycle patch”
+
+5. Analyst Portfolio Builder
+- Familiar category tag: Personal Portfolios
+- Security identity: Security Profile Builder
+- Bahasa label shown in UI:
+  - “Personal Portfolios”
+  - optional small subtitle: “Builder profil analis security”
+
+6. Threat Briefing Player
+- Familiar category tag: Custom Media Players
+- Security identity: Threat Briefing Player
+- Bahasa label shown in UI:
+  - “Custom Media Players”
+  - optional small subtitle: “Player briefing threat intelligence”
+
+7. Incident Response Journey
+- Familiar category tag: Interactive Storyboards
+- Security identity: Incident Response Story
+- Bahasa label shown in UI:
+  - “Interactive Storyboards”
+  - optional small subtitle: “Simulasi perjalanan incident response”
+
+8. CVE Resource Library
+- Familiar category tag: Resource Libraries
+- Security identity: CVE Knowledge Base
+- Bahasa label shown in UI:
+  - “Resource Libraries”
+  - optional small subtitle: “Library referensi CVE dan security”
+
+9. Patch Deadline Countdown
+- Familiar category tag: Event Countdowners
+- Security identity: Patch SLA Countdown
+- Bahasa label shown in UI:
+  - “Event Countdowners”
+  - optional small subtitle: “Countdown deadline patch”
+
+10. SecureOps Habit Tracker
+- Familiar category tag: Daily Habit Logs
+- Security identity: Security Habit Tracker
+- Bahasa label shown in UI:
+  - “Daily Habit Logs”
+  - optional small subtitle: “Checklist kebiasaan SecureOps”
+
+Metadata requirements:
+Update centralized app metadata so each app includes:
+- slug
+- route
+- title
+- category
+- familiarCategory
+- familiarCategorySubtitle
+- securityIdentity
+- description
+- status/risk badge
+- AI action name
+- priority level
+- workflow phase
+- icon/visual marker if already used
+
+Do not duplicate this mapping manually across multiple pages if centralized metadata already exists.
+
+UI requirements for category tags:
+Show the familiar category tag on:
+1. Landing page app cards
+2. /apps app directory cards
+3. Each app page header
+
+The tag should be visually clear but compact.
+
+Suggested UI:
+- small pill badge
+- label: “Jenis App”
+- value: familiar category name
+- small secondary subtitle if there is space
+
+Example:
+Jenis App: Retro Arcade Games
+Game pertahanan cyber
+
+Visual requirements:
+- Tags must use existing global Theme Engine tokens/classes/CSS variables.
+- Tags should have subtle glow/border.
+- Tags should adapt to selected theme.
+- Do not hardcode a new color system.
+- Do not create a separate category color system unless it uses existing theme tokens.
+- Keep contrast readable.
+- Keep mobile layout clean.
+
+Part 2 — Add local sound effects to Threat Runner
+
+Improve Threat Runner with game sound effects.
+
+Important:
+- Audio must be local/browser-based only.
+- Do not call external audio APIs.
+- Do not use real TTS.
+- Do not require paid services.
+- Do not require audio files from external URLs.
+- Prefer lightweight Web Audio API generated sounds, or small local audio assets only if already available.
+- Audio must be user-controllable.
+- Audio should start only after user interaction to avoid browser autoplay issues.
+
+Threat Runner sound requirements:
+Add sound effects for:
+1. Game start
+2. Player shoot
+3. Threat hit / destroyed
+4. Patch token or star collected
+5. Player damage
+6. Game over
+7. Optional UI click / button press
+
+Sound design:
+- Cyber arcade style
+- Short blips, pulses, zaps, shield hits, and alert tones
+- Not loud
+- Not annoying
+- Theme-friendly feel
+- Should feel like a modern cyber defense arcade game
+
+Audio controls:
+Add an audio control inside Threat Runner:
+- toggle: sound on/off
+- label in Bahasa Indonesia:
+  - “Suara”
+  - states: “Aktif” / “Mati”
+- optional volume slider if easy and safe
+- selected sound setting should persist in localStorage if practical
+
+Browser/audio safety:
+- Audio must initialize only after user interaction.
+- No autoplay on page load.
+- No console errors if audio is blocked.
+- If Web Audio is unavailable, fail gracefully.
+- Do not crash SSR.
+- Guard window/AudioContext access safely.
+- Clean up audio resources if needed.
+
+Suggested implementation:
+- Create a small local audio utility if useful:
+  - src/lib/audio/game-audio.ts
+- Use Web Audio API oscillator tones for simple generated effects.
+- Export functions such as:
+  - initAudio()
+  - playStart()
+  - playShoot()
+  - playHit()
+  - playCollect()
+  - playDamage()
+  - playGameOver()
+  - setSoundEnabled()
+- Keep utility browser-safe.
+- Do not import browser-only audio code into server files.
+
+Threat Runner gameplay integration:
+Trigger sounds when:
+- user starts game: playStart()
+- player shoots: playShoot()
+- projectile hits threat: playHit()
+- player collects star/patch token: playCollect()
+- player takes damage: playDamage()
+- game ends: playGameOver()
+
+Sound should not break the game if it fails.
+Wrap audio calls safely.
+
+Threat Runner UI update:
+Add a small controls/help panel showing:
+- A / ← : kiri
+- D / → : kanan
+- Space : tembak
+- Ambil bintang / patch token untuk skor
+- Hancurkan threat untuk skor tambahan
+- Hindari tabrakan dengan threat
+- Suara: Aktif/Mati toggle
+
+Part 3 — Make app category mapping visible in demo flow
+
+Update /apps page or demo guide to show that VibeSec Lab covers 10 common app patterns:
+
+- Retro Arcade Games → Threat Runner
+- Interactive Dashboards → Risk Dashboard
+- Productivity Utilities → Patch Monitor
+- Personal Portfolios → Analyst Portfolio Builder
+- Custom Media Players → Threat Briefing Player
+- Smart Calculators → CVSS Risk Calculator
+- Interactive Storyboards → Incident Response Journey
+- Resource Libraries → CVE Resource Library
+- Event Countdowners → Patch Deadline Countdown
+- Daily Habit Logs → SecureOps Habit Tracker
+
+Add a compact section titled:
+“10 Pola App Vibe Coding”
+
+Description in Bahasa Indonesia:
+“VibeSec Lab menunjukkan bahwa tema security bisa dikemas ke berbagai pola aplikasi sederhana: game, dashboard, kalkulator, portfolio, media player, library, countdown, habit tracker, dan storyboard interaktif.”
+
+Keep it visually compact and polished.
+
+Part 4 — Preserve Gemini/security behavior
+
+Do not change Gemini integration unless required by imports.
+
+Requirements:
+- GEMINI_API_KEY stays server-side only.
+- No client-side Gemini calls.
+- No PUBLIC_ or NEXT_PUBLIC_ Gemini key.
+- No raw Gemini errors exposed.
+- All AI output remains Bahasa Indonesia.
+- Defensive security only.
+- Do not generate offensive exploit instructions.
+- Existing AI actions must still work or fail gracefully.
+
+Existing AI actions that must not be broken:
+1. threat-runner
+   - generate-threat-mission
+   - summarize-incident
+
+2. risk-dashboard
+   - analyze-risk-dashboard
+
+3. cvss-calculator
+   - explain-cvss-risk
+
+4. patch-monitor
+   - generate-patch-plan
+   - generate-stakeholder-update
+
+5. incident-response-journey
+   - explain-ir-step
+   - generate-ir-quiz
+   - generate-postmortem-template
+
+6. analyst-portfolio-builder
+   - generate-security-bio
+   - improve-security-projects
+   - review-analyst-profile
+
+7. secureops-habit-tracker
+   - generate-security-coaching
+
+8. threat-briefing-player
+   - summarize-threat-briefing
+   - extract-briefing-actions
+
+9. cve-resource-library
+   - explain-security-resource
+
+10. patch-deadline-countdown
+   - generate-deadline-checklist
+   - generate-stakeholder-message
+
+Part 5 — Theme Engine integration
+
+All new labels, tags, category badges, sound controls, and Threat Runner audio UI must follow the existing global Theme Engine.
+
+Requirements:
+- Do not create a second ThemeSwitcher.
+- Do not create route-specific theme toggles.
+- Do not hardcode a new color system.
+- Use existing theme tokens/classes/CSS variables.
+- ThemeSwitcher must still work.
+- Selected theme must persist after refresh.
+- All 10 themes must continue to affect app cards, tags, badges, buttons, and Threat Runner controls.
+
+Part 6 — Accessibility and UX
+
+Requirements:
+- Sound must be optional.
+- Sound toggle must be keyboard-accessible.
+- Do not play sound automatically before interaction.
+- Controls should have readable labels.
+- Do not rely only on sound for feedback.
+- Visual feedback must still exist for shooting, collecting, damage, and game over.
+- Respect reduced-motion where practical.
+- Keep mobile layout usable.
+
+Definition of done:
+- Every app has a familiar category tag.
+- Category tags appear on landing page cards.
+- Category tags appear on /apps cards.
+- Category tag appears on each app page header.
+- /apps includes a compact “10 Pola App Vibe Coding” section.
+- Threat Runner has sound effects.
+- Threat Runner has sound on/off toggle.
+- Sound does not autoplay before user interaction.
+- Sound setting persists if practical.
+- Threat Runner still works if audio fails.
+- All routes still work.
+- ThemeSwitcher still works.
+- Gemini AI actions are not broken.
+
+QA:
+Run:
+1. npm run check
+2. npm run build
+
+Manual verification:
+- Open /
+- Confirm app cards show familiar category tags.
+- Open /apps
+- Confirm all 10 app cards show familiar category tags.
+- Confirm “10 Pola App Vibe Coding” section exists.
+- Open each app route and confirm app header shows category tag.
+- Open /apps/threat-runner.
+- Start the game.
+- Confirm sound does not play before user interaction.
+- Confirm sound effects play after interaction when sound is active:
+  - start
+  - shoot
+  - hit
+  - collect
+  - damage
+  - game over
+- Toggle sound off and confirm effects stop.
+- Refresh and confirm sound preference persists if implemented.
+- Confirm ThemeSwitcher still works.
+- Confirm selected theme persists after refresh.
+- Confirm all AI buttons still work or fail gracefully.
+- Confirm no route becomes 404.
+
+Fix only blocking bugs caused by this refinement.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Category metadata changes.
+4. UI category tag changes.
+5. Threat Runner audio changes.
+6. Theme Engine verification.
+7. AI/security verification.
+8. QA result.
+9. Known limitations.
+10. Ready/not ready for Prompt 4.
+```

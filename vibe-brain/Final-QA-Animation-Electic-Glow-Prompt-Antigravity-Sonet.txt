@@ -1,0 +1,86 @@
+Final Sonnet Micro Review: Electric Border Visual QA
+
+Task:
+Review and lightly refine the animated electric glow border effect in VibeSec Lab.
+
+Quota is limited, so keep this pass focused and small.
+
+Do not:
+- rebuild from scratch
+- redesign the whole app
+- add new routes
+- add major features
+- change Gemini/API/env logic
+- touch API key handling
+- change production adapter
+- rewrite components unnecessarily
+
+Preserve:
+- all routes
+- ThemeSwitcher
+- global Theme Engine
+- all 10 themes
+- Gemini server-side API
+- production start
+- app features
+- tutorials
+- category tags
+- back buttons
+- Threat Runner gameplay/audio
+- Risk Dashboard header scanner
+- ATS CV export
+
+Focus only on:
+1. electric border visual quality
+2. glow balance
+3. theme consistency
+4. readability
+5. reduced-motion support
+6. mobile visual sanity
+7. obvious CSS issues caused by electric border
+
+Review these pages only:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/analyst-portfolio-builder
+
+Check:
+- electric border looks premium, not noisy
+- glow follows selected theme color
+- no hardcoded green-only effect
+- text remains readable
+- no overflow bugs
+- no layout shifting
+- hover glow feels smooth
+- reduced-motion disables or reduces animation
+- cards/buttons/panels still look enterprise-grade
+- effect is not applied too aggressively everywhere
+
+If needed, make small targeted refinements:
+- reduce glow intensity
+- slow down animation
+- improve border radius alignment
+- fix overflow clipping
+- improve theme variable usage
+- improve hover/focus state
+- add prefers-reduced-motion fallback
+- remove effect from low-priority elements if too noisy
+
+Run:
+npm run check
+npm run build
+
+Fix only errors caused by this visual refinement.
+
+Return:
+1. Files changed
+2. Electric border review summary
+3. Visual refinements applied
+4. Theme consistency result
+5. Reduced-motion result
+6. npm check result
+7. npm build result
+8. Final demo readiness

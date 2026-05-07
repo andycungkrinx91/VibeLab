@@ -1,0 +1,424 @@
+Final Engineering QA, Regression Check & Pre-Polish Lock
+
+Task:
+Perform the final engineering QA and regression check for VibeSec Lab before the last visual polish pass.
+
+Goal:
+Make sure the project is stable, production-ready, route-safe, AI-safe, and clean before handing it to Sonnet/Opus for final visual polish.
+
+This is not a redesign task.
+This is not a feature expansion task.
+This is a final engineering safety pass.
+
+Do not rebuild the app from scratch.
+Do not redesign the full app.
+Do not add new major features.
+Do not add new routes.
+Do not remove working features.
+Do not break Gemini AI integration.
+Do not change API key/env logic unless it is broken.
+Do not create a second ThemeSwitcher.
+Do not create a new theme system.
+Do not make large architectural refactors unless required to fix blocking bugs.
+
+Project:
+VibeSec Lab by Andy
+
+Stack:
+- SvelteKit
+- Svelte 5
+- Tailwind CSS
+- TypeScript
+- SvelteKit adapter-node
+- Gemini API through server-side SvelteKit routes
+- Local persistence
+- Global Theme Engine
+- Cloud Run-ready production start
+
+Current project includes:
+- 10 mini-apps
+- Global ThemeSwitcher
+- Global Theme Engine with 10 themes
+- App category tags
+- Tutorial sections in every app
+- Threat Runner gameplay + local audio FX
+- Risk Dashboard as Security Header Scanner
+- Patch Monitor renamed to Patch Monitor Status
+- SecureOps Habit Tracker fixes
+- Analyst Portfolio Builder ATS CV generation + export
+- Gemini runtime env loading fix
+- /api/ai/health endpoint
+- adapter-node production start support
+- README/deployment docs if present
+- Top-left back button on all app pages
+
+Before editing:
+1. Inspect current project state.
+2. Inspect package.json.
+3. Inspect svelte.config.js or svelte.config.ts.
+4. Inspect app metadata.
+5. Inspect app shell/navigation.
+6. Inspect global Theme Engine.
+7. Inspect shared components.
+8. Inspect all 10 app routes.
+9. Inspect Gemini helper:
+   - src/lib/server/gemini.ts
+10. Inspect AI API route:
+   - src/routes/api/ai/security/+server.ts
+11. Inspect AI health endpoint:
+   - src/routes/api/ai/health/+server.ts
+12. Inspect security headers API route if present:
+   - src/routes/api/security-headers/+server.ts
+13. Inspect README and .env.example.
+14. Preserve all working behavior.
+
+Routes that must remain valid:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+API routes that must remain valid:
+- /api/ai/security
+- /api/ai/health
+- /api/security-headers if implemented
+
+Final QA scope:
+
+1. Build and type safety
+Check:
+- npm run check passes
+- npm run build passes
+- no Svelte errors
+- no TypeScript blocking errors
+- no accessibility warnings if easily fixable
+- no broken imports
+- no unused fatal imports
+- no server/client boundary mistakes
+
+2. Production start
+Check:
+- adapter-node is configured
+- package.json has:
+  - dev
+  - build
+  - preview
+  - check
+  - start
+- npm run start runs node build
+- PORT env is respected
+- production server boots
+
+Expected:
+PORT=4173 npm run start
+
+3. Gemini env runtime
+Check:
+- GEMINI_API_KEY is read server-side only.
+- Runtime env loading uses server-only private env.
+- Do not expose GEMINI_API_KEY to client.
+- Do not use PUBLIC_GEMINI_API_KEY.
+- Do not use NEXT_PUBLIC_GEMINI_API_KEY.
+- Do not rely on client-side Gemini calls.
+- Do not log full API key.
+- /api/ai/health never returns key value.
+- /api/ai/health may return key existence and key length only.
+
+4. Gemini AI endpoint
+Check:
+- /api/ai/security returns structured JSON.
+- Unknown app/action is rejected safely.
+- Invalid input returns friendly Indonesian error.
+- Raw Gemini/provider errors are not exposed.
+- Expired/invalid key errors are mapped to friendly Indonesian messages.
+- All AI output remains Bahasa Indonesia.
+- All AI safety prompts remain defensive only.
+
+Expected AI response shape:
+{
+  ok: boolean,
+  app: string,
+  action: string,
+  result: object,
+  summary: string,
+  recommendations: string[],
+  warnings?: string[],
+  error?: string
+}
+
+5. Defensive AI safety
+Confirm AI features do not provide:
+- offensive exploit steps
+- malware guidance
+- credential theft guidance
+- evasion guidance
+- persistence guidance
+- payload generation
+- weaponization instructions
+
+Allowed AI output:
+- mitigation
+- patching
+- hardening
+- monitoring
+- incident response
+- education
+- stakeholder updates
+- defensive CV/portfolio content
+- security header hardening suggestions
+
+6. Theme Engine regression
+Check:
+- ThemeSwitcher visible.
+- No duplicate ThemeSwitcher.
+- All 10 themes still exist:
+  1. Terminal Klasik
+  2. Cyberpunk Neon
+  3. Arch Linux Terminal
+  4. Matrix Rain
+  5. Red Alert SOC
+  6. Ice Blue Defense
+  7. Purple Zero-Day
+  8. Amber Ops
+  9. Emerald Secure
+  10. Monochrome Hacker
+- Theme persists after refresh.
+- Theme applies to:
+  - app shell
+  - app cards
+  - buttons
+  - badges
+  - tutorial sections
+  - back buttons
+  - AI panels
+  - category tags
+  - header scanner results
+  - game HUD/audio controls
+  - countdown states
+  - progress bars
+  - tables/cards
+
+7. Navigation regression
+Check:
+- / links to /apps clearly.
+- /apps shows all 10 apps.
+- App cards link to correct routes.
+- All app pages have top-left back button.
+- Back button goes to /apps.
+- “Kembali ke Command Center” button works.
+- Previous/next app navigation works if implemented.
+- Browser back/forward works.
+- No route returns 404.
+
+8. App metadata regression
+Check every app metadata includes:
+- slug
+- route
+- title
+- category
+- familiarCategory
+- familiarCategorySubtitle
+- securityIdentity
+- description
+- status/risk badge
+- AI action name
+- priority level
+- workflow phase
+- icon/visual marker if used
+
+9. Tutorial sections
+Check:
+- Every app page has bottom Tutorial section.
+- Label is exactly:
+  “Tutorial”
+- Tutorial explains:
+  - tujuan
+  - cara pakai
+  - aksi AI
+  - output
+  - catatan security
+- Tutorial is in Bahasa Indonesia.
+- Tutorial does not block main app UI.
+
+10. Threat Runner
+Check:
+- player/robot visible
+- movement works
+- shooting works
+- threats descend
+- collectibles increase score
+- damage reduces health
+- game over works
+- restart works
+- high score persists
+- sound does not autoplay before user interaction
+- sound toggle works
+- audio fails gracefully if blocked
+- no runaway intervals/listeners
+
+11. Risk Dashboard / Security Header Scanner
+Check:
+- route remains /apps/risk-dashboard
+- input domain/URL works
+- invalid URL gives friendly error
+- server-side scan works where possible
+- result shows:
+  - grade A/B/C/D
+  - score
+  - present headers
+  - missing headers
+  - checked headers
+  - summary
+- AI hardening suggestion works or fails gracefully
+- no raw fetch/server errors leak to UI
+
+12. Patch Monitor Status
+Check:
+- user-facing title is Patch Monitor Status
+- route remains /apps/patch-monitor
+- add/update/remove patch item works
+- local persistence works
+- AI patch plan works or fails gracefully
+
+13. SecureOps Habit Tracker
+Check:
+- checklist items clickable
+- progress updates
+- streak behavior sane
+- weekly grid updates
+- local persistence works
+- malformed localStorage does not crash app
+- AI coaching works or fails gracefully
+
+14. Analyst Portfolio Builder
+Check:
+- form updates preview
+- local persistence works
+- AI bio/project/profile review works or fails gracefully
+- Generate CV ATS works or fails gracefully
+- Export CV works
+- export does not run during SSR
+- export file contains expected profile/CV content
+- no secrets in export
+
+15. Remaining apps
+Check:
+- CVSS Risk Calculator works
+- Threat Briefing Player works
+- Incident Response Journey works
+- CVE Resource Library works
+- Patch Deadline Countdown works
+- AI actions work or fail gracefully
+- loading/error/result states exist
+
+16. Mobile sanity
+Check:
+- landing page usable
+- /apps grid usable
+- app page headers usable
+- top-left back button tappable
+- ThemeSwitcher usable
+- forms/tables do not break badly
+- buttons remain tappable
+
+17. Documentation sanity
+Check:
+- README setup is accurate
+- .env.example uses placeholders only
+- no real API key in docs
+- production start docs are correct
+- Cloud Run notes are not misleading
+- troubleshooting includes:
+  - restart after env change
+  - check /api/ai/health
+  - do not use PUBLIC_ Gemini keys
+
+Security search:
+Run or perform equivalent search:
+- GEMINI_API_KEY
+- GOOGLE_API_KEY
+- PUBLIC_GEMINI
+- NEXT_PUBLIC_GEMINI
+- X-goog-api-key
+- ApiError
+- node_modules
+
+Confirm:
+- no real key committed
+- no key exposed client-side
+- no raw provider error shown in UI
+
+Commands to run:
+1. npm run check
+2. npm run build
+3. PORT=4173 npm run start
+
+If npm run start blocks, that is expected.
+Start it long enough to confirm server boots, then stop it.
+
+Manual endpoint tests:
+1. Health:
+curl -s http://localhost:4173/api/ai/health | jq
+
+Expected:
+- hasGeminiKey true if env is set
+- geminiKeyLength greater than 0
+- model names visible
+- no key value exposed
+
+2. Invalid AI request:
+curl -s http://localhost:4173/api/ai/security \
+  -H "Content-Type: application/json" \
+  -X POST \
+  -d '{"app":"unknown","action":"unknown","input":{}}' | jq
+
+Expected:
+- structured JSON
+- friendly Indonesian error
+- no stack trace
+
+3. Security headers invalid input:
+curl -s http://localhost:4173/api/security-headers \
+  -H "Content-Type: application/json" \
+  -X POST \
+  -d '{"url":"not-a-valid-domain"}' | jq
+
+Expected:
+- friendly JSON error
+- no stack trace
+
+Fix policy:
+- Fix only blocking bugs and obvious regressions.
+- Do not redesign.
+- Do not do final visual polish here.
+- Do not add new features.
+- Do not rewrite working systems.
+- Keep changes small and safe.
+
+Return:
+1. Files inspected.
+2. Issues found.
+3. Files changed.
+4. Fixes applied.
+5. Route verification.
+6. Theme Engine verification.
+7. Gemini env/AI verification.
+8. Security Header Scanner verification.
+9. Threat Runner verification.
+10. Portfolio ATS/export verification.
+11. SecureOps Habit Tracker verification.
+12. Production start verification.
+13. Documentation verification.
+14. npm check result.
+15. npm build result.
+16. npm start result.
+17. Remaining risks.
+18. Ready/not ready for final Sonnet/Opus polish.

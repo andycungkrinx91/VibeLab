@@ -1,0 +1,93 @@
+Prompt 4: Bug Audit, Bug Fixing & Demo Readiness
+ 
+
+Task:
+Audit the full VibeSec Lab project, fix bugs, and make sure it is ready for a live demo. Do not add major new features.
+
+Before editing:
+1. Inspect current implementation after Prompt 3.
+2. Preserve all working features.
+3. Do not redesign the full app.
+4. Do not add new app routes.
+5. Focus on correctness, stability, demo readiness, and security hygiene.
+
+Audit scope:
+1. Routing
+2. Navigation
+3. Theme switching
+4. AI endpoint
+5. AI safety instructions
+6. All 10 app pages
+7. Local persistence
+8. Mobile responsiveness
+9. Loading/error states
+10. Build/check errors
+
+Routes to verify:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+Bug categories to fix:
+1. Broken routes or 404.
+2. Back button issues.
+3. Client/server import mistakes.
+4. API key leakage.
+5. Gemini endpoint failure.
+6. AI output not in Bahasa Indonesia.
+7. Offensive/security unsafe AI response.
+8. localStorage/IndexedDB SSR errors.
+9. Form validation issues.
+10. Broken game interaction.
+11. Broken countdown timer.
+12. Broken calculators.
+13. Broken search/filter.
+14. Unusable mobile layout.
+15. Build/check failures.
+
+Security AI rules:
+- Ensure all AI prompts are defensive.
+- No exploit instructions.
+- No offensive payload generation.
+- No malware guidance.
+- AI can explain risk and mitigation only.
+- AI can generate patch/checklist/stakeholder summaries.
+- AI must be in Bahasa Indonesia.
+
+Demo readiness:
+Make sure each app has:
+- clear purpose
+- visible interaction
+- AI button/action
+- loading state
+- result state
+- error state
+- sample data if empty
+- visually consistent layout
+
+Run:
+1. npm run check
+2. npm run build
+
+If errors occur:
+- Fix only the blocking errors.
+- Do not rewrite the app.
+
+Return:
+1. Audit summary.
+2. Bugs found.
+3. Bugs fixed.
+4. Files changed.
+5. npm check result.
+6. npm build result.
+7. Remaining risks.
+8. Ready/not ready for Prompt 5.

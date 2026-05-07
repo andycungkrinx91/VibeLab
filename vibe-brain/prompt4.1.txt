@@ -1,0 +1,195 @@
+Prompt 4.1: Global Back Button Polish for All App Pages
+
+Task:
+Add a consistent back button at the top-left area of every VibeSec Lab app page, similar to the AI Studio mockup style.
+
+Goal:
+Every mini-app page should have a clear, visible, premium back button near the top-left header area so users can easily return to the Command Center.
+
+This is a small UI/navigation refinement.
+Do not rebuild the app.
+Do not redesign the full app.
+Do not remove existing navigation.
+Do not remove existing routes.
+Do not break Gemini AI integration.
+Do not create new app routes.
+Do not create a second ThemeSwitcher.
+Do not create a new theme system.
+Do not remove production start support.
+
+Before editing:
+1. Inspect the current project state.
+2. Inspect the app shell/navigation.
+3. Inspect shared app header component if it exists.
+4. Inspect all 10 app pages.
+5. Inspect app metadata.
+6. Reuse existing shared components where practical.
+7. Preserve global Theme Engine.
+8. Preserve ThemeSwitcher.
+9. Preserve all AI actions.
+10. Preserve production start support.
+11. Preserve all existing app features.
+12. Preserve all tutorial sections.
+13. Preserve category tags.
+14. Preserve Threat Runner audio.
+15. Preserve Risk Dashboard security header scanner.
+16. Preserve Analyst Portfolio ATS export.
+17. Preserve Patch Monitor Status naming.
+18. Preserve SecureOps Habit Tracker fixes.
+
+Routes that must remain valid:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+API routes that must remain valid:
+- /api/ai/security
+- /api/security-headers if implemented
+
+Back button requirements:
+- Add a visible back button near the top-left of every app page header.
+- The button should navigate to:
+  - /apps
+- The visual style should match the cyber command center design.
+- It should look like a square icon button with a left arrow.
+- It should be visually similar to the AI Studio mockup:
+  - square button
+  - thin glowing border
+  - dark glass panel
+  - left arrow icon
+  - hover glow
+  - subtle press state
+- It must be theme-aware.
+- It must use existing Theme Engine tokens/classes/CSS variables.
+- Do not hardcode a fixed green color.
+- The glow/border/accent must follow the selected theme.
+
+Suggested label/accessibility:
+- Visible icon: ← or an existing left-arrow icon if available.
+- aria-label: “Kembali ke Command Center”
+- title: “Kembali ke Command Center”
+
+Behavior:
+- Clicking the button should navigate safely to /apps.
+- It must not cause 404.
+- It must work with browser back/forward.
+- It must not break existing “Kembali ke Command Center” buttons if those already exist.
+- If there is already a text back button lower in the page, keep it unless there is obvious duplication that hurts UX.
+- Prefer one consistent shared header implementation instead of duplicating code in every route.
+
+Preferred implementation:
+If a shared app header component exists:
+- Update the shared app header component to include the back button.
+- Ensure all app pages use this shared header.
+
+If no shared app header component exists:
+- Create a reusable component:
+  - src/lib/components/AppBackButton.svelte
+or:
+  - src/lib/components/AppPageHeader.svelte
+
+Use it across all 10 app pages.
+
+App page header layout:
+- Back button on the far left.
+- App eyebrow/category/status info next to it or above title.
+- App title remains clear and large.
+- Category tags/status badges remain visible.
+- Layout must be clean on mobile.
+
+Example visual structure:
+[ ← ]  [CATEGORY / STATUS BADGE]
+       App Title
+       Short description
+
+Mobile behavior:
+- Back button remains visible.
+- Header should not overflow.
+- Title should wrap cleanly.
+- Button should stay tappable.
+
+Theme Engine requirements:
+- Reuse the global Theme Engine.
+- Do not create a second ThemeSwitcher.
+- Do not create route-specific theme toggles.
+- Do not create a new color system.
+- Back button border, hover glow, icon color, and focus ring must follow selected theme.
+- Selected theme must persist after refresh.
+
+Gemini/AI safety requirements:
+- Do not change Gemini integration unless required by broken imports.
+- GEMINI_API_KEY must stay server-side only.
+- Do not use PUBLIC_ or NEXT_PUBLIC_ Gemini API key.
+- Do not expose API keys.
+- Do not expose environment variables.
+- Do not expose raw Gemini/provider errors.
+- Client components must call internal SvelteKit API routes only.
+- AI output must remain Bahasa Indonesia.
+- AI must remain defensive-security only.
+- Do not generate offensive exploit instructions.
+
+Accessibility:
+- Button must be keyboard accessible.
+- Provide aria-label.
+- Provide visible focus state.
+- Do not rely only on color.
+- Keep tap target reasonably large.
+
+Production safety:
+- Do not break adapter-node.
+- Do not break npm run start.
+- Do not remove start script.
+- Do not switch adapter.
+- Do not change Docker/README unless necessary.
+
+QA:
+Run:
+1. npm run check
+2. npm run build
+
+Optional if quick:
+3. PORT=4173 npm run start
+
+Manual verification:
+- Open /apps/threat-runner
+- Open /apps/analyst-portfolio-builder
+- Open /apps/risk-dashboard
+- Open /apps/cvss-calculator
+- Open /apps/patch-monitor
+- Open /apps/secureops-habit-tracker
+- Open /apps/threat-briefing-player
+- Open /apps/incident-response-journey
+- Open /apps/cve-resource-library
+- Open /apps/patch-deadline-countdown
+- Confirm each page has a top-left back button.
+- Click each back button and confirm it goes to /apps.
+- Confirm no route becomes 404.
+- Confirm ThemeSwitcher still works.
+- Confirm selected theme affects the back button style.
+- Confirm mobile layout remains usable.
+- Confirm AI buttons still exist and work or fail gracefully.
+- Confirm /api/ai/security is not broken.
+- Confirm /api/security-headers is not broken if implemented.
+
+Fix only blocking bugs caused by this back button refinement.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Back button implementation summary.
+4. Shared component summary.
+5. Route verification.
+6. Theme Engine verification.
+7. AI/security verification.
+8. QA result.
+9. Known limitations.
+10. Ready/not ready for Prompt 5.

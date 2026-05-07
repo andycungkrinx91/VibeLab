@@ -1,0 +1,88 @@
+Fix Gemini API key loading in VibeSec Lab.
+
+Problem:
+Curl works with the current Gemini API key, but AI features inside the SvelteKit app fail with API key invalid/expired. The app likely reads a stale environment variable, possibly GOOGLE_API_KEY taking precedence over GEMINI_API_KEY, or the server was not restarted after .env changes.
+
+Task:
+Make Gemini key loading explicit, server-only, debuggable without leaking secrets, and consistent.
+
+Requirements:
+1. Inspect:
+   - src/lib/server/gemini.ts
+   - src/routes/api/ai/security/+server.ts
+   - .env.example
+   - package.json
+   - all client files that call /api/ai/security
+
+2. Ensure Gemini server helper reads the key explicitly from server-only environment:
+   - Prefer import { GEMINI_API_KEY, GEMINI_TEXT_MODEL, GEMINI_CHEAP_MODEL } from '$env/static/private';
+   - Or use $env/dynamic/private if runtime env is required for production/Cloud Run.
+   - Do not read key from client code.
+   - Do not use PUBLIC_ or NEXT_PUBLIC_ Gemini keys.
+
+3. Do not let GOOGLE_API_KEY override GEMINI_API_KEY accidentally.
+   - If using @google/genai client, pass apiKey explicitly:
+     const client = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+   - Do not rely on implicit env auto-detection.
+
+4. Add safe diagnostics:
+   - Log whether GEMINI_API_KEY exists.
+   - Log key length only.
+   - Log last 4 characters only if needed.
+   - Never log the full key.
+   - Never expose diagnostics to client UI.
+
+5. Improve missing/invalid key handling:
+   - If GEMINI_API_KEY is missing, return:
+     “GEMINI_API_KEY belum tersedia di server. Periksa file .env lalu restart server.”
+   - If provider says key invalid/expired, return:
+     “API key Gemini tidak valid atau sudah kedaluwarsa. Perbarui GEMINI_API_KEY lalu restart server.”
+   - Do not expose raw ApiError, stack trace, google.rpc JSON, node_modules path, or environment variables.
+
+6. Ensure API route always returns structured response:
+{
+  ok: false,
+  app: string,
+  action: string,
+  result: {},
+  summary: string,
+  recommendations: string[],
+  warnings?: string[],
+  error: string
+}
+
+7. Add a lightweight server-only health/debug endpoint only if useful:
+   - /api/ai/health
+   - It must return:
+     {
+       ok: boolean,
+       hasGeminiKey: boolean,
+       geminiKeyLength: number,
+       textModel: string,
+       cheapModel: string
+     }
+   - It must never return the key value.
+
+8. Update .env.example:
+GEMINI_API_KEY=
+GEMINI_TEXT_MODEL=gemini-2.5-flash
+GEMINI_CHEAP_MODEL=gemini-2.5-flash-lite
+
+9. Update README troubleshooting:
+   - If curl works but app fails, check .env.
+   - Remove stale GOOGLE_API_KEY.
+   - Restart npm run dev or npm run start.
+   - Ensure app uses server-side GEMINI_API_KEY only.
+
+10. QA:
+Run:
+npm run check
+npm run build
+
+Manual:
+- Restart dev server after changing .env.
+- Hit /api/ai/health if added.
+- Click one AI feature in the app.
+- Confirm friendly Indonesian error if key fails.
+- Confirm raw Gemini error is not shown.
+- Confirm no full API key appears in logs or browser.

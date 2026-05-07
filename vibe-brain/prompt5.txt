@@ -1,0 +1,372 @@
+Prompt 4: Bug Audit, Bug Fixing & Demo Readiness
+
+Task:
+Audit the full VibeSec Lab project, fix bugs, and make sure it is ready for a live demo.
+
+Do not add major new features.
+
+Before editing:
+1. Inspect current implementation after Prompt 3.
+2. Preserve all working features.
+3. Do not redesign the full app.
+4. Do not add new app routes.
+5. Do not rebuild the project from scratch.
+6. Focus on correctness, stability, demo readiness, and security hygiene.
+7. Reuse the existing design system from Prompt 1.
+8. Reuse the global Theme Engine from Prompt 1.
+9. Reuse the existing Gemini helper and AI endpoint from Prompt 2 and Prompt 3.
+10. Do not recreate, rename, or redesign the theme system.
+11. Do not implement a second ThemeSwitcher.
+12. Do not create route-specific theme systems.
+13. Do not hardcode new duplicated color systems.
+14. Keep all AI output in Bahasa Indonesia.
+15. Keep all security guidance defensive only.
+
+Audit scope:
+1. Routing
+2. Navigation
+3. Back button behavior
+4. Theme switching
+5. Theme persistence
+6. Theme consistency across all 10 app pages
+7. AI endpoint
+8. AI safety instructions
+9. Gemini server-side helper
+10. All 10 app pages
+11. Local persistence
+12. Mobile responsiveness
+13. Loading states
+14. Error states
+15. Empty states
+16. Form validation
+17. Build/check errors
+18. API key leakage
+19. Client/server import boundaries
+20. Demo readiness
+
+Routes to verify:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+Bug categories to fix:
+1. Broken routes or 404.
+2. Back button issues.
+3. Navigation links pointing to wrong routes.
+4. Client/server import mistakes.
+5. API key leakage.
+6. Gemini endpoint failure.
+7. AI output not in Bahasa Indonesia.
+8. Offensive/security unsafe AI response.
+9. Raw Gemini/provider errors exposed to client.
+10. localStorage/IndexedDB SSR errors.
+11. Theme localStorage hydration errors.
+12. Theme selection not persisting after refresh.
+13. Theme not applying consistently across all pages.
+14. Duplicate ThemeSwitcher.
+15. Hardcoded page colors that break Theme Engine.
+16. Form validation issues.
+17. Broken game interaction.
+18. Broken countdown timer.
+19. Broken calculators.
+20. Broken search/filter.
+21. Broken add/edit/remove flows.
+22. Broken local persistence.
+23. Broken loading state.
+24. Broken error state.
+25. Broken empty state.
+26. Unusable mobile layout.
+27. Build/check failures.
+
+Theme Engine audit:
+- Confirm ThemeSwitcher is visible and usable from the app shell.
+- Confirm there are 10 visual themes:
+  1. Terminal Klasik
+  2. Cyberpunk Neon
+  3. Arch Linux Terminal
+  4. Matrix Rain
+  5. Red Alert SOC
+  6. Ice Blue Defense
+  7. Purple Zero-Day
+  8. Amber Ops
+  9. Emerald Secure
+  10. Monochrome Hacker
+- Confirm selected theme persists in localStorage.
+- Confirm selected theme loads correctly after refresh.
+- Confirm theme switching does not require page reload.
+- Confirm all pages use the same global theme tokens/classes/CSS variables.
+- Confirm no individual app page creates its own theme engine.
+- Confirm cards, buttons, badges, terminal panels, AI panels, loading states, charts, metric cards, progress bars, player visualizer, resource tags, countdown states, and risk indicators follow the selected theme.
+- Fix only theme bugs that affect consistency, usability, readability, or demo readiness.
+
+AI endpoint audit:
+- Confirm client code calls only internal SvelteKit API routes.
+- Confirm client code does not import server-only Gemini helper.
+- Confirm GEMINI_API_KEY is only used server-side.
+- Confirm no PUBLIC_ or NEXT_PUBLIC_ Gemini key exists.
+- Confirm no API key or environment variable is logged.
+- Confirm unknown app/action combinations are rejected safely.
+- Confirm invalid input returns friendly Indonesian error messages.
+- Confirm raw Gemini errors are not exposed to the client.
+- Confirm all AI actions return the expected response shape:
+{
+  ok: boolean,
+  app: string,
+  action: string,
+  result: object,
+  summary: string,
+  recommendations: string[],
+  warnings?: string[],
+  error?: string
+}
+
+Required AI action coverage:
+1. threat-runner
+   - generate-threat-mission
+   - summarize-incident
+
+2. risk-dashboard
+   - analyze-risk-dashboard
+
+3. cvss-calculator
+   - explain-cvss-risk
+
+4. patch-monitor
+   - generate-patch-plan
+   - generate-stakeholder-update
+
+5. incident-response-journey
+   - explain-ir-step
+   - generate-ir-quiz
+   - generate-postmortem-template
+
+6. analyst-portfolio-builder
+   - generate-security-bio
+   - improve-security-projects
+   - review-analyst-profile
+
+7. secureops-habit-tracker
+   - generate-security-coaching
+
+8. threat-briefing-player
+   - summarize-threat-briefing
+   - extract-briefing-actions
+
+9. cve-resource-library
+   - explain-security-resource
+
+10. patch-deadline-countdown
+   - generate-deadline-checklist
+   - generate-stakeholder-message
+
+Security AI rules:
+- Ensure all AI prompts are defensive.
+- No exploit instructions.
+- No offensive payload generation.
+- No malware guidance.
+- No step-by-step attack instructions.
+- No credential theft guidance.
+- No evasion guidance.
+- No persistence guidance.
+- No weaponization guidance.
+- AI can explain risk and mitigation only.
+- AI can generate patch/checklist/stakeholder summaries.
+- AI can help with defensive monitoring, hardening, patching, incident response, and education.
+- AI must respond in Bahasa Indonesia.
+- If user input requests offensive content, return a defensive safety response in Bahasa Indonesia.
+
+Demo readiness:
+Make sure each app has:
+- clear purpose
+- visible interaction
+- AI button/action
+- loading state
+- result state
+- error state
+- empty state
+- sample data if empty
+- visually consistent layout
+- responsive layout
+- no broken navigation
+- no obvious console/runtime errors
+- no 404
+- no API key exposure
+- theme consistency
+- clear Bahasa Indonesia UI text where user-facing
+
+App-specific demo audit:
+
+1. Threat Runner
+Verify:
+- game starts
+- score updates
+- health updates
+- timer updates
+- game over works
+- local high score works
+- AI mission button works or fails gracefully
+- AI incident summary works or fails gracefully
+- mobile controls are usable if present
+- visual HUD follows selected theme
+
+2. Analyst Portfolio Builder
+Verify:
+- form fields update preview
+- local persistence works
+- empty/incomplete profile state works
+- AI bio generation works or fails gracefully
+- AI project improvement works or fails gracefully
+- AI profile review works or fails gracefully
+- dossier layout follows selected theme
+
+3. Risk Dashboard
+Verify:
+- add finding works
+- edit finding works
+- remove finding works
+- dashboard cards update
+- risk score updates
+- severity distribution/heatmap works
+- AI analysis works or fails gracefully
+- table layout is usable on mobile
+- dashboard follows selected theme
+
+4. CVSS Risk Calculator
+Verify:
+- all inputs update calculation
+- risk score updates
+- severity badge updates
+- SLA recommendation updates
+- mitigation summary updates
+- AI explanation works or fails gracefully
+- calculator follows selected theme
+
+5. Patch Monitor
+Verify:
+- add patch item works
+- update patch status works
+- remove patch item works
+- progress board updates
+- local persistence works
+- AI patch plan works or fails gracefully
+- AI stakeholder update works or fails gracefully
+- board follows selected theme
+
+6. SecureOps Habit Tracker
+Verify:
+- checklist works
+- streak/progress updates
+- weekly contribution grid updates
+- local persistence works
+- AI coaching works or fails gracefully
+- tracker follows selected theme
+
+7. Threat Briefing Player
+Verify:
+- playlist selection works
+- play/pause works
+- progress bar or simulated playback works
+- transcript panel updates
+- waveform/visualizer works
+- AI summary works or fails gracefully
+- AI action extraction works or fails gracefully
+- player follows selected theme
+
+8. Incident Response Journey
+Verify:
+- timeline is interactive
+- selected step updates content
+- progress indicator updates
+- terminal command log style renders correctly
+- AI step explanation works or fails gracefully
+- AI quiz works or fails gracefully
+- AI postmortem template works or fails gracefully
+- journey follows selected theme
+
+9. CVE Resource Library
+Verify:
+- search works
+- filter works
+- resource cards render
+- tag chips work
+- detail panel works
+- empty search state works
+- AI resource explanation works or fails gracefully
+- library follows selected theme
+- no Gemma comparison is added
+
+10. Patch Deadline Countdown
+Verify:
+- create deadline works
+- update deadline works
+- remove deadline works
+- countdown timer works
+- urgency state updates:
+  - normal
+  - warning
+  - critical
+  - overdue
+- remediation checklist renders
+- local persistence works
+- AI checklist works or fails gracefully
+- AI stakeholder message works or fails gracefully
+- countdown follows selected theme
+
+Local persistence audit:
+- Guard browser-only APIs with browser checks where needed.
+- Prevent SSR crashes from localStorage or IndexedDB.
+- Use localStorage safely.
+- If persisted data is malformed, recover gracefully with default data.
+- Do not let invalid persisted data crash the app.
+- Keep useful demo sample data available if storage is empty.
+
+Mobile responsiveness audit:
+- Check landing page on mobile width.
+- Check /apps grid on mobile width.
+- Check all 10 app pages on mobile width.
+- Fix only layout issues that make the app unusable or visually broken.
+- Avoid large redesigns.
+- Ensure tables/cards can scroll or stack.
+- Ensure buttons remain tappable.
+- Ensure app header and ThemeSwitcher remain usable.
+
+Loading/error/empty state audit:
+- Every AI action must show loading state.
+- Every AI action must show result state.
+- Every AI action must show friendly error state.
+- Empty data screens should show useful sample data, onboarding message, or EmptyState component.
+- Do not leave blank panels with no explanation.
+
+Run:
+1. npm run check
+2. npm run build
+
+If errors occur:
+- Fix only the blocking errors.
+- Do not rewrite the app.
+- Do not redesign the app.
+- Do not add major new features.
+- Do not add new routes.
+- Do not remove existing working functionality.
+
+Return:
+1. Audit summary.
+2. Bugs found.
+3. Bugs fixed.
+4. Files inspected.
+5. Files changed.
+6. Theme Engine audit result.
+7. AI endpoint/security audit result.
+8. npm check result.
+9. npm build result.
+10. Remaining risks.
+11. Ready/not ready for Prompt 5.

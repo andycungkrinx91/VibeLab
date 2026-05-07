@@ -1,0 +1,537 @@
+Prompt 2: Core Standout Security Apps + Gemini AI Integration + QA
+
+Task:
+Implement the 5 most important VibeSec Lab apps with real Gemini AI integration and run focused QA.
+
+Apps to implement:
+1. Threat Runner
+2. Risk Dashboard
+3. CVSS Risk Calculator
+4. Patch Monitor
+5. Incident Response Journey
+
+Before editing:
+1. Inspect the app shell and design system from Prompt 1.
+2. Preserve the cyber command center theme.
+3. Reuse shared components.
+4. Reuse the global Theme Engine from Prompt 1.
+5. Do not recreate, rename, or redesign the theme system.
+6. Do not hardcode new color systems inside these app pages.
+7. All 5 apps implemented in this prompt must automatically follow the selected global theme.
+8. Use existing theme tokens/classes/CSS variables from Prompt 1 for:
+   - page background
+   - aurora / cosmic glow background
+   - grid overlay
+   - scanlines
+   - cards
+   - borders
+   - glow effects
+   - buttons
+   - badges
+   - active navigation state
+   - terminal panels
+   - terminal cursor
+   - command logs
+   - AI response panels
+   - charts
+   - metric cards
+   - progress bars
+   - loading states
+   - risk/severity indicators
+   - warning and critical highlight states
+9. Theme switching must continue to work across:
+   - /
+   - /apps
+   - /apps/threat-runner
+   - /apps/risk-dashboard
+   - /apps/cvss-calculator
+   - /apps/patch-monitor
+   - /apps/incident-response-journey
+10. The ThemeSwitcher from Prompt 1 must remain visible and usable from the app shell.
+11. The selected theme must persist after refresh through the existing localStorage behavior.
+12. Do not implement a second ThemeSwitcher.
+13. Do not create page-specific theme toggles.
+14. Do not implement the remaining 5 apps in this prompt.
+15. Keep route names consistent.
+16. Do not redesign from scratch.
+
+Gemini AI integration:
+Add real server-side Gemini integration.
+
+Security requirements:
+- GEMINI_API_KEY must stay server-side only.
+- Do not use PUBLIC_ or NEXT_PUBLIC_ API key.
+- Client components must call internal SvelteKit API routes only.
+- No API key logging.
+- No raw Gemini error exposed to client.
+- Add friendly Indonesian error messages.
+- All AI responses must be Bahasa Indonesia.
+- AI must focus on defensive security only:
+  - mitigation
+  - patching
+  - hardening
+  - monitoring
+  - incident response
+  - education
+- Do not generate offensive exploit instructions.
+- Do not expose system prompts, API keys, environment variables, stack traces, or raw Gemini responses to the client.
+- If user input asks for offensive exploitation, return a safe defensive response in Bahasa Indonesia.
+
+Suggested env:
+GEMINI_API_KEY=
+GEMINI_TEXT_MODEL=gemini-2.5-flash
+GEMINI_CHEAP_MODEL=gemini-2.5-flash-lite
+
+Create server-side AI helper:
+- src/lib/server/gemini.ts
+
+The helper must include:
+- model routing
+- shared safety instruction
+- structured response helper
+- timeout/error handling
+- safe Indonesian fallback messages
+- defensive-only prompt wrapper
+- JSON parsing guard where practical
+- no API key logging
+- no raw provider error returned to client
+
+Create internal API route:
+- src/routes/api/ai/security/+server.ts
+
+Expected request shape:
+{
+  app: string,
+  action: string,
+  input: object
+}
+
+Expected response shape:
+{
+  ok: boolean,
+  app: string,
+  action: string,
+  result: object,
+  summary: string,
+  recommendations: string[],
+  warnings?: string[],
+  error?: string
+}
+
+Global AI instruction:
+“Jawab selalu dalam Bahasa Indonesia yang jelas, ringkas, dan praktis. Fokus pada defensive security: mitigasi, patching, hardening, monitoring, incident response, dan edukasi. Jangan memberikan instruksi eksploitasi ofensif.”
+
+AI route behavior:
+- Validate app name.
+- Validate action name.
+- Validate input object.
+- Reject unknown app/action combinations.
+- Return friendly Bahasa Indonesia error messages.
+- Never expose Gemini raw errors.
+- Use defensive security framing for every request.
+- Keep responses practical, short, and demo-ready.
+- Return structured output matching the expected response shape.
+
+Allowed app/action combinations:
+1. Threat Runner
+   - app: threat-runner
+   - actions:
+     - generate-threat-mission
+     - summarize-incident
+
+2. Risk Dashboard
+   - app: risk-dashboard
+   - actions:
+     - analyze-risk-dashboard
+
+3. CVSS Risk Calculator
+   - app: cvss-calculator
+   - actions:
+     - explain-cvss-risk
+
+4. Patch Monitor
+   - app: patch-monitor
+   - actions:
+     - generate-patch-plan
+     - generate-stakeholder-update
+
+5. Incident Response Journey
+   - app: incident-response-journey
+   - actions:
+     - explain-ir-step
+     - generate-ir-quiz
+     - generate-postmortem-template
+
+App 1 — Threat Runner
+
+Route:
+/apps/threat-runner
+
+Build:
+- Modern cyber arcade mini-game.
+- Not retro pixel art.
+- Smooth cyber mini-game feel.
+- Player protects server core.
+- Collect patch tokens.
+- Avoid malware packets, firewall traps, corrupted nodes.
+- Score, health, timer, threat level.
+- Game over state.
+- Local high score.
+- Glassmorphism HUD.
+- Mobile-friendly controls if practical.
+- Use existing CyberCard, CyberButton, StatusBadge, TerminalPanel, CommandLog, AIResponsePanel, LoadingScanner, ErrorState, ProgressBar, and RiskBadge where useful.
+- Must follow the global Theme Engine from Prompt 1.
+- Do not hardcode cyber colors directly inside this route.
+- Use theme tokens/classes/CSS variables for glow, borders, HUD, scanner, badges, and buttons.
+
+Gemini AI:
+- Generate mission before start.
+- Generate incident report after game over.
+- Generate remediation checklist.
+
+AI actions:
+- generate-threat-mission
+- summarize-incident
+
+Suggested AI input for generate-threat-mission:
+{
+  difficulty: string,
+  threatLevel: string,
+  targetSystem: string
+}
+
+Suggested AI input for summarize-incident:
+{
+  score: number,
+  health: number,
+  tokensCollected: number,
+  threatsAvoided: number,
+  threatsHit: number,
+  duration: number,
+  finalThreatLevel: string
+}
+
+Definition of done:
+- Game can start.
+- Score/health/timer update.
+- Game over works.
+- Local high score works.
+- Gemini mission works.
+- Gemini incident summary works or fails gracefully.
+- UI follows the selected global theme.
+- Theme switch still works on this route.
+
+App 2 — Risk Dashboard
+
+Route:
+/apps/risk-dashboard
+
+Build:
+- Add/edit/remove mock security findings or assets.
+- Fields:
+  - asset name
+  - owner
+  - severity
+  - exposure
+  - business impact
+  - patch effort
+  - status
+- Dashboard cards:
+  - total findings
+  - critical findings
+  - exposed assets
+  - estimated remediation cost
+  - risk score
+- Risk heatmap or severity distribution.
+- Recent findings table.
+- Empty state when no findings exist.
+- Strong form validation.
+- Use existing CyberCard, CyberButton, StatusBadge, MetricCard, RiskBadge, ProgressBar, AIResponsePanel, LoadingScanner, ErrorState, and EmptyState where useful.
+- Must follow the global Theme Engine from Prompt 1.
+- Do not hardcode chart or severity colors outside the theme/severity token system.
+- Use theme tokens/classes/CSS variables for chart accents, active states, borders, cards, and AI panels.
+
+Gemini AI:
+- Analyze current risk data.
+- Recommend remediation priority.
+- Generate manager-friendly summary.
+
+AI action:
+- analyze-risk-dashboard
+
+Suggested AI input:
+{
+  findings: array,
+  metrics: object,
+  riskScore: number
+}
+
+Definition of done:
+- User can add findings.
+- User can edit findings.
+- User can remove findings.
+- Summary cards update.
+- Risk score updates.
+- AI gives Indonesian recommendations.
+- AI errors fail gracefully.
+- UI follows the selected global theme.
+- Theme switch still works on this route.
+
+App 3 — CVSS Risk Calculator
+
+Route:
+/apps/cvss-calculator
+
+Build:
+- Security risk calculator.
+- Inputs:
+  - severity
+  - asset criticality
+  - internet exposed
+  - exploit available
+  - sensitive data
+  - patch complexity
+  - compensating controls
+- Output:
+  - risk score
+  - Low / Medium / High / Critical badge
+  - recommended SLA
+  - mitigation summary
+- Input changes should update calculated output.
+- Add clear explanation of scoring factors.
+- Use existing CyberCard, CyberButton, StatusBadge, RiskBadge, MetricCard, ProgressBar, AIResponsePanel, LoadingScanner, and ErrorState where useful.
+- Must follow the global Theme Engine from Prompt 1.
+- Do not hardcode calculator accent colors.
+- Use theme tokens/classes/CSS variables for sliders, badges, result panels, progress bars, buttons, and AI panels.
+
+Gemini AI:
+- Explain why risk score is high/low.
+- Recommend mitigation plan.
+- Recommend patch SLA.
+
+AI action:
+- explain-cvss-risk
+
+Suggested AI input:
+{
+  severity: string,
+  assetCriticality: string,
+  internetExposed: boolean,
+  exploitAvailable: boolean,
+  sensitiveData: boolean,
+  patchComplexity: string,
+  compensatingControls: string,
+  calculatedRiskScore: number,
+  calculatedSeverity: string,
+  recommendedSla: string
+}
+
+Definition of done:
+- Calculator works.
+- Severity badge updates.
+- SLA recommendation updates.
+- Mitigation summary updates.
+- AI explanation works.
+- AI errors fail gracefully.
+- UI follows the selected global theme.
+- Theme switch still works on this route.
+
+App 4 — Patch Monitor
+
+Route:
+/apps/patch-monitor
+
+Build:
+- Patch lifecycle tracker.
+- Fields:
+  - asset
+  - CVE ID
+  - severity
+  - owner
+  - due date
+  - patch status
+- Status:
+  - detected
+  - triaged
+  - scheduled
+  - patched
+  - verified
+- Progress board.
+- System health indicators.
+- Local persistence.
+- User can add patch item.
+- User can update patch status.
+- User can remove patch item.
+- Empty state when no patch items exist.
+- Use existing CyberCard, CyberButton, StatusBadge, MetricCard, RiskBadge, ProgressBar, AIResponsePanel, LoadingScanner, ErrorState, EmptyState, TerminalPanel, and CommandLog where useful.
+- Must follow the global Theme Engine from Prompt 1.
+- Do not hardcode board colors or status colors outside the existing token system.
+- Use theme tokens/classes/CSS variables for columns, progress states, badges, cards, buttons, logs, and AI panels.
+
+Gemini AI:
+- Generate daily patch plan.
+- Generate stakeholder update.
+- Explain blocked remediation.
+
+AI actions:
+- generate-patch-plan
+- generate-stakeholder-update
+
+Suggested AI input for generate-patch-plan:
+{
+  patchItems: array,
+  systemHealth: object,
+  currentDate: string
+}
+
+Suggested AI input for generate-stakeholder-update:
+{
+  patchItems: array,
+  summaryMetrics: object,
+  audience: string
+}
+
+Definition of done:
+- User can add patch item.
+- User can update patch status.
+- User can remove patch item.
+- Status changes work.
+- Local persistence works.
+- AI patch plan works.
+- AI stakeholder update works.
+- AI errors fail gracefully.
+- UI follows the selected global theme.
+- Theme switch still works on this route.
+
+App 5 — Incident Response Journey
+
+Route:
+/apps/incident-response-journey
+
+Build:
+- Interactive timeline:
+  Detect → Triage → Contain → Patch → Verify → Deploy → Postmortem
+- Step cards.
+- Security explanation.
+- Progress indicator.
+- Terminal command log style.
+- Uses cyber timeline / tracing beam style.
+- Selected step updates content.
+- Add clear defensive learning content for every step.
+- Use existing CyberCard, CyberButton, StatusBadge, TerminalPanel, CommandLog, AIResponsePanel, LoadingScanner, ErrorState, ProgressBar, and RiskBadge where useful.
+- Must follow the global Theme Engine from Prompt 1.
+- Do not hardcode timeline colors.
+- Use theme tokens/classes/CSS variables for timeline beam, active step, step cards, terminal logs, progress, buttons, badges, and AI panels.
+
+Gemini AI:
+- Explain selected incident response step.
+- Generate quiz.
+- Generate postmortem template.
+
+AI actions:
+- explain-ir-step
+- generate-ir-quiz
+- generate-postmortem-template
+
+Suggested AI input for explain-ir-step:
+{
+  step: string,
+  incidentType: string,
+  currentContext: string
+}
+
+Suggested AI input for generate-ir-quiz:
+{
+  step: string,
+  difficulty: string
+}
+
+Suggested AI input for generate-postmortem-template:
+{
+  incidentType: string,
+  affectedAssets: string[],
+  timeline: array,
+  finalStatus: string
+}
+
+Definition of done:
+- Timeline is interactive.
+- Selected step updates content.
+- Progress indicator updates.
+- AI explanation works.
+- AI quiz works.
+- AI postmortem template works.
+- AI errors fail gracefully.
+- UI follows the selected global theme.
+- Theme switch still works on this route.
+
+Enterprise-ready requirements:
+- Strong loading states.
+- Strong error states.
+- Empty states.
+- Input validation.
+- No client/server import mistakes.
+- No API key leakage.
+- All AI output in Bahasa Indonesia.
+- Local persistence where useful.
+- Responsive layout.
+- Reuse design components.
+- All new screens must respect the global Theme Engine from Prompt 1.
+- Do not introduce separate theme logic.
+- Do not duplicate the ThemeSwitcher.
+- Do not introduce hardcoded duplicated color systems.
+- Components must be reusable and typed where practical.
+- Keep app metadata centralized.
+- Keep route paths consistent.
+- Navigation must not cause 404.
+- Support reduced-motion where practical.
+- Maintain strong contrast across all themes.
+- Keep the design premium, cinematic, and demo-ready.
+
+QA after implementation:
+
+Run:
+1. npm install if needed
+2. npm run check
+3. npm run build
+
+Manual route checks:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/incident-response-journey
+
+Theme QA:
+- Switch each of the 10 visual themes from the global ThemeSwitcher.
+- Confirm the selected theme persists after refresh.
+- Confirm all 5 implemented app routes follow the selected theme.
+- Confirm cards, buttons, badges, terminal panels, AI panels, loading states, charts, metric cards, and risk indicators update with the selected theme.
+- Confirm no page falls back to hardcoded colors that break the theme system.
+- Confirm the ThemeSwitcher remains visible and usable from the app shell.
+- Confirm there is no duplicate ThemeSwitcher inside individual app pages.
+
+Gemini/Security QA:
+- Confirm GEMINI_API_KEY is only referenced server-side.
+- Confirm no PUBLIC_ or NEXT_PUBLIC_ Gemini key exists.
+- Confirm browser/client files do not import server-only Gemini helper.
+- Confirm client components call only internal SvelteKit API routes.
+- Confirm API route rejects unknown app/action combinations.
+- Confirm AI responses are Bahasa Indonesia.
+- Confirm offensive exploit-style input receives defensive safety response.
+- Confirm raw Gemini errors are not exposed to client.
+- Confirm no API key or environment variable is logged.
+
+Fix only blocking bugs found during this prompt.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Apps implemented.
+4. AI endpoint summary.
+5. Theme Engine reuse summary.
+6. QA result.
+7. Known limitations.
+8. Ready/not ready for Prompt 3.

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="VibeSec Lab">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#050816" />
+      <stop offset="100%" stop-color="#0d1730" />
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00ffcc" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="58" height="58" rx="14" fill="url(#bg)" stroke="url(#glow)" stroke-width="3" />
+  <path d="M18 18h18l-6 9h10l-20 19 6-12H18z" fill="#00ffcc" opacity="0.95" />
+  <path d="M40 22h6v20h-6z" fill="#7c3aed" opacity="0.9" />
+  <path d="M18 46h28" stroke="#00ffcc" stroke-linecap="round" stroke-width="3" opacity="0.6" />
+</svg>

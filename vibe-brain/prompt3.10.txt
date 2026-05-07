@@ -1,0 +1,147 @@
+Prompt 3.10: Add Production Start Support with SvelteKit Adapter Node
+
+Task:
+Fix VibeSec Lab so it can run in production mode after npm run build.
+
+Problem:
+npm run build works, but the app cannot be started as a proper production server.
+The project currently appears to use SvelteKit adapter-auto.
+For local production start and Cloud Run readiness, configure SvelteKit with adapter-node.
+
+Goal:
+After this fix, these commands should work:
+
+npm run build
+npm run start
+
+The production server should serve the built SvelteKit app.
+
+Do not rebuild the app from scratch.
+Do not redesign the app.
+Do not remove routes.
+Do not break Gemini AI integration.
+Do not expose API keys.
+Do not change app features unless required for production start.
+
+Before editing:
+1. Inspect package.json.
+2. Inspect svelte.config.js or svelte.config.ts.
+3. Inspect vite config if needed.
+4. Inspect current adapter configuration.
+5. Inspect build output behavior.
+6. Preserve all app routes.
+7. Preserve Theme Engine.
+8. Preserve Gemini server-side API routes.
+9. Preserve environment variable usage.
+
+Routes that must remain valid:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+Implementation requirements:
+1. Install adapter-node:
+   npm install -D @sveltejs/adapter-node
+
+2. Update SvelteKit config:
+   Replace adapter-auto with adapter-node.
+
+   Example:
+   import adapter from '@sveltejs/adapter-node';
+
+   export default {
+     kit: {
+       adapter: adapter()
+     }
+   };
+
+3. Update package.json scripts:
+   Ensure scripts include:
+
+   "dev": "vite dev",
+   "build": "vite build",
+   "preview": "vite preview",
+   "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+   "start": "node build"
+
+4. Ensure production server uses:
+   PORT environment variable if provided.
+
+5. Do not hardcode port.
+6. Do not expose GEMINI_API_KEY.
+7. Do not move server-only Gemini helper to client code.
+8. Do not convert app to static adapter because Gemini API routes need server runtime.
+9. Keep all API routes functional in production.
+
+Environment requirements:
+- GEMINI_API_KEY must remain server-side.
+- GEMINI_TEXT_MODEL can remain optional.
+- GEMINI_CHEAP_MODEL can remain optional.
+- Do not commit real .env secrets.
+- If needed, add or update .env.example with placeholders only:
+
+GEMINI_API_KEY=
+GEMINI_TEXT_MODEL=gemini-2.5-flash
+GEMINI_CHEAP_MODEL=gemini-2.5-flash-lite
+
+Cloud Run readiness:
+If practical, add production notes for Cloud Run:
+- npm run build
+- npm run start
+- PORT is provided by Cloud Run
+- GEMINI_API_KEY should be configured as environment variable or secret
+- Do not expose GEMINI_API_KEY to client
+
+Optional Dockerfile:
+Only add Dockerfile if it does not create instability.
+
+If adding Dockerfile, use a simple Node production image:
+- install dependencies
+- build app
+- run node build
+- expose PORT
+- keep secrets out of image
+
+Do not overcomplicate.
+
+QA:
+Run:
+1. npm install
+2. npm run check
+3. npm run build
+4. npm run start
+
+If npm run start blocks the terminal, that is expected.
+Verify the app starts and serves on the configured PORT.
+
+Manual verification:
+- Open production server URL.
+- Confirm / loads.
+- Confirm /apps loads.
+- Confirm all 10 app routes load.
+- Confirm /api/ai/security exists and returns friendly response for invalid requests.
+- Confirm Gemini key is not exposed in client.
+- Confirm ThemeSwitcher still works.
+- Confirm no route becomes 404.
+
+Fix only blocking bugs related to production start.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Adapter changes.
+4. package.json script changes.
+5. Production start command.
+6. Cloud Run readiness notes.
+7. QA result.
+8. Known limitations.
+9. Ready/not ready for Prompt 4.

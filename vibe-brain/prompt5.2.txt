@@ -1,0 +1,360 @@
+Prompt 5.2: Fix Gemini Runtime Env Loading, AI Health Check & App AI Interaction
+
+Task:
+Fix VibeSec Lab Gemini AI integration so the app uses the valid GEMINI_API_KEY from the server runtime consistently.
+
+Confirmed:
+The API key is valid when tested directly with curl:
+
+curl -s "https://generativelanguage.googleapis.com/v1beta/models" \
+  -H "X-goog-api-key: $GEMINI_API_KEY"
+
+The curl command successfully returns the Gemini model list.
+
+Problem:
+AI features inside the SvelteKit app still fail or behave as if the API key is invalid/expired.
+
+Goal:
+Make all app AI features work using the same valid GEMINI_API_KEY from the server environment.
+
+This is a targeted Gemini runtime/env fix.
+Do not rebuild the app from scratch.
+Do not redesign the app.
+Do not remove working features.
+Do not remove existing routes.
+Do not break production start support.
+Do not expose API keys.
+Do not move Gemini calls to the client.
+Do not use PUBLIC_ or NEXT_PUBLIC_ Gemini keys.
+Do not create new app routes except the optional server-only health endpoint.
+Do not create a second ThemeSwitcher.
+Do not create a new theme system.
+
+Before editing:
+1. Inspect the current project state.
+2. Inspect:
+   - src/lib/server/gemini.ts
+   - src/routes/api/ai/security/+server.ts
+   - all frontend files that call /api/ai/security
+   - package.json
+   - svelte.config.js or svelte.config.ts
+   - .env.example
+   - README Gemini setup / troubleshooting section if present
+3. Preserve all working routes.
+4. Preserve all 10 app pages.
+5. Preserve the global Theme Engine.
+6. Preserve ThemeSwitcher.
+7. Preserve adapter-node production start support.
+8. Preserve all defensive AI safety rules.
+9. Preserve Bahasa Indonesia AI output.
+10. Preserve friendly AI error handling.
+11. Preserve existing app features and UI.
+
+Routes that must remain valid:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+API routes that must remain valid:
+- /api/ai/security
+- /api/security-headers if implemented
+
+Root cause to check:
+- The app may be using stale env values.
+- The app may be using $env/static/private and requiring rebuild after key changes.
+- The app may be relying on implicit SDK env detection.
+- The app may accidentally allow GOOGLE_API_KEY to override GEMINI_API_KEY.
+- The app may not be restarted after .env changes.
+- The frontend may be failing to handle ok:false or malformed AI responses.
+
+Key requirements:
+1. Gemini API key must be read server-side only.
+2. Prefer runtime env loading for production compatibility:
+   - Use $env/dynamic/private for GEMINI_API_KEY, GEMINI_TEXT_MODEL, and GEMINI_CHEAP_MODEL.
+   - Avoid $env/static/private if it causes stale key behavior after build.
+3. Pass apiKey explicitly into @google/genai:
+   const client = new GoogleGenAI({ apiKey: apiKey });
+4. Do not rely on implicit SDK environment detection.
+5. Do not let GOOGLE_API_KEY override GEMINI_API_KEY accidentally.
+6. Do not log the full key.
+7. Safe diagnostics may log:
+   - whether GEMINI_API_KEY exists
+   - key length
+   - selected model name
+   But never the full key.
+
+Implementation requirements:
+
+1. Update server-side Gemini helper
+
+File:
+- src/lib/server/gemini.ts
+
+Use runtime private env:
+
+import { env } from '$env/dynamic/private';
+
+const apiKey = env.GEMINI_API_KEY;
+const textModel = env.GEMINI_TEXT_MODEL || 'gemini-2.5-flash';
+const cheapModel = env.GEMINI_CHEAP_MODEL || 'gemini-2.5-flash-lite';
+
+When creating the Gemini client, pass the key explicitly.
+
+Example:
+const ai = new GoogleGenAI({ apiKey });
+
+Do not rely on SDK auto-detection.
+
+2. Missing key behavior
+
+If GEMINI_API_KEY is missing, return a structured friendly error:
+
+“GEMINI_API_KEY belum tersedia di server. Periksa file .env lalu restart server.”
+
+Do not throw raw errors to the client.
+
+3. Invalid or expired key behavior
+
+If provider returns invalid/expired key, return a structured friendly error:
+
+“API key Gemini tidak valid atau sudah kedaluwarsa. Perbarui GEMINI_API_KEY lalu restart server.”
+
+Do not expose:
+- raw ApiError
+- stack trace
+- google.rpc JSON
+- node_modules path
+- environment variables
+- API key value
+
+4. AI response shape
+
+Ensure /api/ai/security always returns the expected structured shape:
+
+{
+  ok: boolean,
+  app: string,
+  action: string,
+  result: object,
+  summary: string,
+  recommendations: string[],
+  warnings?: string[],
+  error?: string
+}
+
+Even on failure, return:
+
+{
+  ok: false,
+  app: string,
+  action: string,
+  result: {},
+  summary: string,
+  recommendations: string[],
+  warnings: string[],
+  error: string
+}
+
+5. Add or fix AI health endpoint
+
+Create or update:
+
+- src/routes/api/ai/health/+server.ts
+
+It should return:
+
+{
+  ok: boolean,
+  hasGeminiKey: boolean,
+  geminiKeyLength: number,
+  textModel: string,
+  cheapModel: string
+}
+
+Rules:
+- This endpoint must be server-side only.
+- It must never return the key value.
+- It must never return the last characters of the key.
+- It may return key length only.
+- It may return selected model names.
+- It must be safe for local debugging.
+
+6. Frontend AI fetch handling
+
+Inspect every app page that calls:
+
+- /api/ai/security
+
+Fix frontend AI interaction so:
+- AI buttons show loading state.
+- AI buttons handle ok:false gracefully.
+- AI buttons show friendly Indonesian error.
+- UI does not crash if result is missing.
+- UI does not crash if recommendations is missing.
+- UI remains interactive after failure.
+- Retry works if available.
+- No unhandled promise rejection appears in console.
+
+7. Env examples
+
+Ensure .env.example contains placeholders only:
+
+GEMINI_API_KEY=
+GEMINI_TEXT_MODEL=gemini-2.5-flash
+GEMINI_CHEAP_MODEL=gemini-2.5-flash-lite
+
+Do not write a real API key into the repo.
+
+8. README troubleshooting
+
+Update README or deployment docs with troubleshooting:
+
+If curl works but the app fails:
+1. Confirm .env contains GEMINI_API_KEY.
+2. Confirm there is no stale GOOGLE_API_KEY overriding behavior.
+3. Restart the dev server after editing .env:
+   npm run dev
+4. For production, rebuild and restart:
+   npm run build
+   PORT=4173 npm run start
+5. Check health endpoint:
+   curl -s http://localhost:4173/api/ai/health
+6. Never use PUBLIC_ or NEXT_PUBLIC_ Gemini keys.
+7. Gemini calls must stay server-side.
+
+9. AI safety preservation
+
+Do not weaken existing AI safety rules.
+
+All AI features must remain:
+- Bahasa Indonesia
+- defensive-security only
+- no offensive exploit steps
+- no payload generation
+- no malware guidance
+- no credential theft guidance
+- no evasion/persistence guidance
+
+Allowed:
+- mitigation
+- patching
+- hardening
+- monitoring
+- incident response
+- education
+- stakeholder updates
+- defensive CV/portfolio generation
+- security header hardening suggestions
+
+10. Production compatibility
+
+Preserve adapter-node support.
+
+Do not break:
+- npm run build
+- npm run start
+- PORT environment variable behavior
+- Cloud Run readiness
+- server-side API routes
+
+QA:
+
+Run:
+1. npm run check
+2. npm run build
+3. PORT=4173 npm run start
+
+If npm run start blocks the terminal, that is expected.
+Start it long enough to verify the server boots.
+Then stop it after verification.
+
+Manual tests:
+
+1. Test Gemini key health endpoint:
+
+curl -s http://localhost:4173/api/ai/health | jq
+
+Expected:
+- hasGeminiKey: true
+- geminiKeyLength greater than 0
+- textModel: gemini-2.5-flash
+- cheapModel: gemini-2.5-flash-lite or configured value
+- no key value exposed
+
+2. Test AI endpoint directly:
+
+curl -s http://localhost:4173/api/ai/security \
+  -H "Content-Type: application/json" \
+  -X POST \
+  -d '{
+    "app": "cvss-calculator",
+    "action": "explain-cvss-risk",
+    "input": {
+      "severity": "High",
+      "assetCriticality": "High",
+      "internetExposed": true,
+      "exploitAvailable": false,
+      "sensitiveData": true,
+      "patchComplexity": "Medium",
+      "compensatingControls": "WAF aktif",
+      "calculatedRiskScore": 82,
+      "calculatedSeverity": "High",
+      "recommendedSla": "7 hari"
+    }
+  }' | jq
+
+Expected:
+- ok: true if key works
+- Bahasa Indonesia summary/recommendations
+- no raw provider error
+
+If key is invalid:
+- ok: false
+- friendly Indonesian error
+- no raw stack trace
+- no google.rpc JSON
+- no node_modules path
+
+3. Test one AI button in browser:
+- Open /apps/cvss-calculator
+- Click AI explanation button
+- Confirm result appears or friendly error appears
+- Confirm UI remains usable
+
+4. Test one more AI feature:
+- Open /apps/risk-dashboard
+- Scan security headers
+- Click AI hardening suggestion
+- Confirm result or friendly error appears
+
+5. Security verification:
+- Search client files for GEMINI_API_KEY.
+- Confirm no client-side key exposure.
+- Confirm no PUBLIC_ or NEXT_PUBLIC_ Gemini key is used.
+- Confirm no full API key appears in logs or browser.
+
+Fix only blocking bugs related to Gemini runtime env loading and app AI interaction.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Env loading fix summary.
+4. Health endpoint summary.
+5. AI endpoint test result.
+6. Frontend AI interaction fix summary.
+7. README troubleshooting update summary.
+8. Security verification.
+9. npm check result.
+10. npm build result.
+11. npm start result.
+12. Remaining risks.
+13. Ready/not ready to continue.

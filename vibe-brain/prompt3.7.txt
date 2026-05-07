@@ -1,0 +1,251 @@
+Prompt 3.7: Command Center Navigation, App Directory UX & Cross-App Demo Flow
+
+Task:
+Improve VibeSec Lab navigation, app discovery, and cross-app demo flow after Prompt 3, Prompt 3.5, and Prompt 3.6.
+
+Goal:
+Make the full 10-app experience feel connected, easy to explore, and demo-ready.
+
+This prompt focuses on:
+1. Navigation clarity
+2. App directory UX
+3. Back/next app navigation
+4. Cross-app demo flow
+5. App status visibility
+6. Consistent page headers
+7. Better user guidance
+
+Do not rebuild from scratch.
+Do not redesign the full app.
+Do not remove working features.
+Do not remove existing routes.
+Do not break Gemini AI integration.
+Do not create new app routes.
+Do not create a second ThemeSwitcher.
+Do not create a new theme system.
+
+Before editing:
+1. Inspect current project state.
+2. Inspect landing page.
+3. Inspect /apps page.
+4. Inspect AppShell/AppNav if available.
+5. Inspect app metadata.
+6. Inspect all 10 app route pages.
+7. Preserve all working app functionality.
+8. Preserve the global Theme Engine.
+9. Preserve ThemeSwitcher.
+10. Preserve all Gemini AI actions.
+11. Preserve Bahasa Indonesia AI output.
+12. Preserve defensive security AI rules.
+
+Routes that must remain valid:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+Main requirements:
+
+1. Global app navigation
+Improve the app shell navigation so users always know where they are.
+
+Add or refine:
+- Logo/title link to /
+- “Command Center” or “Apps” link to /apps
+- Current app/page active state
+- ThemeSwitcher visible in header
+- Responsive mobile nav if practical
+- Safe back navigation
+
+Navigation labels should be in Bahasa Indonesia where natural:
+- Beranda
+- Command Center
+- Apps
+- Kembali ke Apps
+- Berikutnya
+- Sebelumnya
+
+2. Consistent app page header
+Each app page should have a consistent header area.
+
+Every app route should show:
+- app title
+- category
+- short description
+- status/risk badge
+- AI action label or AI-ready indicator
+- button/link: “Kembali ke Command Center”
+- optional next/previous app navigation
+
+Use app metadata as the single source of truth where practical.
+
+Do not manually duplicate route/title/category mappings across every page if metadata already exists.
+
+3. App directory enhancement
+Improve /apps as the main app directory.
+
+The /apps page should include:
+- title: Command Center Apps
+- subtitle: Pilih mini-app untuk menjalankan workflow security: Detect, Triage, Patch, Verify, Deploy.
+- all 10 app cards
+- visible category
+- visible priority
+- visible status/risk badge
+- visible AI action name
+- route link
+- hover glow
+- selected theme styling
+- responsive grid
+
+Add lightweight filtering if practical:
+- by category
+- by priority
+- by workflow phase
+
+Do not overbuild.
+
+4. Cross-app demo flow
+Add a simple demo flow indicator that helps judges/users understand how the apps connect.
+
+The flow should show:
+Detect → Triage → Patch → Verify → Deploy
+
+Each app should optionally map to one or more workflow phases.
+
+Example mapping:
+- Threat Runner: Detect
+- Risk Dashboard: Triage
+- CVSS Risk Calculator: Triage
+- Patch Monitor: Patch
+- Patch Deadline Countdown: Patch
+- Incident Response Journey: Verify / Deploy / Postmortem
+- CVE Resource Library: Education / Support
+- Threat Briefing Player: Detect / Education
+- SecureOps Habit Tracker: Monitoring / Hygiene
+- Analyst Portfolio Builder: Portfolio / Career
+
+Use these mappings in the /apps page or app cards if practical.
+
+5. Next/previous app navigation
+Add simple next/previous navigation between app pages if practical.
+
+For each app page:
+- “Sebelumnya” links to previous app route
+- “Berikutnya” links to next app route
+- “Kembali ke Command Center” links to /apps
+
+This must not cause 404.
+Use centralized metadata order.
+
+6. Demo guidance panel
+Add a small “Alur Demo” or “Demo Guide” panel on /apps.
+
+It should explain in Bahasa Indonesia:
+1. Mulai dari Threat Runner untuk simulasi deteksi threat.
+2. Lanjut Risk Dashboard untuk triage risiko.
+3. Gunakan CVSS Calculator untuk menentukan prioritas.
+4. Pantau remediation di Patch Monitor.
+5. Tutup dengan Incident Response Journey dan Patch Deadline Countdown.
+6. Resource Library dan Threat Briefing Player mendukung edukasi.
+7. Analyst Portfolio Builder menunjukkan output profesional peserta.
+
+Keep this concise and visually polished.
+
+7. Empty/broken state safety
+If any app metadata is missing:
+- show friendly fallback
+- do not crash
+- do not create broken links
+- do not leave blank cards
+
+8. Theme Engine integration
+All navigation and directory improvements must use the existing global Theme Engine.
+
+Requirements:
+- Do not hardcode a new color system.
+- Do not create a second ThemeSwitcher.
+- Do not create page-specific theme toggles.
+- App cards, nav active states, badges, hover glows, demo guide panels, and workflow indicators must follow the selected theme.
+- ThemeSwitcher must still work.
+- Selected theme must persist after refresh.
+
+9. Gemini AI safety
+Do not change Gemini integration unless required for broken imports.
+
+Requirements:
+- GEMINI_API_KEY stays server-side only.
+- No client-side Gemini calls.
+- No PUBLIC_ or NEXT_PUBLIC_ Gemini key.
+- No raw Gemini errors exposed.
+- All AI output remains Bahasa Indonesia.
+- Defensive security only.
+- Do not generate offensive exploit instructions.
+
+10. Visual polish
+Make the navigation and app directory feel premium.
+
+Add:
+- animated hover glow on app cards
+- subtle active route glow
+- clean status badges
+- compact workflow chips
+- polished back/next controls
+- consistent spacing
+- mobile-friendly layout
+
+Do not over-animate.
+Keep it enterprise-grade and readable.
+
+Definition of done:
+- / shows clear path to /apps.
+- /apps clearly shows all 10 apps.
+- every app card links to the correct route.
+- every app route has a clear “Kembali ke Command Center” link.
+- next/previous app navigation works if implemented.
+- active nav state works.
+- no route returns 404.
+- ThemeSwitcher still works.
+- selected theme persists after refresh.
+- Gemini AI actions are not broken.
+- UI remains responsive.
+
+QA:
+Run:
+1. npm run check
+2. npm run build
+
+Manual verification:
+- Open /
+- Click CTA to /apps
+- Confirm all 10 app cards are visible
+- Click every app card and confirm correct route loads
+- Use “Kembali ke Command Center” from every app page
+- Test next/previous app navigation if implemented
+- Switch themes and confirm navigation/app cards update
+- Refresh and confirm selected theme persists
+- Confirm no duplicate ThemeSwitcher
+- Confirm AI buttons still exist and work or fail gracefully
+- Confirm no route becomes 404
+
+Fix only blocking bugs caused by this navigation/demo-flow refinement.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Navigation improvements.
+4. App directory improvements.
+5. Demo flow improvements.
+6. Theme Engine verification.
+7. Route verification.
+8. AI/security verification.
+9. QA result.
+10. Known limitations.
+11. Ready/not ready for Prompt 4.

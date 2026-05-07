@@ -1,0 +1,229 @@
+Theme engine:
+Create a global user-selectable visual theme engine as part of the core design foundation.
+
+This theme engine must be created in Prompt 1 and reused by all later prompts.
+Do not treat theme switching as a per-page feature.
+It must be a shared global system that affects the entire application shell and all future mini-app screens.
+
+Default theme:
+Terminal Klasik
+
+Required themes:
+1. Terminal Klasik
+   - classic modern terminal look
+   - charcoal / black background
+   - terminal green accent
+   - subtle cyan secondary accent
+   - clean hacker command-line feel
+
+2. Cyberpunk Neon
+   - black / deep purple background
+   - neon pink, cyan, electric blue, and violet accents
+   - futuristic cyberpunk command center feel
+
+3. Arch Linux Terminal
+   - dark navy / black background
+   - Arch blue accents
+   - cyan highlights
+   - clean minimal Linux terminal aesthetic
+
+4. Matrix Rain
+   - black background
+   - layered green and emerald tones
+   - falling-code inspired terminal atmosphere
+   - modern and polished, not old plain terminal
+
+5. Red Alert SOC
+   - dark graphite background
+   - red, crimson, amber, and warning orange accents
+   - critical incident response / SOC alert mode
+
+6. Ice Blue Defense
+   - deep navy / near-black background
+   - ice blue, cyan, and white-blue glow accents
+   - calm professional security operations feel
+
+7. Purple Zero-Day
+   - deep indigo background
+   - violet, purple, magenta, and soft blue accents
+   - premium threat intelligence dashboard feel
+
+8. Amber Ops
+   - dark brown / black background
+   - amber, gold, orange, and muted yellow accents
+   - operations war room feel
+
+9. Emerald Secure
+   - dark emerald / black background
+   - green, teal, mint, and soft cyan accents
+   - clean defensive security and compliance feel
+
+10. Monochrome Hacker
+   - black, gray, silver, and white accents only
+   - minimalist high-contrast terminal mode
+   - subtle glow, no colorful neon
+
+Theme selector:
+- Add a visible ThemeSwitcher component in the main app header or command center settings area.
+- Use the label: “Tema Visual”.
+- Each theme option must show:
+  - theme name in Bahasa Indonesia
+  - small color preview swatch
+  - active selected state
+- Selected theme must persist in localStorage.
+- Theme must load correctly on refresh.
+- Theme switching must update instantly without page reload.
+
+Theme option labels:
+- Terminal Klasik
+- Cyberpunk Neon
+- Arch Linux Terminal
+- Matrix Rain
+- Red Alert SOC
+- Ice Blue Defense
+- Purple Zero-Day
+- Amber Ops
+- Emerald Secure
+- Monochrome Hacker
+
+Theme must affect:
+- page background
+- aurora / cosmic glow background
+- grid overlay tone
+- scanline tone
+- accent color
+- glow color
+- border highlight
+- glassmorphism panel tint
+- bento card border and hover glow
+- active navigation state
+- active badge
+- primary button
+- secondary button
+- shimmer button effect
+- terminal cursor
+- terminal log accent
+- command prompt color
+- AI assistant panel accent
+- AI response panel glow
+- loading scanner animation
+- charts and metric accents
+- progress bars
+- risk/status badges
+- warning and critical highlight states
+
+Implementation requirements:
+- Use a reusable theme token system.
+- Prefer CSS variables or Tailwind-compatible design tokens.
+- Do not duplicate hardcoded color classes across components.
+- Do not create separate layouts for each theme.
+- The layout and UX must stay consistent across all themes.
+- Only the visual color identity changes.
+- Keep the background dark and readable across all themes.
+- Maintain strong contrast and accessibility.
+- Support reduced-motion where practical.
+- No backend.
+- No database.
+- No external API.
+- No real Gemini integration.
+
+---
+Prompt 1 Follow-up: Add Magic UI Motion Polish to the App Shell
+
+Task:
+Improve the Prompt 1 design foundation by adding global Magic UI-style motion polish to the VibeSec Lab app shell.
+
+Do not implement the 10 full apps yet.
+Do not add real Gemini integration.
+Do not add backend, auth, or database.
+Do not redesign from scratch.
+
+Focus only on:
+1. Initial boot animation.
+2. Global page transition animation.
+3. Circle/ring scanner loading animation.
+4. Burst/glow reveal effect.
+5. Page enter animation.
+6. Card/button/panel micro-interactions.
+
+Requirements:
+- Add a short initial boot animation when the app first loads.
+- Add terminal-style boot lines.
+- Add a circular scanner/ring animation.
+- The ring should pulse, rotate, expand, then burst/fade into the app.
+- Add route/menu transition animation for internal navigation.
+- When user navigates between main routes, show a short cyber scanner loading overlay.
+- Add smooth page enter animation.
+- Cards should stagger in slightly.
+- Panels should fade/rise smoothly.
+- Buttons should have shimmer/glow hover effects.
+- Cards should have subtle hover lift and animated border glow.
+- Active nav items should have animated glow/underline.
+- Loading scanner must use the selected theme accent color.
+
+Suggested components:
+- PageBoot.svelte
+- RouteTransition.svelte
+- CyberBurstLoader.svelte
+- MotionShell.svelte
+
+Theme Engine integration:
+- All animation colors must use the existing global Theme Engine from Prompt 1.
+- Do not hardcode one fixed green color.
+- Loader ring, particles, glow, shimmer, and border beams must follow the selected theme.
+- ThemeSwitcher must still work.
+- Selected theme must still persist after refresh.
+- Do not create a second ThemeSwitcher.
+- Do not create a separate theme system.
+
+Reduced motion:
+- Respect prefers-reduced-motion.
+- If reduced motion is enabled, use simple fade transitions only.
+- Disable burst particles and heavy rotation for reduced motion users.
+
+Performance:
+- Use CSS animations where practical.
+- Avoid heavy JavaScript animation loops.
+- Do not add large animation libraries unless already installed.
+- Keep mobile performance smooth.
+
+Navigation safety:
+- Do not break SvelteKit routing.
+- Do not create new app routes.
+- Do not cause 404.
+- Do not break browser back/forward.
+- Overlay must clean up correctly after navigation.
+
+Visual target:
+The app should feel more:
+- cinematic
+- premium
+- Magic UI-inspired
+- cyber command center
+- animated
+- demo-ready
+
+QA:
+Run:
+1. npm run check
+2. npm run build
+
+Manual checks:
+- Open /
+- Open /apps
+- Navigate between app placeholder routes if they exist.
+- Confirm initial boot animation appears.
+- Confirm route transition animation appears.
+- Confirm ThemeSwitcher still works.
+- Confirm all 10 themes affect animation accents.
+- Confirm refresh still keeps selected theme.
+- Confirm mobile layout remains usable.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Animation components added.
+4. Theme integration summary.
+5. QA result.
+6. Known limitations.
+7. Ready for Prompt 2.

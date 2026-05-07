@@ -1,0 +1,620 @@
+Mantap bro. Prompt 2 kelihatan **sukses**:
+
+```text
+- 5 core apps sudah dibuat
+- Gemini server-side endpoint sudah dibuat
+- /api/ai/security sudah ada
+- Theme Engine dari Prompt 1 dipakai ulang
+- npm install, npm run check, npm run build sukses
+- 0 build errors
+- Ready for Prompt 3
+```
+
+Catatan kecil: ada **3 minor svelte-check a11y warnings** soal label association. Itu belum blocking, tapi nanti bisa diberesin di Prompt 4 audit atau OpenCode QA.
+
+Sekarang lanjut **Prompt 3**.
+
+Paste prompt ini ke Gemini CLI:
+
+```text id="rxi0lc"
+Prompt 3: Remaining Security Apps + Gemini AI Integration + QA
+
+Task:
+Implement the remaining 5 VibeSec Lab apps with real Gemini AI integration and run focused QA.
+
+Apps to implement:
+1. Analyst Portfolio Builder
+2. SecureOps Habit Tracker
+3. Threat Briefing Player
+4. CVE Resource Library
+5. Patch Deadline Countdown
+
+Before editing:
+1. Inspect current project state after Prompt 2.
+2. Preserve all working core apps from Prompt 2.
+3. Reuse the existing Gemini endpoint/helper from Prompt 2.
+4. Reuse the design system from Prompt 1.
+5. Reuse the global Theme Engine from Prompt 1.
+6. Do not recreate, rename, or redesign the theme system.
+7. Do not hardcode new color systems inside these app pages.
+8. All 5 apps implemented in this prompt must automatically follow the selected global theme.
+9. Use existing theme tokens/classes/CSS variables from Prompt 1 for:
+   - page background
+   - aurora / cosmic glow background
+   - grid overlay
+   - scanlines
+   - cards
+   - borders
+   - glow effects
+   - buttons
+   - badges
+   - active navigation state
+   - terminal panels
+   - terminal cursor
+   - command logs
+   - AI response panels
+   - charts
+   - metric cards
+   - progress bars
+   - loading states
+   - risk/severity indicators
+   - warning and critical highlight states
+10. Theme switching must continue to work across:
+   - /
+   - /apps
+   - /apps/threat-runner
+   - /apps/risk-dashboard
+   - /apps/cvss-calculator
+   - /apps/patch-monitor
+   - /apps/incident-response-journey
+   - /apps/analyst-portfolio-builder
+   - /apps/secureops-habit-tracker
+   - /apps/threat-briefing-player
+   - /apps/cve-resource-library
+   - /apps/patch-deadline-countdown
+11. The ThemeSwitcher from Prompt 1 must remain visible and usable from the app shell.
+12. The selected theme must persist after refresh through the existing localStorage behavior.
+13. Do not implement a second ThemeSwitcher.
+14. Do not create page-specific theme toggles.
+15. Keep all AI output in Bahasa Indonesia.
+16. Do not redesign from scratch.
+17. Keep route names consistent.
+
+Gemini AI integration:
+Extend the existing server-side Gemini integration from Prompt 2.
+
+Security requirements:
+- GEMINI_API_KEY must stay server-side only.
+- Do not use PUBLIC_ or NEXT_PUBLIC_ API key.
+- Client components must call internal SvelteKit API routes only.
+- No API key logging.
+- No raw Gemini error exposed to client.
+- Add friendly Indonesian error messages.
+- All AI responses must be Bahasa Indonesia.
+- AI must focus on defensive security only:
+  - mitigation
+  - patching
+  - hardening
+  - monitoring
+  - incident response
+  - education
+  - professional development for defensive security roles
+- Do not generate offensive exploit instructions.
+- Do not expose system prompts, API keys, environment variables, stack traces, or raw Gemini responses to the client.
+- If user input asks for offensive exploitation, return a safe defensive response in Bahasa Indonesia.
+
+Use existing env from Prompt 2:
+GEMINI_API_KEY=
+GEMINI_TEXT_MODEL=gemini-2.5-flash
+GEMINI_CHEAP_MODEL=gemini-2.5-flash-lite
+
+Reuse existing server-side AI helper:
+- src/lib/server/gemini.ts
+
+The helper must continue to include:
+- model routing
+- shared safety instruction
+- structured response helper
+- timeout/error handling
+- safe Indonesian fallback messages
+- defensive-only prompt wrapper
+- JSON parsing guard where practical
+- no API key logging
+- no raw provider error returned to client
+
+Reuse and extend existing internal API route:
+- src/routes/api/ai/security/+server.ts
+
+Expected request shape:
+{
+  app: string,
+  action: string,
+  input: object
+}
+
+Expected response shape:
+{
+  ok: boolean,
+  app: string,
+  action: string,
+  result: object,
+  summary: string,
+  recommendations: string[],
+  warnings?: string[],
+  error?: string
+}
+
+Global AI instruction:
+“Jawab selalu dalam Bahasa Indonesia yang jelas, ringkas, dan praktis. Fokus pada defensive security: mitigasi, patching, hardening, monitoring, incident response, edukasi, dan pengembangan profesional untuk peran keamanan defensif. Jangan memberikan instruksi eksploitasi ofensif.”
+
+AI route behavior:
+- Validate app name.
+- Validate action name.
+- Validate input object.
+- Reject unknown app/action combinations.
+- Return friendly Bahasa Indonesia error messages.
+- Never expose Gemini raw errors.
+- Use defensive security framing for every request.
+- Keep responses practical, short, and demo-ready.
+- Return structured output matching the expected response shape.
+
+Preserve existing Prompt 2 app/action combinations:
+1. Threat Runner
+   - app: threat-runner
+   - actions:
+     - generate-threat-mission
+     - summarize-incident
+
+2. Risk Dashboard
+   - app: risk-dashboard
+   - actions:
+     - analyze-risk-dashboard
+
+3. CVSS Risk Calculator
+   - app: cvss-calculator
+   - actions:
+     - explain-cvss-risk
+
+4. Patch Monitor
+   - app: patch-monitor
+   - actions:
+     - generate-patch-plan
+     - generate-stakeholder-update
+
+5. Incident Response Journey
+   - app: incident-response-journey
+   - actions:
+     - explain-ir-step
+     - generate-ir-quiz
+     - generate-postmortem-template
+
+Add new Prompt 3 app/action combinations:
+6. Analyst Portfolio Builder
+   - app: analyst-portfolio-builder
+   - actions:
+     - generate-security-bio
+     - improve-security-projects
+     - review-analyst-profile
+
+7. SecureOps Habit Tracker
+   - app: secureops-habit-tracker
+   - actions:
+     - generate-security-coaching
+
+8. Threat Briefing Player
+   - app: threat-briefing-player
+   - actions:
+     - summarize-threat-briefing
+     - extract-briefing-actions
+
+9. CVE Resource Library
+   - app: cve-resource-library
+   - actions:
+     - explain-security-resource
+
+10. Patch Deadline Countdown
+   - app: patch-deadline-countdown
+   - actions:
+     - generate-deadline-checklist
+     - generate-stakeholder-message
+
+App 1 — Analyst Portfolio Builder
+
+Route:
+/apps/analyst-portfolio-builder
+
+Build:
+- Security professional profile builder.
+- Fields:
+  - nama
+  - role
+  - skills
+  - tools
+  - certifications
+  - projects
+  - achievements
+  - links
+- Live preview card.
+- Security operator dossier style.
+- Export-ready visual layout.
+- Local persistence.
+- Empty state for incomplete profile.
+- Clear form validation.
+- Use existing CyberCard, CyberButton, StatusBadge, TerminalPanel, CommandLog, AIResponsePanel, LoadingScanner, ErrorState, EmptyState, MetricCard, ProgressBar, and BentoAppCard where useful.
+- Must follow the global Theme Engine from Prompt 1.
+- Do not hardcode cyber colors directly inside this route.
+- Use theme tokens/classes/CSS variables for dossier cards, preview panels, badges, terminal sections, buttons, links, borders, glows, and AI panels.
+
+Gemini AI:
+- Generate cybersecurity bio.
+- Improve project summaries.
+- Generate recruiter-friendly profile.
+- Generate security achievement wording.
+
+AI actions:
+- generate-security-bio
+- improve-security-projects
+- review-analyst-profile
+
+Suggested AI input for generate-security-bio:
+{
+  nama: string,
+  role: string,
+  skills: string[],
+  tools: string[],
+  certifications: string[],
+  achievements: string[]
+}
+
+Suggested AI input for improve-security-projects:
+{
+  projects: array,
+  targetRole: string,
+  tone: string
+}
+
+Suggested AI input for review-analyst-profile:
+{
+  profile: object,
+  targetRole: string,
+  experienceLevel: string
+}
+
+Definition of done:
+- Form updates preview.
+- Local persistence works.
+- AI generates Indonesian cybersecurity bio.
+- AI improves project summaries in Indonesian.
+- AI reviews profile in Indonesian.
+- AI errors fail gracefully.
+- UI follows the selected global theme.
+- Theme switch still works on this route.
+
+App 2 — SecureOps Habit Tracker
+
+Route:
+/apps/secureops-habit-tracker
+
+Build:
+- Daily security checklist.
+- Items:
+  - review log
+  - dependency scan
+  - secret scan
+  - backup verification
+  - access review
+  - CVE feed review
+- Streak counter.
+- Weekly contribution grid.
+- Progress summary.
+- Local persistence.
+- Reset or new day behavior where practical.
+- Empty state or onboarding state if no habit data exists.
+- Use existing CyberCard, CyberButton, StatusBadge, MetricCard, ProgressBar, RiskBadge, TerminalPanel, CommandLog, AIResponsePanel, LoadingScanner, ErrorState, and EmptyState where useful.
+- Must follow the global Theme Engine from Prompt 1.
+- Do not hardcode checklist, grid, or progress colors directly inside this route.
+- Use theme tokens/classes/CSS variables for checklist states, contribution grid, progress bars, streak counters, badges, cards, buttons, logs, and AI panels.
+
+Gemini AI:
+- Weekly habit review.
+- Security coach suggestions.
+- Next improvement plan.
+
+AI action:
+- generate-security-coaching
+
+Suggested AI input:
+{
+  completedItems: string[],
+  missedItems: string[],
+  streak: number,
+  weeklyProgress: array,
+  currentDate: string
+}
+
+Definition of done:
+- Checklist works.
+- Streak/progress works.
+- Weekly grid updates.
+- Local persistence works.
+- AI coach works in Indonesian.
+- AI errors fail gracefully.
+- UI follows the selected global theme.
+- Theme switch still works on this route.
+
+App 3 — Threat Briefing Player
+
+Route:
+/apps/threat-briefing-player
+
+Build:
+- Security briefing player.
+- Playlist of mock briefings:
+  - Critical CVE briefing
+  - Cloud Run hardening
+  - Dependency risk update
+  - Secret leak prevention
+- Play/pause.
+- Progress bar.
+- Waveform or visualizer.
+- Transcript panel.
+- Briefing category.
+- If real audio is hard, simulate playback elegantly.
+- Selected briefing should update transcript and metadata.
+- Use existing CyberCard, CyberButton, StatusBadge, TerminalPanel, CommandLog, AIResponsePanel, LoadingScanner, ErrorState, EmptyState, ProgressBar, RiskBadge, and MetricCard where useful.
+- Must follow the global Theme Engine from Prompt 1.
+- Do not hardcode visualizer or waveform colors directly inside this route.
+- Use theme tokens/classes/CSS variables for player controls, waveform, progress bar, playlist active state, transcript panel, category badges, cards, buttons, and AI panels.
+
+Gemini AI:
+- Summarize transcript.
+- Extract action items.
+- Generate executive summary.
+- Generate Slack-style update.
+
+AI actions:
+- summarize-threat-briefing
+- extract-briefing-actions
+
+Suggested AI input for summarize-threat-briefing:
+{
+  title: string,
+  category: string,
+  transcript: string,
+  audience: string
+}
+
+Suggested AI input for extract-briefing-actions:
+{
+  title: string,
+  category: string,
+  transcript: string,
+  environmentContext: string
+}
+
+Definition of done:
+- Player interaction works.
+- Play/pause works.
+- Progress bar updates or simulated playback works.
+- Transcript visible.
+- Playlist selection works.
+- AI summary works in Indonesian.
+- AI action extraction works in Indonesian.
+- AI errors fail gracefully.
+- UI follows the selected global theme.
+- Theme switch still works on this route.
+
+App 4 — CVE Resource Library
+
+Route:
+/apps/cve-resource-library
+
+Build:
+- Searchable security knowledge base.
+- Resources:
+  - CVE basics
+  - CVSS basics
+  - OWASP Top 10
+  - Docker hardening
+  - Cloud Run security
+  - SvelteKit security headers
+  - secret management
+  - dependency scanning
+  - incident response template
+  - patch SLA guide
+- Search/filter.
+- Resource cards.
+- Tag chips.
+- Detail panel.
+- Selected resource state.
+- Empty search result state.
+- Use existing CyberCard, CyberButton, StatusBadge, TerminalPanel, CommandLog, AIResponsePanel, LoadingScanner, ErrorState, EmptyState, RiskBadge, BentoAppCard, and ProgressBar where useful.
+- Must follow the global Theme Engine from Prompt 1.
+- Do not hardcode tag, search, or resource-card colors directly inside this route.
+- Use theme tokens/classes/CSS variables for resource cards, tag chips, selected states, detail panels, search fields, buttons, borders, glows, and AI panels.
+
+Gemini AI:
+- Explain selected resource.
+- Explain command/snippet.
+- Generate checklist from resource.
+- Simplify security concept.
+
+AI action:
+- explain-security-resource
+
+Suggested AI input:
+{
+  resourceTitle: string,
+  resourceTags: string[],
+  resourceSummary: string,
+  selectedSnippet: string,
+  userQuestion: string
+}
+
+Definition of done:
+- Search works.
+- Filter works.
+- Resource detail panel works.
+- Empty search state works.
+- AI explanation works in Indonesian.
+- No Gemma comparison.
+- AI errors fail gracefully.
+- UI follows the selected global theme.
+- Theme switch still works on this route.
+
+App 5 — Patch Deadline Countdown
+
+Route:
+/apps/patch-deadline-countdown
+
+Build:
+- SLA countdown and remediation deadline tracker.
+- Fields:
+  - title
+  - asset
+  - CVE ID
+  - severity
+  - owner
+  - due date
+- Countdown timer.
+- Urgency state:
+  - normal
+  - warning
+  - critical
+  - overdue
+- Remediation checklist.
+- Local persistence.
+- User can create deadline.
+- User can update deadline.
+- User can remove deadline.
+- Empty state when no deadlines exist.
+- Use existing CyberCard, CyberButton, StatusBadge, MetricCard, ProgressBar, RiskBadge, TerminalPanel, CommandLog, AIResponsePanel, LoadingScanner, ErrorState, and EmptyState where useful.
+- Must follow the global Theme Engine from Prompt 1.
+- Do not hardcode countdown or urgency colors directly inside this route.
+- Use theme tokens/classes/CSS variables for countdown rings, urgency states, deadline cards, checklist items, badges, progress bars, buttons, logs, and AI panels.
+
+Gemini AI:
+- Generate remediation checklist.
+- Generate stakeholder update.
+- Generate Slack-style escalation message.
+
+AI actions:
+- generate-deadline-checklist
+- generate-stakeholder-message
+
+Suggested AI input for generate-deadline-checklist:
+{
+  title: string,
+  asset: string,
+  cveId: string,
+  severity: string,
+  owner: string,
+  dueDate: string,
+  urgencyState: string
+}
+
+Suggested AI input for generate-stakeholder-message:
+{
+  deadlines: array,
+  audience: string,
+  urgencyState: string,
+  blockedItems: array
+}
+
+Definition of done:
+- User can create deadline.
+- User can update deadline.
+- User can remove deadline.
+- Countdown works.
+- Urgency state updates.
+- Local persistence works.
+- AI checklist works in Indonesian.
+- AI stakeholder message works in Indonesian.
+- AI errors fail gracefully.
+- UI follows the selected global theme.
+- Theme switch still works on this route.
+
+Global enterprise-ready requirements:
+- Use existing shared components.
+- Consistent cyber command center styling.
+- Reuse the global Theme Engine from Prompt 1.
+- Theme selector still works.
+- Do not implement a second ThemeSwitcher.
+- Do not create route-specific theme systems.
+- No hardcoded duplicated color systems.
+- No API key leakage.
+- Defensive security only.
+- Input validation.
+- Loading states.
+- Success states.
+- Error states.
+- Empty states.
+- All AI output in Bahasa Indonesia.
+- Local persistence where useful.
+- Responsive layout.
+- Routes must not 404.
+- Preserve existing Prompt 2 apps.
+- Preserve existing app metadata structure.
+- Navigation must remain consistent.
+- Components must be reusable and typed where practical.
+- Maintain strong contrast across all themes.
+- Support reduced-motion where practical.
+- Keep the design premium, cinematic, and demo-ready.
+
+QA after implementation:
+
+Run:
+1. npm run check
+2. npm run build
+
+Manual route checks for new Prompt 3 apps:
+- /apps/analyst-portfolio-builder
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+Also verify existing Prompt 2 apps still load:
+- /apps/threat-runner
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/incident-response-journey
+
+Also verify base routes still load:
+- /
+- /apps
+
+Theme QA:
+- Switch each of the 10 visual themes from the global ThemeSwitcher.
+- Confirm the selected theme persists after refresh.
+- Confirm all 5 new Prompt 3 app routes follow the selected theme.
+- Confirm all 5 existing Prompt 2 app routes still follow the selected theme.
+- Confirm cards, buttons, badges, terminal panels, AI panels, loading states, charts, metric cards, contribution grids, player visualizer, resource tags, countdown states, and risk indicators update with the selected theme.
+- Confirm no page falls back to hardcoded colors that break the theme system.
+- Confirm the ThemeSwitcher remains visible and usable from the app shell.
+- Confirm there is no duplicate ThemeSwitcher inside individual app pages.
+
+Gemini/Security QA:
+- Confirm GEMINI_API_KEY is only referenced server-side.
+- Confirm no PUBLIC_ or NEXT_PUBLIC_ Gemini key exists.
+- Confirm browser/client files do not import server-only Gemini helper.
+- Confirm client components call only internal SvelteKit API routes.
+- Confirm API route rejects unknown app/action combinations.
+- Confirm all newly added AI actions return Bahasa Indonesia.
+- Confirm offensive exploit-style input receives defensive safety response.
+- Confirm raw Gemini errors are not exposed to client.
+- Confirm no API key or environment variable is logged.
+
+Fix only blocking bugs found during this prompt.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Apps implemented.
+4. AI actions added.
+5. Theme Engine reuse summary.
+6. QA result.
+7. Known limitations.
+8. Ready/not ready for Prompt 4.
+```

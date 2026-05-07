@@ -1,0 +1,317 @@
+Prompt 5.3: Animated Electric Glow Border Pass
+
+Task:
+Add premium animated glowing border effects to key VibeSec Lab UI elements so the interface feels more alive, futuristic, and cyber-electric.
+
+Goal:
+Create a moving border/glow effect that travels around cards, boxes, panels, and selected buttons like electric energy running along the edges.
+
+This should feel like:
+- animated electric border
+- running neon edge
+- energy beam border
+- cyber circuit glow trace
+- premium SOC command center UI
+
+Important:
+This is a visual polish task only.
+Do not rebuild the app.
+Do not redesign the whole app.
+Do not add new routes.
+Do not add major features.
+Do not change Gemini/API/env logic.
+Do not touch API key handling.
+Do not break production start.
+Do not create a second ThemeSwitcher.
+Do not create a new theme system.
+Do not remove working features.
+
+Before editing:
+1. Inspect current project state.
+2. Inspect global stylesheet.
+3. Inspect Theme Engine variables/tokens.
+4. Inspect shared components:
+   - CyberCard
+   - CyberButton
+   - AIResponsePanel
+   - BentoAppCard
+   - MetricCard
+   - TerminalPanel
+   - AppBackButton or AppPageHeader if present
+5. Inspect landing page.
+6. Inspect /apps page.
+7. Inspect important app pages:
+   - /apps/threat-runner
+   - /apps/risk-dashboard
+   - /apps/cvss-calculator
+   - /apps/analyst-portfolio-builder
+   - /apps/patch-monitor
+8. Preserve all existing behavior.
+9. Preserve all routes.
+10. Preserve ThemeSwitcher and global Theme Engine.
+11. Preserve Gemini AI server-side integration.
+12. Preserve production start support.
+
+Routes that must remain valid:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/analyst-portfolio-builder
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/patch-monitor
+- /apps/secureops-habit-tracker
+- /apps/threat-briefing-player
+- /apps/incident-response-journey
+- /apps/cve-resource-library
+- /apps/patch-deadline-countdown
+
+Design direction:
+Premium cyber command center.
+Dark glass UI.
+Glowing animated edges.
+Energy/electricity moving around the border.
+Feels like a live SOC dashboard, not childish.
+Subtle, elegant, high-end.
+Not too noisy.
+Not a rainbow overload.
+Not plain green terminal.
+
+Main visual request:
+Add animated “running electric glow” border effects on selected UI elements.
+
+Effect style:
+- A glow line or energy streak moving along the border path.
+- Feels like electric current or neon signal traveling around the edge.
+- Subtle flicker or pulse is okay.
+- Should look premium, not chaotic.
+- Can use CSS gradients, pseudo-elements, masking, blur, and animation.
+- Prefer CSS-first implementation.
+- Avoid heavy JavaScript animation loops.
+
+Theme behavior:
+- Effect must use the existing selected theme accent color.
+- Do not hardcode only green.
+- Effect should automatically adapt for all themes.
+- Border glow, electric trace, and highlight should follow current theme tokens/CSS variables.
+- Selected theme must still persist after refresh.
+- ThemeSwitcher must still work.
+
+Apply effect selectively, not everywhere.
+
+High priority targets:
+1. Landing page hero feature card/panel.
+2. App cards on /apps.
+3. Bento app cards on landing page.
+4. Important dashboard cards.
+5. AI response panels.
+6. Threat Runner game panel / HUD card.
+7. Risk Dashboard security header scanner grade/result card.
+8. CVSS result card.
+9. Patch Monitor Status key cards.
+10. Page header back button.
+11. Primary action buttons.
+12. Tutorial section container only if it does not make the page too noisy.
+
+Do not overload:
+- Not every small component needs this effect.
+- Use on premium surfaces only.
+- Keep visual hierarchy clean.
+- Keep content readable.
+
+Suggested implementation:
+Create a reusable visual pattern instead of copy-pasting large CSS everywhere.
+
+Option A:
+Add shared CSS utilities in global stylesheet:
+- .electric-border
+- .electric-panel
+- .electric-card
+- .electric-button
+- .electric-border-hover
+
+Option B:
+Create reusable wrapper component:
+- src/lib/components/ElectricBorder.svelte
+
+Use whichever fits the current structure better.
+
+Suggested CSS approach:
+- Use pseudo-elements:
+  - ::before
+  - ::after
+- Use conic-gradient or linear-gradient for moving border beam.
+- Use CSS mask or background-clip where practical.
+- Add blurred glow layer.
+- Add moving beam segment animation.
+- Add subtle hover intensification.
+- Use CSS variables from Theme Engine for accent color.
+
+Possible utility behavior:
+- .electric-border creates a relative container.
+- ::before renders animated conic-gradient border.
+- ::after renders soft glow blur.
+- content remains above pseudo-elements.
+- border radius is respected.
+- overflow is controlled safely.
+- pointer events disabled on pseudo-elements.
+
+Animation behavior:
+- Effect should feel like a line of energy traveling around the box border.
+- Motion can loop continuously but stay subtle.
+- Speed should be medium, not too fast.
+- Recommended duration: 4s–8s.
+- Hover can intensify glow slightly.
+- Active/important cards can have slightly stronger effect.
+- Inactive cards should remain subtle.
+
+Performance rules:
+- Prefer CSS animations.
+- Avoid expensive continuous JS loops.
+- Avoid excessive box-shadow layers.
+- Avoid particle spam.
+- Keep mobile performance acceptable.
+- Keep frame rate stable.
+- Do not cause layout thrashing.
+
+Accessibility:
+- Respect prefers-reduced-motion.
+- If reduced motion is enabled:
+  - disable or heavily reduce moving border animation
+  - keep a static subtle glow border
+- Keep text readable.
+- Do not reduce contrast.
+- Do not let glow overpower content.
+- Do not create flashing effects.
+
+Theme integration:
+- Use existing global Theme Engine variables/classes.
+- No second theme system.
+- No duplicated hardcoded color definitions if avoidable.
+- All 10 themes must still work correctly:
+  1. Terminal Klasik
+  2. Cyberpunk Neon
+  3. Arch Linux Terminal
+  4. Matrix Rain
+  5. Red Alert SOC
+  6. Ice Blue Defense
+  7. Purple Zero-Day
+  8. Amber Ops
+  9. Emerald Secure
+  10. Monochrome Hacker
+
+Specific polish targets:
+
+1. App cards
+- Add subtle animated edge trace.
+- Add stronger glow on hover.
+- Keep text readable.
+- Keep clickability unchanged.
+- Keep route links unchanged.
+
+2. Hero/feature panels
+- Make the hero box feel premium with electric border motion.
+- Keep title and CTA readable.
+- Do not overpower the landing page.
+
+3. AI panels
+- Add elegant intelligent-energy border effect.
+- Loading state can slightly intensify the animation.
+- Do not change AI fetch logic.
+
+4. Buttons
+- Primary buttons can have a milder edge energy effect.
+- Do not overdo on every small secondary button.
+- Keep keyboard focus visible.
+
+5. Back button
+- Top-left back button can have a smaller animated border/glow effect.
+- Hover/active states should feel premium.
+- Keep aria-label and navigation behavior unchanged.
+
+6. Threat Runner
+- Game container can have slightly stronger arcade-cyber electric border.
+- HUD cards can have subtle energy edge.
+- Do not change gameplay logic.
+- Do not change audio logic.
+
+7. Security Header Scanner result card
+- Grade/result card can have premium animated border emphasis.
+- Do not change scanner API logic.
+- Do not change AI suggestion logic.
+
+8. CVSS result card
+- Risk score/result panel can have subtle animated electric border.
+- Do not change calculator logic.
+
+9. Patch Monitor Status
+- Key status/progress cards can have subtle electric edge.
+- Do not change patch tracker logic.
+
+10. Tutorial sections
+- Apply only a subtle static or low-intensity electric border if it improves consistency.
+- Do not make Tutorial sections visually louder than primary app interactions.
+
+Implementation preference:
+- Prefer updating shared components so the effect appears consistently.
+- Use utility classes where safer.
+- Avoid manually editing every route unless needed.
+- Avoid changing component APIs too much.
+- Keep changes small and targeted.
+
+Do not:
+- Break existing layout.
+- Cause overflow clipping bugs.
+- Make text hard to read.
+- Create distracting rainbow effects.
+- Add random particle spam.
+- Add loud flashing.
+- Introduce accessibility issues.
+- Change Gemini/API/env logic.
+- Change production adapter.
+- Change app routes.
+
+QA:
+Run:
+1. npm run check
+2. npm run build
+
+Optional if quick:
+3. PORT=4173 npm run start
+
+Manual verification:
+- Open /
+- Open /apps
+- Open /apps/threat-runner
+- Open /apps/risk-dashboard
+- Open /apps/cvss-calculator
+- Open /apps/analyst-portfolio-builder
+- Open /apps/patch-monitor
+
+Verify:
+- Selected important cards/panels now have animated electric border effect.
+- Effect follows current selected theme color.
+- Hover feels premium.
+- Reduced motion is respected.
+- Text remains readable.
+- No layout overflow is introduced.
+- No route breaks.
+- ThemeSwitcher still works.
+- Selected theme persists after refresh.
+- AI buttons still exist and work or fail gracefully.
+- Threat Runner gameplay/audio still works.
+- Production build still passes.
+
+Fix only visual bugs caused by this electric border polish.
+
+Return:
+1. Files inspected.
+2. Files changed.
+3. Components/classes updated.
+4. Where electric border effect was applied.
+5. Theme integration summary.
+6. Accessibility/reduced-motion summary.
+7. npm check result.
+8. npm build result.
+9. Known limitations.
+10. Ready/not ready to continue.
