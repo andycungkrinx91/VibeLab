@@ -221,7 +221,7 @@
 			<div class="space-y-4 rounded-lg border border-border bg-bg-panel p-6 shadow-md">
 				<h3 class="border-b border-border pb-2 font-semibold text-text-base">Informasi Dasar</h3>
 
-				<div class="grid grid-cols-2 gap-4">
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<div>
 						<label for="portfolio-name" class="mb-1 block text-xs text-text-muted">Nama</label>
 						<input
@@ -381,7 +381,7 @@
 					<button
 						onclick={generateBio}
 						disabled={isLoadingBio}
-						class="btn-shimmer flex w-full items-center justify-between rounded border border-accent/50 bg-accent/10 px-4 py-2 text-left text-sm font-semibold text-accent transition-colors hover:bg-accent/20"
+						class="btn-shimmer flex w-full items-center justify-between rounded border border-accent/50 bg-accent/10 px-4 py-2 text-left text-sm font-semibold text-accent transition-colors hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						<span>1. Generate Professional Bio</span>
 						{#if isLoadingBio}<span class="animate-pulse">...</span>{/if}
@@ -389,7 +389,7 @@
 					<button
 						onclick={improveProjects}
 						disabled={isLoadingProjects}
-						class="btn-shimmer flex w-full items-center justify-between rounded border border-warning/50 bg-warning/10 px-4 py-2 text-left text-sm font-semibold text-warning transition-colors hover:bg-warning/20"
+						class="btn-shimmer flex w-full items-center justify-between rounded border border-warning/50 bg-warning/10 px-4 py-2 text-left text-sm font-semibold text-warning transition-colors hover:bg-warning/20 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						<span>2. Polish Project Descriptions</span>
 						{#if isLoadingProjects}<span class="animate-pulse">...</span>{/if}
@@ -397,7 +397,7 @@
 					<button
 						onclick={reviewProfile}
 						disabled={isLoadingReview}
-						class="btn-shimmer flex w-full items-center justify-between rounded border border-accent-secondary/50 bg-accent-secondary/10 px-4 py-2 text-left text-sm font-semibold text-accent-secondary transition-colors hover:bg-accent-secondary/20"
+						class="btn-shimmer flex w-full items-center justify-between rounded border border-accent-secondary/50 bg-accent-secondary/10 px-4 py-2 text-left text-sm font-semibold text-accent-secondary transition-colors hover:bg-accent-secondary/20 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						<span>3. Get Expert Profile Review</span>
 						{#if isLoadingReview}<span class="animate-pulse">...</span>{/if}
@@ -405,7 +405,7 @@
 					<button
 						onclick={generateAtsCv}
 						disabled={isLoadingAts}
-						class="btn-shimmer flex w-full items-center justify-between rounded border border-border bg-bg-base px-4 py-2 text-left text-sm font-semibold text-text-base transition-colors hover:border-accent hover:text-accent"
+						class="btn-shimmer flex w-full items-center justify-between rounded border border-border bg-bg-base px-4 py-2 text-left text-sm font-semibold text-text-base transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						<span>4. Generate CV ATS</span>
 						{#if isLoadingAts}<span class="animate-pulse">...</span>{/if}
@@ -426,7 +426,7 @@
 										Export CV
 									</button>
 								</div>
-								<pre class="whitespace-pre-wrap rounded border border-border/50 bg-bg-panel p-3 text-sm leading-relaxed text-text-base">{aiAtsCv}</pre>
+								<pre class="max-w-full overflow-x-auto whitespace-pre-wrap rounded border border-border/50 bg-bg-panel p-3 text-sm leading-relaxed text-text-base">{aiAtsCv}</pre>
 								{#if aiAtsRecommendations && aiAtsRecommendations.length > 0}
 									<ul class="mt-3 space-y-2">
 										{#each aiAtsRecommendations as rec}

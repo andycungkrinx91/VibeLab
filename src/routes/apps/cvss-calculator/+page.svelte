@@ -34,6 +34,7 @@
 	let isLoadingAI = $state(false);
 
 	async function explainRisk() {
+		if (isLoadingAI) return; // prevent duplicate calls
 		isLoadingAI = true;
 		aiAnalysis = null;
 		try {
@@ -59,7 +60,10 @@
 			if (data.ok) {
 				aiAnalysis = data;
 			} else {
-				aiAnalysis = data;
+				aiAnalysis = {
+					ok: false,
+					error: data.summary || data.error || 'Analisa AI tidak tersedia saat ini.'
+				};
 			}
 		} catch (e) {
 			aiAnalysis = {
@@ -105,7 +109,6 @@
 						<select
 							id="cvss-severity"
 							bind:value={severity}
-							onchange={explainRisk}
 							class="w-full rounded border border-border bg-bg-base px-3 py-2 text-sm text-text-base outline-none focus:border-accent"
 						>
 							<option value="Low">Low</option>
@@ -120,7 +123,6 @@
 						<select
 							id="cvss-asset-criticality"
 							bind:value={assetCriticality}
-							onchange={explainRisk}
 							class="w-full rounded border border-border bg-bg-base px-3 py-2 text-sm text-text-base outline-none focus:border-accent"
 						>
 							<option value="Low">Low (Non-essential)</option>
@@ -135,7 +137,6 @@
 						<select
 							id="cvss-patch-complexity"
 							bind:value={patchComplexity}
-							onchange={explainRisk}
 							class="w-full rounded border border-border bg-bg-base px-3 py-2 text-sm text-text-base outline-none focus:border-accent"
 						>
 							<option value="Low">Low (Auto-update)</option>
@@ -149,7 +150,6 @@
 							<input
 								type="checkbox"
 								bind:checked={internetExposed}
-								onchange={explainRisk}
 								class="h-4 w-4 accent-accent"
 							/>
 							<span class="text-sm text-text-base">Internet Exposed</span>
@@ -161,7 +161,6 @@
 							<input
 								type="checkbox"
 								bind:checked={exploitAvailable}
-								onchange={explainRisk}
 								class="h-4 w-4 accent-accent"
 							/>
 							<span class="text-sm text-text-base">Active Exploit Available (PoC/Wild)</span>
@@ -173,7 +172,6 @@
 							<input
 								type="checkbox"
 								bind:checked={sensitiveData}
-								onchange={explainRisk}
 								class="h-4 w-4 accent-accent"
 							/>
 							<span class="text-sm text-text-base">Processes Sensitive Data (PII/PCI)</span>
@@ -218,7 +216,10 @@
 				>
 					<h3 class="flex items-center gap-2 font-semibold text-accent">AI Mitigation Advisor</h3>
 					{#if !aiAnalysis && !isLoadingAI}
-					<button onclick={explainRisk} class="btn-shimmer text-xs text-accent hover:underline"
+					<button
+						onclick={explainRisk}
+						disabled={isLoadingAI}
+						class="btn-shimmer text-xs text-accent hover:underline disabled:opacity-50"
 						>Analisa</button
 					>
 					{/if}
@@ -250,7 +251,7 @@
 						<div>
 							<div class="mb-2 text-xs text-text-muted uppercase">Mitigation Plan</div>
 							<ul class="space-y-1">
-								{#each aiAnalysis.recommendations as rec}
+								{#each aiAnalysis.recommendations || [] as rec}
 									<li class="flex items-start text-sm">
 										<span class="mr-2 text-accent">■</span>
 										<span class="text-text-base">{rec}</span>

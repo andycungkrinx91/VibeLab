@@ -1,8 +1,8 @@
 <script lang="ts">
-import { onDestroy, onMount } from 'svelte';
-import MotionShell from '$lib/components/MotionShell.svelte';
-import AppPageShell from '$lib/components/AppPageShell.svelte';
-import AppTutorial from '$lib/components/AppTutorial.svelte';
+	import { onDestroy, onMount } from 'svelte';
+	import MotionShell from '$lib/components/MotionShell.svelte';
+	import AppPageShell from '$lib/components/AppPageShell.svelte';
+	import AppTutorial from '$lib/components/AppTutorial.svelte';
 	import {
 		initAudio,
 		loadSoundEnabled,
@@ -47,6 +47,31 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 	let timerInterval: ReturnType<typeof setInterval> | null = null;
 	let removeKeyboardListener: (() => void) | null = null;
 
+	// Touch / hold state
+	let holdLeft = false;
+	let holdRight = false;
+	let holdIntervalId: ReturnType<typeof setInterval> | null = null;
+
+	function startHold(direction: 'left' | 'right') {
+		stopHold();
+		if (direction === 'left') holdLeft = true;
+		if (direction === 'right') holdRight = true;
+		holdIntervalId = setInterval(() => {
+			if (!isPlaying) return;
+			if (holdLeft) movePlayer(-5);
+			if (holdRight) movePlayer(5);
+		}, 50);
+	}
+
+	function stopHold() {
+		holdLeft = false;
+		holdRight = false;
+		if (holdIntervalId) {
+			clearInterval(holdIntervalId);
+			holdIntervalId = null;
+		}
+	}
+
 	onMount(() => {
 		soundEnabled = loadSoundEnabled(true);
 
@@ -81,10 +106,12 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 
 	onDestroy(() => {
 		clearGameLoop();
+		stopHold();
 		removeKeyboardListener?.();
 	});
 
 	async function fetchMission() {
+		if (isLoadingAI) return;
 		isLoadingAI = true;
 		aiError = '';
 		try {
@@ -101,16 +128,17 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 			if (data.ok) {
 				mission = data;
 			} else {
-				aiError = data.summary || data.error;
+				aiError = data.summary || data.error || 'Gagal memuat misi AI.';
 			}
 		} catch (e) {
-			aiError = 'Koneksi ke AI gagal.';
+			aiError = 'Koneksi ke AI gagal. Klik "Lewati & Mulai" untuk bermain.';
 		} finally {
 			isLoadingAI = false;
 		}
 	}
 
 	async function fetchSummary() {
+		if (isLoadingAI) return;
 		isLoadingAI = true;
 		try {
 			const res = await fetch('/api/ai/security', {
@@ -126,7 +154,11 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 			if (data.ok) {
 				incidentSummary = data;
 			} else {
-				incidentSummary = data;
+				incidentSummary = {
+					ok: false,
+					summary: data.summary || data.error || 'Laporan insiden tidak tersedia.',
+					result: { status: 'Tinjauan', remediationChecklist: [] }
+				};
 			}
 		} catch (e) {
 			incidentSummary = {
@@ -163,6 +195,7 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 
 	function startGame() {
 		clearGameLoop();
+		stopHold();
 		initAudio();
 		playStart();
 		resetGameState();
@@ -186,6 +219,7 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 
 	function endGame() {
 		if (isGameOver) return;
+		stopHold();
 		isPlaying = false;
 		isGameOver = true;
 		clearGameLoop();
@@ -299,7 +333,7 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 			{
 				id: nextId++,
 				type: isMalware ? 'malware' : 'patch',
-				x: Math.random() * 90, // Percentage
+				x: Math.random() * 84 + 8, // 8%–92% to keep within bounds
 				y: 0,
 				speed: Math.random() * 0.5 + 0.5 + (threatLevel === 'Critical' ? 1 : 0)
 			}
@@ -328,39 +362,54 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 			initAudio();
 		}
 	}
+
+	// Safe accessors for AI result fields
+	function getMissionTitle() {
+		return mission?.result?.missionTitle || 'Misi Pertahanan';
+	}
+	function getMissionObjectives(): string[] {
+		return mission?.result?.objectives || [];
+	}
+	function getIncidentStatus() {
+		return incidentSummary?.result?.status || 'Tinjauan';
+	}
+	function getRemediationChecklist(): string[] {
+		return incidentSummary?.result?.remediationChecklist || [];
+	}
 </script>
 
 <AppPageShell appId="threat-runner">
-	<div class="mb-4 flex items-center justify-between">
+	<div class="mb-3 flex items-center justify-between">
 		<div class="text-right">
-			<div class="text-sm text-text-muted">High Score</div>
-			<div class="text-2xl font-bold text-accent-secondary">{highScore}</div>
+			<div class="text-xs text-text-muted">High Score</div>
+			<div class="text-xl font-bold text-accent-secondary sm:text-2xl">{highScore}</div>
 		</div>
 	</div>
 
-	<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+	<div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
 		<!-- Game Area -->
-		<MotionShell delay={100} class="h-[500px] lg:col-span-2">
+		<MotionShell delay={100} class="lg:col-span-2">
 			<div
 				bind:this={gameAreaRef}
-				class="electric-border electric-border-active relative h-full w-full overflow-hidden rounded-lg border border-border bg-bg-panel shadow-[0_0_20px_var(--color-accent-glow)]"
+				class="electric-border electric-border-active relative w-full overflow-hidden rounded-lg border border-border bg-bg-panel shadow-[0_0_20px_var(--color-accent-glow)]"
+				style="height: clamp(320px, 55vw, 500px);"
 			>
 				{#if !isPlaying && !isGameOver}
 					<div
-						class="absolute inset-0 flex flex-col items-center justify-center bg-bg-base/80 p-6 backdrop-blur-sm"
+						class="absolute inset-0 flex flex-col items-center justify-center bg-bg-base/80 p-4 backdrop-blur-sm sm:p-6"
 					>
 						{#if isLoadingAI && !mission}
-							<div class="animate-pulse text-accent">Menghubungi AI Security...</div>
+							<div class="animate-pulse text-sm text-accent sm:text-base">Menghubungi AI Security...</div>
 						{:else if mission}
 							<div
-								class="mb-6 max-w-md rounded border border-accent/50 bg-bg-panel p-4 text-center shadow-lg"
+								class="mb-4 w-full max-w-sm rounded border border-accent/50 bg-bg-panel p-4 text-center shadow-lg"
 							>
-								<h2 class="mb-2 text-xl font-bold text-accent">
-									{mission.result.missionTitle || 'Misi Pertahanan'}
+								<h2 class="mb-2 text-base font-bold text-accent sm:text-xl">
+									{getMissionTitle()}
 								</h2>
-								<p class="mb-4 text-sm text-text-muted">{mission.summary}</p>
-								<ul class="mb-4 text-left text-sm text-text-base">
-									{#each mission.result.objectives || [] as obj}
+								<p class="mb-3 text-xs text-text-muted sm:text-sm">{mission.summary}</p>
+								<ul class="mb-4 text-left text-xs text-text-base sm:text-sm">
+									{#each getMissionObjectives() as obj}
 										<li
 											class="flex items-center before:mr-2 before:text-accent before:content-['>']"
 										>
@@ -377,39 +426,45 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 							</div>
 						{/if}
 						{#if aiError}
-							<div class="text-sm text-critical">{aiError}</div>
-							<button onclick={startGame} class="mt-4 text-accent underline">Lewati & Mulai</button>
+							<div class="mb-3 max-w-xs rounded border border-critical/30 bg-critical/10 px-4 py-2 text-center text-xs text-critical">
+								{aiError}
+							</div>
+							<button onclick={startGame} class="rounded border border-accent px-4 py-2 text-sm text-accent hover:bg-accent/10">
+								Lewati &amp; Mulai
+							</button>
 						{/if}
 					</div>
 				{:else if isGameOver}
 					<div
-						class="absolute inset-0 flex flex-col items-center justify-center bg-bg-base/90 p-6 backdrop-blur-md"
+						class="absolute inset-0 flex flex-col items-center justify-center overflow-y-auto bg-bg-base/90 p-4 backdrop-blur-md sm:p-6"
 					>
-						<h2 class="mb-2 text-3xl font-bold text-critical">SYSTEM COMPROMISED</h2>
-						<div class="mb-6 text-xl">Final Score: <span class="text-accent">{score}</span></div>
+						<h2 class="mb-1 text-2xl font-bold text-critical sm:text-3xl">SYSTEM COMPROMISED</h2>
+						<div class="mb-4 text-lg">Final Score: <span class="text-accent">{score}</span></div>
 
 						{#if isLoadingAI}
-							<div class="animate-pulse text-text-muted">Menyusun Incident Report...</div>
+							<div class="animate-pulse text-sm text-text-muted">Menyusun Incident Report...</div>
 						{:else if incidentSummary}
-							<div class="mb-6 w-full max-w-lg rounded border border-border bg-bg-panel p-4">
-								<div class="mb-2 flex items-center justify-between">
-									<div class="font-bold text-accent">Incident Summary</div>
+							<div class="mb-4 w-full max-w-md rounded border border-border bg-bg-panel p-4">
+								<div class="mb-2 flex items-center justify-between gap-2">
+									<div class="font-bold text-accent text-sm">Incident Summary</div>
 									<div
 										class="rounded border border-warning/30 bg-warning/10 px-2 py-0.5 text-xs text-warning"
 									>
-										{incidentSummary.result.status || 'Tinjauan'}
+										{getIncidentStatus()}
 									</div>
 								</div>
-								<p class="mb-4 text-sm text-text-base">{incidentSummary.summary}</p>
-								<div class="text-xs font-bold text-text-muted">Remediation Checklist:</div>
-								<ul class="mt-2 space-y-1 text-sm">
-									{#each incidentSummary.result.remediationChecklist || [] as item}
-										<li class="flex items-start">
-											<span class="mr-2 text-accent-secondary">[ ]</span>
-											{item}
-										</li>
-									{/each}
-								</ul>
+								<p class="mb-3 text-xs leading-relaxed text-text-base sm:text-sm">{incidentSummary.summary}</p>
+								{#if getRemediationChecklist().length > 0}
+									<div class="text-xs font-bold text-text-muted">Remediation Checklist:</div>
+									<ul class="mt-2 space-y-1 text-xs sm:text-sm">
+										{#each getRemediationChecklist() as item}
+											<li class="flex items-start">
+												<span class="mr-2 text-accent-secondary">[ ]</span>
+												{item}
+											</li>
+										{/each}
+									</ul>
+								{/if}
 							</div>
 						{/if}
 
@@ -425,17 +480,17 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 				<!-- HUD -->
 				{#if isPlaying}
 					<div
-						class="absolute top-0 left-0 z-10 flex w-full items-center justify-between bg-gradient-to-b from-bg-base to-transparent p-4"
+						class="absolute top-0 left-0 z-10 flex w-full items-center justify-between bg-gradient-to-b from-bg-base to-transparent px-2 py-2 sm:px-4 sm:py-3"
 					>
-						<div class="flex gap-4 font-mono">
+						<div class="flex gap-2 font-mono sm:gap-4">
 							<div>
-								<div class="text-xs text-text-muted">SCORE</div>
-								<div class="text-lg font-bold text-accent">{score}</div>
+								<div class="text-[10px] text-text-muted sm:text-xs">SCORE</div>
+								<div class="text-sm font-bold text-accent sm:text-lg">{score}</div>
 							</div>
 							<div>
-								<div class="text-xs text-text-muted">HEALTH</div>
+								<div class="text-[10px] text-text-muted sm:text-xs">HP</div>
 								<div
-									class="text-lg font-bold {health < 30
+									class="text-sm font-bold sm:text-lg {health < 30
 										? 'animate-pulse text-critical'
 										: 'text-accent-secondary'}"
 								>
@@ -443,11 +498,11 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 								</div>
 							</div>
 						</div>
-						<div class="flex gap-4 text-right font-mono">
+						<div class="flex gap-2 text-right font-mono sm:gap-4">
 							<div>
-								<div class="text-xs text-text-muted">THREAT</div>
+								<div class="text-[10px] text-text-muted sm:text-xs">THREAT</div>
 								<div
-									class="text-lg font-bold {threatLevel === 'Critical'
+									class="text-sm font-bold sm:text-lg {threatLevel === 'Critical'
 										? 'text-critical'
 										: threatLevel === 'High'
 											? 'text-warning'
@@ -457,8 +512,8 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 								</div>
 							</div>
 							<div>
-								<div class="text-xs text-text-muted">TIMER</div>
-								<div class="text-lg font-bold text-text-base">{timer}s</div>
+								<div class="text-[10px] text-text-muted sm:text-xs">TIME</div>
+								<div class="text-sm font-bold text-text-base sm:text-lg">{timer}s</div>
 							</div>
 						</div>
 					</div>
@@ -479,8 +534,8 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 					{/each}
 
 					<div
-						class="absolute z-20 flex items-center justify-center rounded-full border border-accent/40 bg-bg-base/80 px-3 py-2 text-lg shadow-[0_0_14px_var(--color-accent-glow)]"
-						style="left: {playerX}%; bottom: 1rem; transform: translateX(-50%);"
+						class="absolute z-20 flex items-center justify-center rounded-full border border-accent/40 bg-bg-base/80 px-2 py-1.5 text-base shadow-[0_0_14px_var(--color-accent-glow)] sm:px-3 sm:py-2 sm:text-lg"
+						style="left: {playerX}%; bottom: 2.5rem; transform: translateX(-50%);"
 						aria-label="Cyber defender"
 					>
 						🛡️
@@ -489,7 +544,7 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 					<!-- Entities -->
 					{#each entities as entity (entity.id)}
 						<button
-							class="absolute flex h-10 w-10 items-center justify-center rounded-full border shadow-lg transition-transform hover:scale-110 focus:outline-none"
+							class="absolute flex h-9 w-9 items-center justify-center rounded-full border shadow-lg transition-transform focus:outline-none sm:h-10 sm:w-10"
 							style="left: {entity.x}%; top: {entity.y}%; border-color: var(--color-{entity.type ===
 							'malware'
 								? 'critical'
@@ -507,41 +562,79 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 					{/each}
 				{/if}
 			</div>
+
+			<!-- Mobile touch controls — shown only during play on small screens -->
+			{#if isPlaying}
+				<div class="mt-3 flex items-center justify-between gap-2 sm:hidden">
+					<!-- Left button -->
+					<button
+						class="tap-target touch-none flex flex-1 items-center justify-center rounded-xl border border-accent/40 bg-bg-panel py-3 text-2xl font-bold text-accent active:bg-accent/20"
+						aria-label="Gerak kiri"
+						onpointerdown={(e) => { e.preventDefault(); startHold('left'); }}
+						onpointerup={stopHold}
+						onpointerleave={stopHold}
+						onpointercancel={stopHold}
+					>
+						◀
+					</button>
+
+					<!-- Shoot button -->
+					<button
+						class="tap-target touch-none flex flex-[1.4] items-center justify-center rounded-xl border border-warning/60 bg-warning/10 py-3 text-sm font-bold text-warning active:bg-warning/30"
+						aria-label="Tembak"
+						onpointerdown={(e) => { e.preventDefault(); shootProjectile(); }}
+					>
+						🔫 TEMBAK
+					</button>
+
+					<!-- Right button -->
+					<button
+						class="tap-target touch-none flex flex-1 items-center justify-center rounded-xl border border-accent/40 bg-bg-panel py-3 text-2xl font-bold text-accent active:bg-accent/20"
+						aria-label="Gerak kanan"
+						onpointerdown={(e) => { e.preventDefault(); startHold('right'); }}
+						onpointerup={stopHold}
+						onpointerleave={stopHold}
+						onpointercancel={stopHold}
+					>
+						▶
+					</button>
+				</div>
+			{/if}
 		</MotionShell>
 
 		<!-- Right Panel -->
-		<MotionShell delay={200} class="flex h-full flex-col gap-6">
-			<div class="electric-border flex h-full flex-col rounded-lg border border-border bg-bg-panel p-6 shadow-md">
-				<div class="mb-4 rounded-lg border border-border/60 bg-bg-base/70 p-4">
-					<div class="mb-3 flex items-start justify-between gap-3">
-						<div>
-							<div class="text-xs font-semibold tracking-[0.22em] text-text-muted uppercase">
+		<MotionShell delay={200} class="flex h-full flex-col gap-4 lg:gap-6">
+			<div class="electric-border flex h-full flex-col rounded-lg border border-border bg-bg-panel p-4 shadow-md sm:p-6">
+				<div class="mb-4 rounded-lg border border-border/60 bg-bg-base/70 p-3 sm:p-4">
+					<div class="mb-2 flex items-start justify-between gap-2">
+						<div class="min-w-0">
+							<div class="text-xs font-semibold tracking-[0.18em] text-text-muted uppercase">
 								Kontrol
 							</div>
-							<div class="mt-1 text-sm font-semibold text-text-base">
-								A / ← kiri • D / → kanan • Space tembak
+							<div class="mt-1 text-xs font-semibold text-text-base sm:text-sm">
+								A / ← kiri · D / → kanan · Space tembak
 							</div>
 						</div>
 						<button
 							type="button"
 							aria-pressed={soundEnabled}
 							onclick={toggleSound}
-							class="rounded-full border px-3 py-1 text-xs font-semibold transition-colors {soundEnabled
+							class="shrink-0 rounded-full border px-2 py-1 text-xs font-semibold transition-colors {soundEnabled
 								? 'border-accent/30 bg-accent/10 text-accent'
 								: 'border-border bg-bg-panel text-text-muted'}"
 						>
-							Suara: {soundEnabled ? 'Aktif' : 'Mati'}
+							{soundEnabled ? '🔊' : '🔇'}
 						</button>
 					</div>
-					<ul class="grid grid-cols-1 gap-1 text-xs text-text-muted sm:grid-cols-2">
+					<ul class="grid grid-cols-1 gap-1 text-[11px] text-text-muted sm:grid-cols-2 sm:text-xs">
 						<li>• Ambil bintang / patch token untuk skor</li>
 						<li>• Hancurkan threat untuk skor tambahan</li>
 						<li>• Hindari tabrakan dengan threat</li>
-						<li>• Audio hanya aktif setelah interaksi</li>
+						<li>• Audio aktif setelah interaksi pertama</li>
 					</ul>
 				</div>
 
-				<h3 class="mb-4 text-lg font-semibold text-text-base">System Logs</h3>
+				<h3 class="mb-3 text-sm font-semibold text-text-base sm:text-lg">System Logs</h3>
 				<div
 					class="flex-1 overflow-y-auto rounded border border-border/50 bg-bg-base p-3 font-mono text-xs"
 				>
@@ -571,7 +664,7 @@ import AppTutorial from '$lib/components/AppTutorial.svelte';
 
 	<AppTutorial
 		purpose="Mensimulasikan pertahanan cyber arcade dengan misi, skor, dan incident report."
-		howToUse="Gerakkan defender, tembak threat, ambil patch token/bintang, dan jaga health agar tidak turun."
+		howToUse="Di desktop: A/D atau ← → untuk bergerak, Space untuk tembak. Di mobile: gunakan tombol ◀ ▶ dan TEMBAK di bawah arena."
 		aiAction="Generate mission untuk briefing awal dan Summarize Incident untuk laporan akhir."
 		output="Skor, high score, laporan insiden, dan checklist remediation defensif."
 		securityNote="Fokus pada deteksi, respons, dan remediation tanpa instruksi ofensif."

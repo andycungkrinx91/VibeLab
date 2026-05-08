@@ -78,7 +78,7 @@
 	}
 
 	async function analyzeRisk() {
-		if (!scanResult) return;
+		if (!scanResult || isLoadingAI) return; // prevent duplicate AI calls
 		isLoadingAI = true;
 		aiError = '';
 		try {
@@ -145,7 +145,7 @@
 					</span>
 				</div>
 
-				<div class="flex flex-col gap-3 md:flex-row">
+				<div class="flex flex-col gap-3 sm:flex-row">
 					<div class="flex-1">
 						<label for="security-header-target" class="mb-2 block text-xs font-semibold tracking-wider text-text-muted uppercase">
 							Domain / URL
@@ -161,7 +161,7 @@
 						<button
 							onclick={scanHeaders}
 							disabled={!canScan(targetUrl) || isScanning}
-							class="btn-shimmer inline-flex items-center justify-center rounded-lg border border-accent/30 bg-accent/10 px-4 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-bg-base disabled:cursor-not-allowed disabled:opacity-50"
+							class="btn-shimmer inline-flex flex-1 items-center justify-center rounded-lg border border-accent/30 bg-accent/10 px-4 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-bg-base disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
 						>
 							{isScanning ? 'Scanning...' : 'Scan Security Headers'}
 						</button>

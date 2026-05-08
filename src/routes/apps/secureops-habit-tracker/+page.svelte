@@ -124,7 +124,7 @@
 	});
 
 	async function getCoaching() {
-		if (!isReady) return;
+		if (!isReady || isLoadingAI) return; // prevent duplicate calls
 		isLoadingAI = true;
 		aiCoachMessage = null;
 		aiNextSteps = null;
@@ -148,7 +148,7 @@
 				})
 			});
 			const data = await res.json();
-			if (data.ok && data.result.coachMessage) {
+			if (data.ok && data.result?.coachMessage) {
 				aiCoachMessage = data.result.coachMessage;
 				aiNextSteps = data.result.nextSteps || [];
 			} else {

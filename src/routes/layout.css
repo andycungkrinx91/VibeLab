@@ -177,12 +177,18 @@
 	--critical: #dddddd;
 }
 
+html {
+	overflow-x: hidden;
+}
+
 body {
 	background-color: var(--color-bg-base);
 	color: var(--color-text-base);
 	font-family:
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
 		monospace;
+	overflow-x: hidden;
+	-webkit-tap-highlight-color: transparent;
 }
 
 /* ─── Background Patterns ──────────────────────────────────────────────────── */
@@ -670,4 +676,24 @@ body {
 	:where(.electric-button, .btn-shimmer)::after {
 		display: none;
 	}
+	/* Reduce electric border glow intensity on small screens */
+	.electric-border-active {
+		--electric-opacity: 0.38;
+		--electric-border-glow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 18%, transparent), 0 0 12px var(--color-accent-glow);
+	}
+}
+
+/* ─── Touch controls ────────────────────────────────────────────────────────  */
+/* Prevent accidental page scroll when tapping game controls */
+.touch-none {
+	touch-action: none;
+}
+.touch-pan-x {
+	touch-action: pan-x;
+}
+
+/* Minimum tap target size (WCAG 2.5.5) */
+.tap-target {
+	min-height: 44px;
+	min-width: 44px;
 }
