@@ -178,10 +178,14 @@
 }
 
 html {
+	min-height: 100%;
 	overflow-x: hidden;
+	scrollbar-gutter: stable;
 }
 
 body {
+	min-height: 100%;
+	margin: 0;
 	background-color: var(--color-bg-base);
 	color: var(--color-text-base);
 	font-family:
@@ -514,6 +518,8 @@ body {
 	--electric-border-glow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 22%, transparent), 0 0 18px var(--color-accent-glow);
 	position: relative;
 	isolation: isolate;
+	overflow: hidden;
+	contain: paint;
 	/* No border/background override: each element keeps its own base styles */
 	transition:
 		box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),

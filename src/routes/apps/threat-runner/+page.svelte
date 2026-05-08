@@ -92,7 +92,6 @@
 
 		const stored = localStorage.getItem('vibelab-threat-runner-highscore');
 		if (stored) highScore = parseInt(stored, 10);
-		fetchMission();
 
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (!isPlaying) return;
@@ -243,7 +242,6 @@
 				localStorage.setItem('vibelab-threat-runner-highscore', highScore.toString());
 			}
 		}
-		fetchSummary();
 	}
 
 	function updateThreatLevel() {
@@ -451,13 +449,32 @@
 								>
 									Buka AI
 								</button>
-							{/if}
-							<button
-								onclick={startGame}
-								class="mission-start-btn btn-shimmer w-full rounded border border-accent bg-accent/20 px-6 py-3 font-bold text-accent transition-colors hover:bg-accent hover:text-bg-base"
-							>
-								INITIATE DEFENSE
-							</button>
+						{/if}
+						<button
+							onclick={startGame}
+							class="mission-start-btn btn-shimmer w-full rounded border border-accent bg-accent/20 px-6 py-3 font-bold text-accent transition-colors hover:bg-accent hover:text-bg-base"
+						>
+							INITIATE DEFENSE
+						</button>
+						{:else}
+							<div class="mb-4 max-w-sm rounded border border-border/60 bg-bg-panel/80 p-4 text-center text-sm text-text-muted">
+								Klik tombol di bawah untuk memuat misi AI atau mulai bermain tanpa misi.
+							</div>
+							<div class="flex w-full max-w-sm flex-col gap-2">
+								<button
+									onclick={fetchMission}
+									disabled={isLoadingAI}
+									class="mission-start-btn btn-shimmer w-full rounded border border-accent bg-accent/20 px-6 py-3 font-bold text-accent transition-colors hover:bg-accent hover:text-bg-base disabled:opacity-50"
+								>
+									{isLoadingAI ? 'Memuat AI...' : 'Muat Misi AI'}
+								</button>
+								<button
+									onclick={startGame}
+									class="mission-skip rounded border border-border px-4 py-2 text-sm text-text-base hover:bg-bg-panel"
+								>
+									Main Tanpa AI
+								</button>
+							</div>
 						{/if}
 						{#if aiError}
 							<div class="mission-error mb-3 max-w-xs rounded border border-critical/30 bg-critical/10 px-4 py-2 text-center text-xs text-critical">
@@ -512,6 +529,17 @@
 									Buka AI
 								</button>
 							{/if}
+						{:else}
+							<div class="mb-4 max-w-md rounded border border-border/60 bg-bg-panel/80 p-4 text-center text-sm text-text-muted">
+								Klik tombol di bawah untuk menghasilkan incident report AI.
+							</div>
+							<button
+								onclick={fetchSummary}
+								disabled={isLoadingAI}
+								class="mb-4 rounded border border-accent bg-accent/10 px-4 py-2 text-sm font-semibold text-accent hover:bg-accent hover:text-bg-base disabled:opacity-50"
+							>
+								{isLoadingAI ? 'Memuat AI...' : 'Minta Incident Report'}
+							</button>
 						{/if}
 
 						<button
@@ -661,7 +689,7 @@
 		<!-- Right Panel -->
 		<div class="w-full min-w-0 max-w-[860px] mx-auto xl:max-w-none xl:mx-0">
 			<MotionShell delay={200}>
-				<div class="electric-border flex h-full flex-col rounded-lg border border-border bg-bg-panel p-4 shadow-md sm:p-6">
+				<div class="electric-border flex min-h-0 flex-col rounded-lg border border-border bg-bg-panel p-4 shadow-md sm:p-6">
 				<div class="mb-4 rounded-lg border border-border/60 bg-bg-base/70 p-3 sm:p-4">
 					<div class="mb-2 flex items-start justify-between gap-2">
 						<div class="min-w-0">

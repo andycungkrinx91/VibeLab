@@ -92,6 +92,10 @@ Provider modes:
 - `AI_PROVIDER=openai` → official OpenAI provider
 - `AI_PROVIDER=openai-compatible` → Cloudflare Workers AI / AI Gateway / Ollama / LM Studio / OpenRouter / custom baseURL providers
 - `AI_DISABLE_THINKING=true|false` → toggle low-latency / no-thinking mode (default: `false`)
+- `AI_MAX_OUTPUT_TOKENS=<number>` → cap AI output tokens to reduce cost (default: `700`)
+- `OPENAI_COMPAT_MAX_OUTPUT_TOKENS=<number>` → higher cap for OpenAI-compatible reasoning models (default: `4096`)
+- `AI_REQUEST_TIMEOUT_MS=<number>` → server timeout for AI requests (default: `25000`)
+- `AI_PROMPT_MODE=standard|concise` → shorten server prompts and responses when set to `concise`
 
 Debug tips if direct curl works but the app still shows errors:
 
@@ -138,6 +142,10 @@ Rules:
 ```env
 AI_PROVIDER=gemini
 AI_DISABLE_THINKING=false
+AI_MAX_OUTPUT_TOKENS=700
+OPENAI_COMPAT_MAX_OUTPUT_TOKENS=4096
+AI_REQUEST_TIMEOUT_MS=25000
+AI_PROMPT_MODE=standard
 
 GEMINI_API_KEY=
 GEMINI_TEXT_MODEL=gemini-2.5-flash

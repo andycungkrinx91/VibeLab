@@ -148,7 +148,7 @@
 	}
 </script>
 
-	<div class="mx-auto mt-8 flex h-full w-full max-w-6xl flex-col gap-6">
+	<div class="mx-auto mt-8 flex min-h-0 w-full max-w-6xl flex-col gap-6">
 		<MotionShell delay={0}>
 			<AppHeader appId="patch-deadline-countdown" />
 		</MotionShell>
@@ -272,11 +272,11 @@
 		<!-- Right Col: AI Assistant -->
 		<MotionShell delay={200} class="flex flex-col lg:col-span-1">
 			<div
-				class="sticky top-24 flex h-full flex-1 flex-col rounded-lg border border-border bg-bg-panel p-6 shadow-md"
+				class="sticky top-24 flex max-h-[calc(100dvh-6rem)] min-h-0 flex-col overflow-hidden rounded-lg border border-border bg-bg-panel p-6 shadow-md"
 			>
 				<h3 class="mb-4 border-b border-border pb-2 font-semibold text-accent">AI Patch Advisor</h3>
 
-				<div class="flex-1 overflow-y-auto">
+				<div class="flex-1 overflow-y-auto min-h-0">
 					{#if isLoadingAI}
 						<div class="animate-pulse space-y-4">
 							<div class="h-4 w-1/4 rounded bg-border/50"></div>

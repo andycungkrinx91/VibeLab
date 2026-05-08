@@ -18,7 +18,7 @@
 	);
 </script>
 
-<div class="mx-auto mt-8 flex h-full w-full max-w-6xl flex-col gap-8">
+<div class="mx-auto mt-8 flex min-h-0 w-full max-w-6xl flex-col gap-8">
 	<MotionShell delay={0}>
 		<div class="mb-4 flex flex-col justify-between gap-6 md:flex-row md:items-end">
 			<div>

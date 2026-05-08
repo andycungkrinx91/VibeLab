@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { env } from '$env/dynamic/private';
 
-const FALLBACK_OPENAI_TEXT_MODEL = 'gpt-5.5';
+const FALLBACK_OPENAI_TEXT_MODEL = 'gpt-5.5-mini';
 const FALLBACK_OPENAI_CHEAP_MODEL = 'gpt-5.5-mini';
 
 function isThinkingDisabled() {
@@ -17,6 +17,20 @@ type OpenAIProviderHealth = {
 
 let openAIClient: OpenAI | null = null;
 let openAIClientKey = '';
+let openAIClientTimeoutMs = 0;
+
+function getIntEnvValue(name: string, fallback: number) {
+	const value = Number(readEnvValue(name));
+	return Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
+function getMaxOutputTokens() {
+	return getIntEnvValue('AI_MAX_OUTPUT_TOKENS', 700);
+}
+
+function getRequestTimeoutMs() {
+	return getIntEnvValue('AI_REQUEST_TIMEOUT_MS', 25000);
+}
 
 function readEnvValue(name: string) {
 	const runtimeValue = (env as Record<string, string | undefined>)[name];
@@ -24,9 +38,11 @@ function readEnvValue(name: string) {
 }
 
 function getClient(apiKey: string) {
-	if (!openAIClient || openAIClientKey !== apiKey) {
-		openAIClient = new OpenAI({ apiKey });
+	const timeoutMs = getRequestTimeoutMs();
+	if (!openAIClient || openAIClientKey !== apiKey || openAIClientTimeoutMs !== timeoutMs) {
+		openAIClient = new OpenAI({ apiKey, timeout: timeoutMs });
 		openAIClientKey = apiKey;
+		openAIClientTimeoutMs = timeoutMs;
 	}
 
 	return openAIClient;
@@ -76,6 +92,10 @@ function sanitizeOpenAIError(error: unknown) {
 		return 'OpenAI sedang dibatasi sementara. Coba lagi beberapa saat lagi.';
 	}
 
+	if (message.includes('abort') || message.includes('timeout') || message.includes('timed out')) {
+		return 'Permintaan ke OpenAI melebihi batas waktu. Coba lagi dengan prompt yang lebih ringkas.';
+	}
+
 	if (message.includes('fetch failed') || message.includes('failed to fetch') || message.includes('network') || message.includes('econnrefused') || message.includes('enotfound')) {
 		return 'Koneksi ke OpenAI gagal. Periksa OPENAI_API_KEY, konektivitas server, dan endpoint model.';
 	}
@@ -93,7 +113,7 @@ function sanitizeOpenAIError(error: unknown) {
 
 export function getOpenAIProviderHealth(): OpenAIProviderHealth {
 	const apiKey = readEnvValue('OPENAI_API_KEY');
-	const textModel = readEnvValue('OPENAI_TEXT_MODEL') || FALLBACK_OPENAI_TEXT_MODEL;
+	const textModel = readEnvValue('OPENAI_TEXT_MODEL') || readEnvValue('OPENAI_CHEAP_MODEL') || FALLBACK_OPENAI_TEXT_MODEL;
 	const cheapModel = readEnvValue('OPENAI_CHEAP_MODEL') || FALLBACK_OPENAI_CHEAP_MODEL;
 
 	return {
@@ -117,6 +137,7 @@ export async function generateWithOpenAIResponses(params: {
 
 	const client = getClient(apiKey);
 	const disableThinking = isThinkingDisabled();
+	const maxOutputTokens = getMaxOutputTokens();
 
 	const runOnce = async (disableThinking: boolean) => {
 		const response = await client.responses.create({
@@ -125,7 +146,8 @@ export async function generateWithOpenAIResponses(params: {
 				{ role: 'system', content: globalSafetyInstruction },
 				{ role: 'user', content: prompt }
 			],
-			...(disableThinking ? { reasoning: { effort: 'none' } } : {})
+			max_output_tokens: maxOutputTokens,
+			...(disableThinking ? { reasoning: { effort: 'low' } } : {})
 		});
 
 		const text = extractResponseText(response);

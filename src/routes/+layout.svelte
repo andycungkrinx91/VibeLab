@@ -22,7 +22,7 @@
 	style="background: radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 70%);"
 ></div>
 
-<div class="relative z-0 flex min-h-screen flex-col text-text-base">
+<div class="relative z-0 flex min-h-dvh flex-col overflow-x-hidden text-text-base">
 	<header
 		class="sticky top-0 z-50 border-b border-border/40 bg-bg-panel/85 shadow-[0_1px_24px_-4px_var(--color-accent-glow)] backdrop-blur-md"
 	>
@@ -63,7 +63,7 @@
 		</div>
 	</header>
 
-	<main class="container mx-auto flex flex-1 flex-col p-4 sm:p-6 lg:p-8">
-		{@render children()}
-	</main>
+<main class="container mx-auto flex min-h-0 flex-1 flex-col overflow-x-hidden p-4 sm:p-6 lg:p-8">
+	{@render children()}
+</main>
 </div>

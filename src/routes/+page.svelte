@@ -4,7 +4,7 @@
 	import { APPS } from '$lib/metadata';
 </script>
 
-<div class="mx-auto mt-8 flex h-full w-full max-w-6xl flex-col gap-12">
+<div class="mx-auto mt-8 flex min-h-0 w-full max-w-6xl flex-col gap-12">
 	<!-- Hero Section -->
 	<MotionShell delay={0}>
 		<div
@@ -173,7 +173,7 @@
 
 		<MotionShell delay={400} class="md:col-span-2">
 			<div
-				class="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-bg-panel shadow-md"
+				class="flex min-h-0 flex-col overflow-hidden rounded-lg border border-border bg-bg-panel shadow-md"
 			>
 				<div class="flex items-center justify-between border-b border-border bg-bg-base px-4 py-2">
 					<div class="text-xs font-medium tracking-wider text-text-muted uppercase">

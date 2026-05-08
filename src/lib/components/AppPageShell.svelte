@@ -13,7 +13,7 @@
   let nextApp = $derived(currentIndex < APPS.length - 1 ? APPS[currentIndex + 1] : null);
 </script>
 
-<div class="flex flex-col min-h-screen">
+<div class="flex min-h-0 flex-col overflow-x-hidden">
   <!-- App Header -->
   <header class="mb-6 sm:mb-8">
     <AppHeader {appId} />
@@ -30,7 +30,7 @@
     </div>
   </header>
 
-  <main class="flex-1">
+  <main class="min-h-0 flex-1">
     <MotionShell delay={80}>
       {@render children()}
     </MotionShell>

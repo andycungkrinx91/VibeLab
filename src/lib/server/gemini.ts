@@ -22,6 +22,11 @@ Berikan respons dalam format JSON dengan struktur berikut:
 Jangan bungkus dengan markdown code block.
 `;
 
+const DEFAULT_MAX_OUTPUT_TOKENS = 700;
+const DEFAULT_OPENAI_COMPAT_MAX_OUTPUT_TOKENS = 4096;
+const DEFAULT_REQUEST_TIMEOUT_MS = 25000;
+const CONCISE_PROMPT_MODE = 'concise';
+
 const FALLBACK_GEMINI_TEXT_MODEL = 'gemini-2.5-flash';
 const FALLBACK_GEMINI_CHEAP_MODEL = 'gemini-2.5-flash-lite';
 const FALLBACK_OPENAI_TEXT_MODEL = 'gpt-5.5';
@@ -126,6 +131,50 @@ function loadLocalEnvOverrides() {
 
 function stripWhitespace(value: string) {
 	return value.trim();
+}
+
+function getIntEnvValue(name: string, fallback: number) {
+	const value = Number(readEnvValue(name));
+	return Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
+function getMaxOutputTokens() {
+	return getIntEnvValue('AI_MAX_OUTPUT_TOKENS', DEFAULT_MAX_OUTPUT_TOKENS);
+}
+
+function getOpenAICompatibleMaxOutputTokens() {
+	return getIntEnvValue('OPENAI_COMPAT_MAX_OUTPUT_TOKENS', DEFAULT_OPENAI_COMPAT_MAX_OUTPUT_TOKENS);
+}
+
+function getRequestTimeoutMs() {
+	return getIntEnvValue('AI_REQUEST_TIMEOUT_MS', DEFAULT_REQUEST_TIMEOUT_MS);
+}
+
+function isConcisePromptMode() {
+	return readEnvValue('AI_PROMPT_MODE').toLowerCase() === CONCISE_PROMPT_MODE;
+}
+
+function buildPromptModeInstruction() {
+	if (!isConcisePromptMode()) {
+		return '';
+	}
+
+	return 'Mode ringkas aktif: jawab sepadat mungkin, hindari pengulangan, prioritaskan hasil inti, dan batasi rekomendasi ke 3 poin paling penting.';
+}
+
+async function fetchWithTimeout(input: string, init: RequestInit, timeoutMs: number) {
+	if (!timeoutMs) {
+		return fetch(input, init);
+	}
+
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+	try {
+		return await fetch(input, { ...init, signal: controller.signal });
+	} finally {
+		clearTimeout(timer);
+	}
 }
 
 function isThinkingDisabled() {
@@ -280,12 +329,16 @@ function getGeminiClient(apiKey: string) {
 }
 
 function buildJsonSchemaPrompt() {
-	return RESPONSE_SCHEMA_INSTRUCTION;
+	const conciseModeInstruction = buildPromptModeInstruction();
+	return conciseModeInstruction ? `${RESPONSE_SCHEMA_INSTRUCTION}\n${conciseModeInstruction}` : RESPONSE_SCHEMA_INSTRUCTION;
 }
 
 function buildFinalPrompt(app: string, action: string, input: any, prompt: string) {
+	const conciseModeInstruction = buildPromptModeInstruction();
 	return `
 ${SYSTEM_INSTRUCTION}
+
+${conciseModeInstruction ? `${conciseModeInstruction}\n` : ''}
 
 Konteks Aplikasi: ${app}
 Aksi: ${action}
@@ -406,6 +459,9 @@ function friendlyProviderError(providerLabel: string, providerId: AIProviderSele
 			return 'AI_PROVIDER tidak valid. Gunakan gemini, openai, atau openai-compatible lalu restart server.';
 		}
 		if (providerId === 'gemini') {
+			if (message.includes('abort') || message.includes('timeout') || message.includes('timed out')) {
+				return 'Permintaan ke Gemini melebihi batas waktu. Coba lagi dengan prompt yang lebih ringkas.';
+			}
 			if (
 				message.includes('429') ||
 				message.includes('quota') ||
@@ -446,6 +502,9 @@ function friendlyProviderError(providerLabel: string, providerId: AIProviderSele
 			) {
 				return `OPENAI_COMPAT_API_KEY untuk ${providerLabel} tidak valid atau sudah kedaluwarsa. Perbarui konfigurasi lalu restart server.`;
 			}
+			if (message.includes('abort') || message.includes('timeout') || message.includes('timed out')) {
+				return `Permintaan ke ${providerLabel} melebihi batas waktu. Coba lagi dengan prompt yang lebih ringkas.`;
+			}
 			if (
 				message.includes('failed to fetch') ||
 				message.includes('fetch failed') ||
@@ -471,6 +530,9 @@ function friendlyProviderError(providerLabel: string, providerId: AIProviderSele
 			}
 			if (message.includes('429') || message.includes('rate limit')) {
 				return 'OpenAI sedang dibatasi sementara. Coba lagi beberapa saat lagi.';
+			}
+			if (message.includes('abort') || message.includes('timeout') || message.includes('timed out')) {
+				return 'Permintaan ke OpenAI melebihi batas waktu. Coba lagi dengan prompt yang lebih ringkas.';
 			}
 			if (
 				message.includes('failed to fetch') ||
@@ -498,6 +560,7 @@ async function generateWithGemini(
 ): Promise<SecurityAIResponse> {
 	const finalPrompt = buildFinalPrompt(app, action, input, prompt);
 	const disableThinking = isThinkingDisabled();
+	const maxOutputTokens = getOpenAICompatibleMaxOutputTokens();
 
 	const tryGeminiOnce = async (disableThinking: boolean) => {
 		const client = getGeminiClient(apiKey);
@@ -506,11 +569,12 @@ async function generateWithGemini(
 			contents: finalPrompt,
 			config: disableThinking
 				? {
+					maxOutputTokens,
 					thinkingConfig: {
 						thinkingBudget: 0
 					}
 				}
-				: {}
+				: { maxOutputTokens }
 		});
 
 		const text = coerceProviderText(response.text);
@@ -573,16 +637,20 @@ async function generateGeminiViaRest(
 	const body: Record<string, unknown> = {
 		contents: [{ role: 'user', parts: [{ text: finalPrompt }] }]
 	};
+	const maxOutputTokens = getMaxOutputTokens();
 
 	if (disableThinking) {
 		body.generationConfig = {
+			maxOutputTokens,
 			thinkingConfig: {
 				thinkingBudget: 0
 			}
 		};
+	} else {
+		body.generationConfig = { maxOutputTokens };
 	}
 
-	const response = await fetch(
+	const response = await fetchWithTimeout(
 		`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
 		{
 			method: 'POST',
@@ -592,6 +660,8 @@ async function generateGeminiViaRest(
 			},
 			body: JSON.stringify(body)
 		}
+		,
+		getRequestTimeoutMs()
 	);
 
 	if (!response.ok) {
@@ -635,6 +705,7 @@ async function generateWithOpenAICompatible(
 ): Promise<SecurityAIResponse> {
 	const finalPrompt = buildFinalPrompt(app, action, input, prompt);
 	const disableThinking = isThinkingDisabled();
+	const maxOutputTokens = getMaxOutputTokens();
 
 	const runOnce = async (disableThinking: boolean) => {
 		const requestBody: Record<string, unknown> = {
@@ -643,11 +714,12 @@ async function generateWithOpenAICompatible(
 				{ role: 'system', content: SYSTEM_INSTRUCTION },
 				{ role: 'user', content: finalPrompt }
 			],
-			temperature: 0.4
+			temperature: 0.4,
+			max_tokens: maxOutputTokens
 		};
 
 		if (disableThinking) {
-			requestBody.reasoning_effort = 'none';
+			requestBody.reasoning_effort = null;
 		}
 
 		const headers: Record<string, string> = {
@@ -658,11 +730,11 @@ async function generateWithOpenAICompatible(
 			headers.Authorization = `Bearer ${apiKey}`;
 		}
 
-		const response = await fetch(buildOpenAICompatibleUrl(baseUrl), {
+		const response = await fetchWithTimeout(buildOpenAICompatibleUrl(baseUrl), {
 			method: 'POST',
 			headers,
 			body: JSON.stringify(requestBody)
-		});
+		}, getRequestTimeoutMs());
 
 		if (!response.ok) {
 			const rawError = await response.text();

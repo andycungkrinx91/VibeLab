@@ -123,7 +123,7 @@
 	];
 </script>
 
-	<div class="mx-auto mt-8 flex h-full w-full max-w-5xl flex-col gap-6">
+	<div class="mx-auto mt-8 flex min-h-0 w-full max-w-5xl flex-col gap-6">
 		<MotionShell delay={0}>
 			<AppHeader appId="patch-monitor" />
 		</MotionShell>

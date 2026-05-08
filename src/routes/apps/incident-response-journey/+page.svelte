@@ -20,13 +20,6 @@
 	let aiContent = $state<any>({});
 	let isLoadingAI = $state(false);
 
-	// Load content when step changes
-	$effect(() => {
-		if (activeStep) {
-			fetchStepExplanation(activeStep.id);
-		}
-	});
-
 	async function fetchStepExplanation(stepId: string) {
 		isLoadingAI = true;
 		aiContent[stepId] = null;
@@ -104,7 +97,7 @@
 	});
 </script>
 
-	<div class="mx-auto mt-8 flex h-full w-full max-w-5xl flex-col gap-6">
+<div class="mx-auto mt-8 flex min-h-0 w-full max-w-5xl flex-col gap-6">
 		<MotionShell delay={0}>
 			<AppHeader appId="incident-response-journey" />
 		</MotionShell>
@@ -157,7 +150,7 @@
 	<!-- Content Area -->
 	<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 		<!-- Explanation Panel -->
-		<MotionShell delay={200} class="flex h-full flex-col">
+		<MotionShell delay={200} class="flex min-h-0 flex-col">
 			<div
 				class="flex flex-1 flex-col overflow-hidden rounded-lg border border-border bg-bg-panel shadow-md"
 			>
@@ -166,6 +159,13 @@
 						<span class="text-accent">>_</span>
 						{activeStep.label} Phase
 					</h3>
+					<button
+						onclick={() => fetchStepExplanation(activeStep.id)}
+						disabled={isLoadingAI}
+						class="rounded border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent transition-colors hover:bg-accent hover:text-bg-base disabled:opacity-50"
+					>
+						{isLoadingAI ? 'Memuat...' : aiContent[activeStep.id] ? 'Muat Ulang AI' : 'Muat AI'}
+					</button>
 				</div>
 				<div class="flex-1 overflow-y-auto p-6 font-mono text-sm leading-relaxed text-text-base">
 					{#if isLoadingAI && !aiContent[activeStep.id]}
@@ -189,14 +189,14 @@
 							</ul>
 						{/if}
 					{:else}
-						<div class="text-critical">Gagal memuat instruksi.</div>
+						<div class="text-text-muted">Klik tombol “Muat AI” untuk menampilkan penjelasan fase ini.</div>
 					{/if}
 				</div>
 			</div>
 		</MotionShell>
 
 		<!-- Interactive Panel (Quiz / Postmortem) -->
-		<MotionShell delay={300} class="flex h-full flex-col">
+		<MotionShell delay={300} class="flex min-h-0 flex-col">
 			<div
 				class="flex flex-1 flex-col overflow-hidden rounded-lg border border-border bg-bg-panel shadow-md"
 			>
