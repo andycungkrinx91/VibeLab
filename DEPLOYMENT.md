@@ -15,14 +15,21 @@ If needed, set a port explicitly:
 PORT=4173 npm run start
 ```
 
+Provider modes:
+
+- `AI_PROVIDER=gemini` for Gemini
+- `AI_PROVIDER=openai` for official OpenAI
+- `AI_PROVIDER=openai-compatible` for Cloudflare / local / custom OpenAI-compatible backends
+
 ## Docker
 
 ```sh
 docker build -t vibesec-lab .
-docker run -p 8080:8080 -e GEMINI_API_KEY=your_key vibesec-lab
+docker run -p 8080:8080 -e AI_PROVIDER=gemini -e GEMINI_API_KEY=your_key vibesec-lab
 ```
 
 The container uses `node build` and respects `PORT` from the environment.
+Swap `AI_PROVIDER` and the matching key for `openai` or `openai-compatible` if needed.
 
 ## Cloud Run
 
@@ -35,22 +42,26 @@ gcloud run deploy vibesec-lab \
   --platform managed \
   --region asia-southeast2 \
   --allow-unauthenticated \
-  --set-env-vars GEMINI_TEXT_MODEL=gemini-2.5-flash,GEMINI_CHEAP_MODEL=gemini-2.5-flash-lite \
-  --set-secrets GEMINI_API_KEY=GEMINI_API_KEY:latest
+  --set-env-vars AI_PROVIDER=openai,OPENAI_TEXT_MODEL=gpt-5.5,OPENAI_CHEAP_MODEL=gpt-5.5-mini \
+  --set-secrets OPENAI_API_KEY=OPENAI_API_KEY:latest
 ```
 
-If Secret Manager is not used, set `GEMINI_API_KEY` as a Cloud Run environment variable instead.
+If Secret Manager is not used, set the provider key as a Cloud Run environment variable instead.
 
 ## Troubleshooting
 
 ### API key expired or invalid
-- Renew `GEMINI_API_KEY`
+- Renew the active provider key (`GEMINI_API_KEY`, `OPENAI_API_KEY`, or `OPENAI_COMPAT_API_KEY`)
 - Restart the server
 
 ### AI button fails
 - Check server logs
-- Verify `GEMINI_API_KEY`
+- Verify the active provider key
 - Confirm `/api/ai/security` is reachable
+
+### Invalid provider mode
+- Set `AI_PROVIDER` to `gemini`, `openai`, or `openai-compatible`
+- Restart the server
 
 ### Port issue
 - Use `PORT` from the environment

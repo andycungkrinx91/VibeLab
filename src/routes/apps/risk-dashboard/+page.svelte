@@ -2,6 +2,7 @@
 	import MotionShell from '$lib/components/MotionShell.svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import AppTutorial from '$lib/components/AppTutorial.svelte';
+	import { requestSecurityAI } from '$lib/utils/ai-client';
 
 	type ScanHeader = {
 		name: string;
@@ -82,30 +83,21 @@
 		isLoadingAI = true;
 		aiError = '';
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'risk-dashboard',
-					action: 'analyze-risk-dashboard',
-					input: {
-						url: scanResult.url,
-						grade: scanResult.grade,
-						score: scanResult.score,
-						presentHeaders: scanResult.presentHeaders,
-						missingHeaders: scanResult.missingHeaders,
-						checkedHeaders: scanResult.checkedHeaders
-					}
-				})
+			aiAnalysis = await requestSecurityAI({
+				app: 'risk-dashboard',
+				action: 'analyze-risk-dashboard',
+				input: {
+					url: scanResult.url,
+					grade: scanResult.grade,
+					score: scanResult.score,
+					presentHeaders: scanResult.presentHeaders,
+					missingHeaders: scanResult.missingHeaders,
+					checkedHeaders: scanResult.checkedHeaders
+				}
 			});
-			const data = await res.json();
-			if (data.ok) {
-				aiAnalysis = data;
-			} else {
-				aiError = data.summary || data.error || 'Analisa AI belum bisa digunakan.';
-			}
+			aiError = aiAnalysis.ok ? '' : aiAnalysis.error || aiAnalysis.summary;
 		} catch {
-			aiError = 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.';
+			aiError = 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.';
 		} finally {
 			isLoadingAI = false;
 		}
@@ -240,7 +232,7 @@
 		</MotionShell>
 
 		<MotionShell delay={150} class="flex flex-col gap-4">
-				<div class="electric-border electric-border-active rounded-2xl border border-border bg-bg-panel p-6 shadow-md">
+			<div class="electric-border electric-border-active rounded-2xl border border-border bg-bg-panel p-6 shadow-md">
 				<div class="mb-4 flex items-center justify-between border-b border-border/50 pb-2">
 					<h3 class="font-semibold text-accent">AI Hardening Advisor</h3>
 					<button
@@ -252,6 +244,7 @@
 					</button>
 				</div>
 
+				<div class="max-h-[60vh] overflow-y-auto pr-1">
 				{#if isLoadingAI}
 					<div class="animate-pulse space-y-3">
 						<div class="h-4 w-3/4 rounded bg-border/50"></div>
@@ -282,13 +275,14 @@
 							</ul>
 						</div>
 					</div>
-				{:else if aiError}
-					<div class="rounded-xl border border-critical/20 bg-critical/10 p-4 text-sm text-critical">{aiError}</div>
-				{:else}
-					<div class="rounded-xl border border-dashed border-border/60 bg-bg-base/40 p-4 text-sm text-text-muted">
-						Pilih domain lalu jalankan scan untuk melihat rekomendasi AI.
-					</div>
+					{:else if aiError}
+						<div class="rounded-xl border border-critical/20 bg-critical/10 p-4 text-sm text-critical">{aiError}</div>
+					{:else}
+						<div class="rounded-xl border border-dashed border-border/60 bg-bg-base/40 p-4 text-sm text-text-muted">
+							Pilih domain lalu jalankan scan untuk melihat rekomendasi AI.
+						</div>
 				{/if}
+				</div>
 			</div>
 		</MotionShell>
 	</div>

@@ -11,6 +11,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"start": "node build",
+		"test:ai": "node scripts/test-ai-providers.mjs",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write ."
 	},
@@ -37,6 +38,7 @@
 		"vite": "^8.0.7"
 	},
 	"dependencies": {
-		"@google/genai": "^1.52.0"
+		"@google/genai": "^1.52.0",
+		"openai": "^6.37.0"
 	}
 }

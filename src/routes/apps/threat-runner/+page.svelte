@@ -3,6 +3,7 @@
 	import MotionShell from '$lib/components/MotionShell.svelte';
 	import AppPageShell from '$lib/components/AppPageShell.svelte';
 	import AppTutorial from '$lib/components/AppTutorial.svelte';
+	import { requestSecurityAI } from '$lib/utils/ai-client';
 	import {
 		initAudio,
 		loadSoundEnabled,
@@ -30,10 +31,21 @@
 	let incidentSummary = $state<any>(null);
 	let isLoadingAI = $state(false);
 	let aiError = $state('');
+	let showAiPanel = $state(true);
+	const AI_FALLBACK_ERROR = 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.';
 
 	// Game Objects
 	type Entity = { id: number; type: 'patch' | 'malware'; x: number; y: number; speed: number };
 	type Projectile = { id: number; x: number; y: number; speed: number };
+	const PLAYER_Y = 88;
+	const PLAYER_MIN_X = 8;
+	const PLAYER_MAX_X = 92;
+	const PLAYER_HIT_RADIUS_X = 5;
+	const PLAYER_HIT_RADIUS_Y = 5;
+	const PROJECTILE_SPEED = 2.2;
+	const PROJECTILE_SPAWN_OFFSET = 5;
+	const ENTITY_START_Y = 0;
+	const ENTITY_END_Y = 100;
 	let entities = $state<Entity[]>([]);
 	let projectiles = $state<Projectile[]>([]);
 	let playerX = $state(50);
@@ -56,6 +68,9 @@
 		stopHold();
 		if (direction === 'left') holdLeft = true;
 		if (direction === 'right') holdRight = true;
+		if (!isPlaying) return;
+		if (holdLeft) movePlayer(-5);
+		if (holdRight) movePlayer(5);
 		holdIntervalId = setInterval(() => {
 			if (!isPlaying) return;
 			if (holdLeft) movePlayer(-5);
@@ -115,23 +130,17 @@
 		isLoadingAI = true;
 		aiError = '';
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'threat-runner',
-					action: 'generate-threat-mission',
-					input: { difficulty: 'Normal', threatLevel: 'Elevated', targetSystem: 'Mainframe Core' }
-				})
+			mission = await requestSecurityAI({
+				app: 'threat-runner',
+				action: 'generate-threat-mission',
+				input: { difficulty: 'Normal', threatLevel: 'Elevated', targetSystem: 'Mainframe Core' }
 			});
-			const data = await res.json();
-			if (data.ok) {
-				mission = data;
-			} else {
-				aiError = data.summary || data.error || 'Gagal memuat misi AI.';
+			showAiPanel = true;
+			if (!mission.ok) {
+				aiError = mission.error || mission.summary || AI_FALLBACK_ERROR;
 			}
 		} catch (e) {
-			aiError = 'Koneksi ke AI gagal. Klik "Lewati & Mulai" untuk bermain.';
+			aiError = AI_FALLBACK_ERROR;
 		} finally {
 			isLoadingAI = false;
 		}
@@ -141,30 +150,28 @@
 		if (isLoadingAI) return;
 		isLoadingAI = true;
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'threat-runner',
-					action: 'summarize-incident',
-					input: { score, health, duration: 60 - timer, finalThreatLevel: threatLevel }
-				})
+			incidentSummary = await requestSecurityAI({
+				app: 'threat-runner',
+				action: 'summarize-incident',
+				input: { score, health, duration: 60 - timer, finalThreatLevel: threatLevel }
 			});
-			const data = await res.json();
-			if (data.ok) {
-				incidentSummary = data;
-			} else {
+			showAiPanel = true;
+			if (!incidentSummary.ok) {
 				incidentSummary = {
-					ok: false,
-					summary: data.summary || data.error || 'Laporan insiden tidak tersedia.',
+					...incidentSummary,
 					result: { status: 'Tinjauan', remediationChecklist: [] }
 				};
 			}
 		} catch (e) {
 			incidentSummary = {
 				ok: false,
-				summary: 'Fitur AI gagal sementara, tetapi permainan tetap bisa digunakan dengan data lokal.',
-				result: { status: 'Tinjauan', remediationChecklist: [] }
+				app: 'threat-runner',
+				action: 'summarize-incident',
+					summary: AI_FALLBACK_ERROR,
+				result: { status: 'Tinjauan', remediationChecklist: [] },
+				recommendations: [],
+				warnings: [],
+				error: AI_FALLBACK_ERROR
 			};
 		} finally {
 			isLoadingAI = false;
@@ -191,6 +198,7 @@
 		projectiles = [];
 		playerX = 50;
 		incidentSummary = null;
+		showAiPanel = true;
 	}
 
 	function startGame() {
@@ -201,6 +209,11 @@
 		resetGameState();
 		isPlaying = true;
 		isGameOver = false;
+		if (typeof window !== 'undefined' && gameAreaRef && window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches) {
+			window.requestAnimationFrame(() => {
+				gameAreaRef.scrollIntoView({ block: 'start', behavior: 'smooth' });
+			});
+		}
 		lastTime = performance.now();
 		animationId = requestAnimationFrame(gameLoop);
 
@@ -241,17 +254,14 @@
 	}
 
 	function movePlayer(delta: number) {
-		playerX = Math.min(92, Math.max(8, playerX + delta));
+		playerX = Math.min(PLAYER_MAX_X, Math.max(PLAYER_MIN_X, playerX + delta));
 	}
 
 	function shootProjectile() {
 		if (!isPlaying) return;
 		initAudio();
 		playShoot();
-		projectiles = [
-			...projectiles,
-			{ id: nextProjectileId++, x: playerX, y: 84, speed: 2.2 }
-		];
+		projectiles = [...projectiles, { id: nextProjectileId++, x: playerX, y: PLAYER_Y - PROJECTILE_SPAWN_OFFSET, speed: PROJECTILE_SPEED }];
 	}
 
 	function applyDamage(amount: number) {
@@ -280,7 +290,14 @@
 		let movedEntities: Entity[] = [];
 		for (const entity of entities) {
 			const nextY = entity.y + entity.speed * (delta / 16);
-			if (nextY < 100) {
+			const dx = Math.abs(entity.x - playerX);
+			const dy = Math.abs(nextY - PLAYER_Y);
+			if (dx < PLAYER_HIT_RADIUS_X && dy < PLAYER_HIT_RADIUS_Y) {
+				applyDamage(entity.type === 'patch' ? 5 : 20);
+				continue;
+			}
+
+			if (nextY < ENTITY_END_Y) {
 				movedEntities.push({ ...entity, y: nextY });
 			} else if (entity.type === 'patch') {
 				applyDamage(5);
@@ -333,8 +350,8 @@
 			{
 				id: nextId++,
 				type: isMalware ? 'malware' : 'patch',
-				x: Math.random() * 84 + 8, // 8%–92% to keep within bounds
-				y: 0,
+				x: Math.random() * (PLAYER_MAX_X - PLAYER_MIN_X) + PLAYER_MIN_X,
+				y: ENTITY_START_Y,
 				speed: Math.random() * 0.5 + 0.5 + (threatLevel === 'Critical' ? 1 : 0)
 			}
 		];
@@ -386,86 +403,115 @@
 		</div>
 	</div>
 
-	<div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
+	<div class="threat-layout">
 		<!-- Game Area -->
-		<MotionShell delay={100} class="lg:col-span-2">
-			<div
-				bind:this={gameAreaRef}
-				class="electric-border electric-border-active relative w-full overflow-hidden rounded-lg border border-border bg-bg-panel shadow-[0_0_20px_var(--color-accent-glow)]"
-				style="height: clamp(320px, 55vw, 500px);"
-			>
+		<div class="w-full">
+			<MotionShell delay={100}>
+				<div
+					bind:this={gameAreaRef}
+					class="game-arena electric-border electric-border-active relative overflow-hidden rounded-lg border border-border bg-bg-panel shadow-[0_0_20px_var(--color-accent-glow)]"
+				>
 				{#if !isPlaying && !isGameOver}
 					<div
-						class="absolute inset-0 flex flex-col items-center justify-center bg-bg-base/80 p-4 backdrop-blur-sm sm:p-6"
+						class="mission-overlay absolute inset-0 flex flex-col items-center justify-center overflow-y-auto bg-bg-base/80 p-4 backdrop-blur-sm sm:p-6"
 					>
 						{#if isLoadingAI && !mission}
 							<div class="animate-pulse text-sm text-accent sm:text-base">Menghubungi AI Security...</div>
 						{:else if mission}
-							<div
-								class="mb-4 w-full max-w-sm rounded border border-accent/50 bg-bg-panel p-4 text-center shadow-lg"
-							>
-								<h2 class="mb-2 text-base font-bold text-accent sm:text-xl">
-									{getMissionTitle()}
-								</h2>
-								<p class="mb-3 text-xs text-text-muted sm:text-sm">{mission.summary}</p>
-								<ul class="mb-4 text-left text-xs text-text-base sm:text-sm">
-									{#each getMissionObjectives() as obj}
-										<li
-											class="flex items-center before:mr-2 before:text-accent before:content-['>']"
-										>
-											{obj}
-										</li>
-									{/each}
-								</ul>
-								<button
-									onclick={startGame}
-									class="btn-shimmer w-full rounded border border-accent bg-accent/20 px-6 py-3 font-bold text-accent transition-colors hover:bg-accent hover:text-bg-base"
+							{#if showAiPanel}
+								<div
+									class="mission-briefing mb-4 w-full max-w-sm max-h-[44vh] overflow-y-auto rounded border border-accent/50 bg-bg-panel p-4 text-center shadow-lg"
 								>
-									INITIATE DEFENSE
+									<div class="mb-2 flex items-start justify-between gap-2 text-left">
+										<h2 class="text-base font-bold text-accent sm:text-xl">{getMissionTitle()}</h2>
+										<button
+											type="button"
+											onclick={() => (showAiPanel = false)}
+											class="rounded border border-border/50 bg-bg-base px-2 py-1 text-[10px] font-semibold text-text-muted hover:border-accent hover:text-accent"
+										>
+											Tutup AI
+										</button>
+									</div>
+									<p class="mission-summary mb-3 text-xs text-text-muted sm:text-sm">{mission.summary}</p>
+									<ul class="mission-objectives mb-4 text-left text-xs text-text-base sm:text-sm">
+										{#each getMissionObjectives() as obj}
+											<li
+												class="flex items-center before:mr-2 before:text-accent before:content-['>']"
+											>
+												{obj}
+											</li>
+										{/each}
+									</ul>
+								</div>
+							{:else}
+								<button
+									type="button"
+									onclick={() => (showAiPanel = true)}
+									class="mb-4 rounded border border-accent bg-accent/10 px-4 py-2 text-sm font-semibold text-accent hover:bg-accent hover:text-bg-base"
+								>
+									Buka AI
 								</button>
-							</div>
+							{/if}
+							<button
+								onclick={startGame}
+								class="mission-start-btn btn-shimmer w-full rounded border border-accent bg-accent/20 px-6 py-3 font-bold text-accent transition-colors hover:bg-accent hover:text-bg-base"
+							>
+								INITIATE DEFENSE
+							</button>
 						{/if}
 						{#if aiError}
-							<div class="mb-3 max-w-xs rounded border border-critical/30 bg-critical/10 px-4 py-2 text-center text-xs text-critical">
+							<div class="mission-error mb-3 max-w-xs rounded border border-critical/30 bg-critical/10 px-4 py-2 text-center text-xs text-critical">
 								{aiError}
 							</div>
-							<button onclick={startGame} class="rounded border border-accent px-4 py-2 text-sm text-accent hover:bg-accent/10">
+							<button onclick={startGame} class="mission-skip rounded border border-accent px-4 py-2 text-sm text-accent hover:bg-accent/10">
 								Lewati &amp; Mulai
 							</button>
 						{/if}
 					</div>
-				{:else if isGameOver}
-					<div
-						class="absolute inset-0 flex flex-col items-center justify-center overflow-y-auto bg-bg-base/90 p-4 backdrop-blur-md sm:p-6"
-					>
+					{:else if isGameOver}
+						<div
+							class="absolute inset-0 flex flex-col items-center justify-center overflow-y-auto bg-bg-base/90 p-4 backdrop-blur-md sm:p-6"
+						>
 						<h2 class="mb-1 text-2xl font-bold text-critical sm:text-3xl">SYSTEM COMPROMISED</h2>
 						<div class="mb-4 text-lg">Final Score: <span class="text-accent">{score}</span></div>
 
 						{#if isLoadingAI}
 							<div class="animate-pulse text-sm text-text-muted">Menyusun Incident Report...</div>
 						{:else if incidentSummary}
-							<div class="mb-4 w-full max-w-md rounded border border-border bg-bg-panel p-4">
-								<div class="mb-2 flex items-center justify-between gap-2">
-									<div class="font-bold text-accent text-sm">Incident Summary</div>
-									<div
-										class="rounded border border-warning/30 bg-warning/10 px-2 py-0.5 text-xs text-warning"
-									>
-										{getIncidentStatus()}
+							{#if showAiPanel}
+								<div class="mb-4 w-full max-w-md max-h-[44vh] overflow-y-auto rounded border border-border bg-bg-panel p-4">
+									<div class="mb-2 flex items-start justify-between gap-2">
+										<div class="font-bold text-accent text-sm">Incident Summary</div>
+										<button
+											type="button"
+											onclick={() => (showAiPanel = false)}
+											class="rounded border border-border/50 bg-bg-base px-2 py-1 text-[10px] font-semibold text-text-muted hover:border-accent hover:text-accent"
+										>
+											Tutup AI
+										</button>
 									</div>
+									<p class="mb-3 text-xs leading-relaxed text-text-base sm:text-sm">{incidentSummary.summary}</p>
+									{#if getRemediationChecklist().length > 0}
+										<div class="text-xs font-bold text-text-muted">Remediation Checklist:</div>
+										<ul class="mt-2 space-y-1 text-xs sm:text-sm">
+											{#each getRemediationChecklist() as item}
+												<li class="flex items-start">
+													<span class="mr-2 text-accent-secondary">[ ]</span>
+													{item}
+												</li>
+											{/each}
+										</ul>
+									{/if}
 								</div>
-								<p class="mb-3 text-xs leading-relaxed text-text-base sm:text-sm">{incidentSummary.summary}</p>
-								{#if getRemediationChecklist().length > 0}
-									<div class="text-xs font-bold text-text-muted">Remediation Checklist:</div>
-									<ul class="mt-2 space-y-1 text-xs sm:text-sm">
-										{#each getRemediationChecklist() as item}
-											<li class="flex items-start">
-												<span class="mr-2 text-accent-secondary">[ ]</span>
-												{item}
-											</li>
-										{/each}
-									</ul>
-								{/if}
-							</div>
+							{:else}
+								<button
+									type="button"
+									onclick={() => (showAiPanel = true)}
+									class="mb-4 rounded border border-accent bg-accent/10 px-4 py-2 text-sm font-semibold text-accent hover:bg-accent hover:text-bg-base"
+								>
+									Buka AI
+								</button>
+							{/if}
 						{/if}
 
 						<button
@@ -534,8 +580,8 @@
 					{/each}
 
 					<div
-						class="absolute z-20 flex items-center justify-center rounded-full border border-accent/40 bg-bg-base/80 px-2 py-1.5 text-base shadow-[0_0_14px_var(--color-accent-glow)] sm:px-3 sm:py-2 sm:text-lg"
-						style="left: {playerX}%; bottom: 2.5rem; transform: translateX(-50%);"
+						class="absolute z-20 flex h-8 w-8 items-center justify-center rounded-full border border-accent/40 bg-bg-base/80 text-base shadow-[0_0_14px_var(--color-accent-glow)] sm:h-10 sm:w-10 sm:text-lg"
+						style="left: {playerX}%; top: {PLAYER_Y}%; transform: translate(-50%, -50%);"
 						aria-label="Cyber defender"
 					>
 						🛡️
@@ -544,7 +590,7 @@
 					<!-- Entities -->
 					{#each entities as entity (entity.id)}
 						<button
-							class="absolute flex h-9 w-9 items-center justify-center rounded-full border shadow-lg transition-transform focus:outline-none sm:h-10 sm:w-10"
+							class="absolute flex h-8 w-8 items-center justify-center rounded-full border shadow-lg transition-transform focus:outline-none sm:h-10 sm:w-10"
 							style="left: {entity.x}%; top: {entity.y}%; border-color: var(--color-{entity.type ===
 							'malware'
 								? 'critical'
@@ -561,50 +607,61 @@
 						</button>
 					{/each}
 				{/if}
-			</div>
+				</div>
 
-			<!-- Mobile touch controls — shown only during play on small screens -->
-			{#if isPlaying}
-				<div class="mt-3 flex items-center justify-between gap-2 sm:hidden">
+				<!-- Mobile touch controls — shown only during play on small screens -->
+				{#if isPlaying}
+					<div class="mt-3 flex items-center justify-between gap-2 sm:hidden">
 					<!-- Left button -->
 					<button
-						class="tap-target touch-none flex flex-1 items-center justify-center rounded-xl border border-accent/40 bg-bg-panel py-3 text-2xl font-bold text-accent active:bg-accent/20"
+						class="tap-target touch-none flex flex-1 items-center justify-center rounded-xl border border-accent/40 bg-bg-panel py-3 text-accent active:bg-accent/20"
 						aria-label="Gerak kiri"
-						onpointerdown={(e) => { e.preventDefault(); startHold('left'); }}
+						onpointerdown={(e) => { e.preventDefault(); e.stopPropagation(); startHold('left'); }}
 						onpointerup={stopHold}
 						onpointerleave={stopHold}
 						onpointercancel={stopHold}
 					>
-						◀
+						<span class="flex flex-col items-center leading-none">
+							<span class="text-xl">◀</span>
+							<span class="mt-1 text-[10px] font-bold uppercase tracking-wider">Kiri</span>
+						</span>
 					</button>
 
 					<!-- Shoot button -->
 					<button
-						class="tap-target touch-none flex flex-[1.4] items-center justify-center rounded-xl border border-warning/60 bg-warning/10 py-3 text-sm font-bold text-warning active:bg-warning/30"
+						class="tap-target touch-none flex flex-[1.4] items-center justify-center rounded-xl border border-warning/60 bg-warning/10 py-3 text-warning active:bg-warning/30"
 						aria-label="Tembak"
-						onpointerdown={(e) => { e.preventDefault(); shootProjectile(); }}
+						onpointerdown={(e) => { e.preventDefault(); e.stopPropagation(); shootProjectile(); }}
 					>
-						🔫 TEMBAK
+						<span class="flex flex-col items-center gap-1 leading-none">
+							<span class="text-lg">🔫</span>
+							<span class="text-[10px] font-bold uppercase tracking-wider">Tembak</span>
+						</span>
 					</button>
 
 					<!-- Right button -->
 					<button
-						class="tap-target touch-none flex flex-1 items-center justify-center rounded-xl border border-accent/40 bg-bg-panel py-3 text-2xl font-bold text-accent active:bg-accent/20"
+						class="tap-target touch-none flex flex-1 items-center justify-center rounded-xl border border-accent/40 bg-bg-panel py-3 text-accent active:bg-accent/20"
 						aria-label="Gerak kanan"
-						onpointerdown={(e) => { e.preventDefault(); startHold('right'); }}
+						onpointerdown={(e) => { e.preventDefault(); e.stopPropagation(); startHold('right'); }}
 						onpointerup={stopHold}
 						onpointerleave={stopHold}
 						onpointercancel={stopHold}
 					>
-						▶
+						<span class="flex flex-col items-center leading-none">
+							<span class="text-xl">▶</span>
+							<span class="mt-1 text-[10px] font-bold uppercase tracking-wider">Kanan</span>
+						</span>
 					</button>
 				</div>
-			{/if}
-		</MotionShell>
+				{/if}
+			</MotionShell>
+		</div>
 
 		<!-- Right Panel -->
-		<MotionShell delay={200} class="flex h-full flex-col gap-4 lg:gap-6">
-			<div class="electric-border flex h-full flex-col rounded-lg border border-border bg-bg-panel p-4 shadow-md sm:p-6">
+		<div class="w-full min-w-0 max-w-[860px] mx-auto xl:max-w-none xl:mx-0">
+			<MotionShell delay={200}>
+				<div class="electric-border flex h-full flex-col rounded-lg border border-border bg-bg-panel p-4 shadow-md sm:p-6">
 				<div class="mb-4 rounded-lg border border-border/60 bg-bg-base/70 p-3 sm:p-4">
 					<div class="mb-2 flex items-start justify-between gap-2">
 						<div class="min-w-0">
@@ -658,8 +715,9 @@
 						{/if}
 					{/if}
 				</div>
-			</div>
-		</MotionShell>
+				</div>
+			</MotionShell>
+		</div>
 	</div>
 
 	<AppTutorial
@@ -670,3 +728,85 @@
 		securityNote="Fokus pada deteksi, respons, dan remediation tanpa instruksi ofensif."
 	/>
 </AppPageShell>
+
+<style>
+	.threat-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1rem;
+	}
+
+	.game-arena {
+		width: min(100%, clamp(420px, 42vw, 620px));
+		height: clamp(620px, 78vh, 920px);
+		margin-inline: auto;
+	}
+
+	@media (min-width: 1280px) {
+		.threat-layout {
+			grid-template-columns: minmax(0, clamp(420px, 42vw, 620px)) minmax(300px, 1fr);
+			gap: 1.5rem;
+			align-items: start;
+		}
+	}
+
+	@media (max-width: 767px) and (orientation: portrait) {
+		.game-arena {
+			width: 100%;
+			height: clamp(620px, calc(100svh - 220px), 820px);
+		}
+
+		.mission-overlay {
+			justify-content: flex-start;
+			padding: 0.45rem;
+		}
+
+		.mission-briefing {
+			max-height: 26vh;
+			padding: 0.5rem;
+			margin-bottom: 0.4rem;
+		}
+
+		.mission-briefing h2 {
+			margin-bottom: 0.25rem;
+			font-size: 0.78rem;
+			line-height: 1.2;
+		}
+
+		.mission-summary {
+			margin-bottom: 0.3rem;
+			font-size: 0.62rem;
+			line-height: 1.2;
+		}
+
+		.mission-objectives {
+			margin-bottom: 0.45rem;
+			font-size: 0.62rem;
+			line-height: 1.15;
+		}
+
+		.mission-objectives li + li {
+			margin-top: 0.2rem;
+		}
+
+		.mission-start-btn {
+			padding: 0.35rem 0.65rem;
+			font-size: 0.66rem;
+			line-height: 1.1;
+		}
+
+		.mission-error {
+			margin-bottom: 0.35rem;
+			max-width: 15rem;
+			padding: 0.35rem 0.55rem;
+			font-size: 0.62rem;
+			line-height: 1.15;
+		}
+
+		.mission-skip {
+			padding: 0.3rem 0.6rem;
+			font-size: 0.66rem;
+			line-height: 1.1;
+		}
+	}
+</style>

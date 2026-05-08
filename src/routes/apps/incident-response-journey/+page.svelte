@@ -2,6 +2,7 @@
 	import MotionShell from '$lib/components/MotionShell.svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import AppTutorial from '$lib/components/AppTutorial.svelte';
+	import { requestSecurityAI } from '$lib/utils/ai-client';
 
 	const steps = [
 		{ id: 'detect', label: 'Detect', icon: '⚡' },
@@ -30,34 +31,25 @@
 		isLoadingAI = true;
 		aiContent[stepId] = null;
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'incident-response-journey',
-					action: 'explain-ir-step',
-					input: {
-						step: stepId,
-						incidentType: 'Web Server Compromise',
-						currentContext: 'General Playbook'
-					}
-				})
+			aiContent[stepId] = await requestSecurityAI({
+				app: 'incident-response-journey',
+				action: 'explain-ir-step',
+				input: {
+					step: stepId,
+					incidentType: 'Web Server Compromise',
+					currentContext: 'General Playbook'
+				}
 			});
-			const data = await res.json();
-			if (data.ok) {
-				aiContent[stepId] = data;
-			} else {
-				aiContent[stepId] = {
-					ok: false,
-					summary: data.summary || data.error || 'Fitur AI gagal sementara.',
-					recommendations: []
-				};
-			}
 		} catch {
 			aiContent[stepId] = {
 				ok: false,
-				summary: 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.',
-				recommendations: []
+				app: 'incident-response-journey',
+				action: 'explain-ir-step',
+				result: {},
+				summary: 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.',
+				recommendations: [],
+				warnings: [],
+				error: 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.'
 			};
 		} finally {
 			isLoadingAI = false;
@@ -69,28 +61,21 @@
 		isLoadingAI = true;
 		quizData = null;
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'incident-response-journey',
-					action: 'generate-ir-quiz',
-					input: { step: activeStep.label, difficulty: 'Medium' }
-				})
+			const data = await requestSecurityAI({
+				app: 'incident-response-journey',
+				action: 'generate-ir-quiz',
+				input: { step: activeStep.label, difficulty: 'Medium' }
 			});
-			const data = await res.json();
-			if (data.ok) {
-				quizData = data.result;
-			} else {
-				quizData = {
-					question: data.summary || data.error || 'Kuis belum tersedia.',
+			quizData = data.ok
+				? data.result
+				: {
+					question: data.error || data.summary,
 					options: [],
 					correctAnswer: ''
 				};
-			}
 		} catch {
 			quizData = {
-				question: 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.',
+				question: 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.',
 				options: [],
 				correctAnswer: ''
 			};

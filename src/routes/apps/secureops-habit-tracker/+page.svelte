@@ -3,6 +3,7 @@
 	import MotionShell from '$lib/components/MotionShell.svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import AppTutorial from '$lib/components/AppTutorial.svelte';
+	import { requestSecurityAI } from '$lib/utils/ai-client';
 
 	type Habit = { id: string; label: string; checked: boolean };
 	type DayRecord = { date: string; completed: boolean; progress: number };
@@ -131,31 +132,28 @@
 		aiError = '';
 
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'secureops-habit-tracker',
-					action: 'generate-security-coaching',
-					input: {
-						completedItems,
-						missedItems,
-						progressPercent: progress,
-						streak,
-						weeklyProgress,
-						currentDate
-					}
-				})
+			const data = await requestSecurityAI({
+				app: 'secureops-habit-tracker',
+				action: 'generate-security-coaching',
+				input: {
+					completedItems,
+					missedItems,
+					progressPercent: progress,
+					streak,
+					weeklyProgress,
+					currentDate
+				}
 			});
-			const data = await res.json();
-			if (data.ok && data.result?.coachMessage) {
-				aiCoachMessage = data.result.coachMessage;
-				aiNextSteps = data.result.nextSteps || [];
+			if (data.ok) {
+				aiCoachMessage = (data.result.coachMessage as string) || data.summary;
+				aiNextSteps = Array.isArray(data.result.nextSteps)
+					? (data.result.nextSteps as string[])
+					: data.recommendations;
 			} else {
-				aiError = data.summary || data.error || 'Gagal mendapatkan saran coaching.';
+				aiError = data.error || data.summary;
 			}
 		} catch {
-			aiError = 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.';
+			aiError = 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.';
 		} finally {
 			isLoadingAI = false;
 		}

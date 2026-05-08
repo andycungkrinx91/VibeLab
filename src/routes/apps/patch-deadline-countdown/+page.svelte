@@ -2,6 +2,7 @@
 	import MotionShell from '$lib/components/MotionShell.svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import AppTutorial from '$lib/components/AppTutorial.svelte';
+	import { requestSecurityAI } from '$lib/utils/ai-client';
 
 	interface Deadline {
 		id: string;
@@ -90,6 +91,7 @@
 	}
 
 	async function getAiAdvice(deadline: Deadline) {
+		if (isLoadingAI) return;
 		isLoadingAI = true;
 		aiChecklist = null;
 		aiMessage = null;
@@ -97,44 +99,35 @@
 		const urgency = getUrgency(deadline.dueDate);
 
 		try {
-			const [checklistRes, messageRes] = await Promise.all([
-				fetch('/api/ai/security', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						app: 'patch-deadline-countdown',
-						action: 'generate-deadline-checklist',
-						input: { ...deadline, urgencyState: urgency.state }
-					})
+			const [checklistData, messageData] = await Promise.all([
+				requestSecurityAI({
+					app: 'patch-deadline-countdown',
+					action: 'generate-deadline-checklist',
+					input: { ...deadline, urgencyState: urgency.state }
 				}),
-				fetch('/api/ai/security', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						app: 'patch-deadline-countdown',
-						action: 'generate-stakeholder-message',
-						input: {
-							deadlines: [deadline],
-							audience: 'Technical Management',
-							urgencyState: urgency.state,
-							blockedItems: []
-						}
-					})
+				requestSecurityAI({
+					app: 'patch-deadline-countdown',
+					action: 'generate-stakeholder-message',
+					input: {
+						deadlines: [deadline],
+						audience: 'Technical Management',
+						urgencyState: urgency.state,
+						blockedItems: []
+					}
 				})
 			]);
 
-			const checklistData = await checklistRes.json();
-			const messageData = await messageRes.json();
-
 			if (checklistData.ok) {
-				aiChecklist = checklistData.result.checklist || [];
+				aiChecklist = Array.isArray(checklistData.result.checklist)
+					? (checklistData.result.checklist as string[])
+					: checklistData.recommendations;
 			} else {
-				aiChecklist = [checklistData.summary || checklistData.error || 'Checklist belum tersedia.'];
+				aiChecklist = [checklistData.error || checklistData.summary];
 			}
 			if (messageData.ok) {
-				aiMessage = messageData.result.message || 'Gagal mendapatkan pesan.';
+				aiMessage = (messageData.result.message as string) || messageData.summary;
 			} else {
-				aiMessage = messageData.summary || messageData.error || 'Gagal mendapatkan pesan.';
+				aiMessage = messageData.error || messageData.summary;
 			}
 		} catch {
 			aiMessage = 'Terjadi kesalahan sistem.';
@@ -256,11 +249,12 @@
 							</div>
 
 							<div class="flex flex-col gap-2">
-								<button
-									onclick={() => getAiAdvice(d)}
-									class="rounded bg-accent/10 px-3 py-1 text-xs text-accent transition-colors hover:bg-accent/20"
-								>
-									AI Assist
+				<button
+					onclick={() => getAiAdvice(d)}
+					disabled={isLoadingAI}
+					class="rounded bg-accent/10 px-3 py-1 text-xs text-accent transition-colors hover:bg-accent/20"
+				>
+					AI Assist
 								</button>
 								<button
 									onclick={() => removeDeadline(d.id)}

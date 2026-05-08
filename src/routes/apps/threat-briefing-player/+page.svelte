@@ -2,6 +2,7 @@
 	import MotionShell from '$lib/components/MotionShell.svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import AppTutorial from '$lib/components/AppTutorial.svelte';
+	import { requestSecurityAI } from '$lib/utils/ai-client';
 
 	let playlists = $state([
 		{
@@ -85,55 +86,43 @@
 		aiSlackUpdate = null;
 
 		try {
-			// Run both AI actions in parallel
-			const [summaryRes, actionRes] = await Promise.all([
-				fetch('/api/ai/security', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						app: 'threat-briefing-player',
-						action: 'summarize-threat-briefing',
-						input: {
-							title: activeBriefing.title,
-							category: activeBriefing.category,
-							transcript: activeBriefing.transcript,
-							audience: 'Executive'
-						}
-					})
+			const [summaryData, actionData] = await Promise.all([
+				requestSecurityAI({
+					app: 'threat-briefing-player',
+					action: 'summarize-threat-briefing',
+					input: {
+						title: activeBriefing.title,
+						category: activeBriefing.category,
+						transcript: activeBriefing.transcript,
+						audience: 'Executive'
+					}
 				}),
-				fetch('/api/ai/security', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						app: 'threat-briefing-player',
-						action: 'extract-briefing-actions',
-						input: {
-							title: activeBriefing.title,
-							category: activeBriefing.category,
-							transcript: activeBriefing.transcript,
-							environmentContext: 'Production'
-						}
-					})
+				requestSecurityAI({
+					app: 'threat-briefing-player',
+					action: 'extract-briefing-actions',
+					input: {
+						title: activeBriefing.title,
+						category: activeBriefing.category,
+						transcript: activeBriefing.transcript,
+						environmentContext: 'Production'
+					}
 				})
 			]);
 
-			const summaryData = await summaryRes.json();
-			const actionData = await actionRes.json();
-
-			if (summaryData.ok && summaryData.result.summary) {
-				aiSummary = summaryData.result.summary;
-			} else if (summaryData.summary || summaryData.error) {
-				aiSummary = summaryData.summary || summaryData.error;
-			}
+			aiSummary = summaryData.ok
+				? ((summaryData.result.summary as string) || summaryData.summary)
+				: summaryData.error || summaryData.summary;
 
 			if (actionData.ok) {
-				aiActionItems = actionData.result.actionItems || [];
-				aiSlackUpdate = actionData.result.slackUpdate || null;
-			} else if (actionData.summary || actionData.error) {
-				aiSlackUpdate = actionData.summary || actionData.error;
+				aiActionItems = Array.isArray(actionData.result.actionItems)
+					? (actionData.result.actionItems as string[])
+					: actionData.recommendations;
+				aiSlackUpdate = (actionData.result.slackUpdate as string) || actionData.summary;
+			} else {
+				aiSlackUpdate = actionData.error || actionData.summary;
 			}
 		} catch {
-			aiSummary = 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.';
+			aiSummary = 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.';
 		} finally {
 			isLoadingAI = false;
 		}

@@ -2,6 +2,7 @@
 	import MotionShell from '$lib/components/MotionShell.svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import AppTutorial from '$lib/components/AppTutorial.svelte';
+	import { requestSecurityAI } from '$lib/utils/ai-client';
 
 	let severity = $state('High');
 	let assetCriticality = $state('High');
@@ -38,38 +39,20 @@
 		isLoadingAI = true;
 		aiAnalysis = null;
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'cvss-calculator',
-					action: 'explain-cvss-risk',
-					input: {
-						severity,
-						assetCriticality,
-						internetExposed,
-						exploitAvailable,
-						sensitiveData,
-						patchComplexity,
-						calculatedRiskScore: riskScore,
-						calculatedSeverity: finalSeverity
-					}
-				})
+			aiAnalysis = await requestSecurityAI({
+				app: 'cvss-calculator',
+				action: 'explain-cvss-risk',
+				input: {
+					severity,
+					assetCriticality,
+					internetExposed,
+					exploitAvailable,
+					sensitiveData,
+					patchComplexity,
+					calculatedRiskScore: riskScore,
+					calculatedSeverity: finalSeverity
+				}
 			});
-			const data = await res.json();
-			if (data.ok) {
-				aiAnalysis = data;
-			} else {
-				aiAnalysis = {
-					ok: false,
-					error: data.summary || data.error || 'Analisa AI tidak tersedia saat ini.'
-				};
-			}
-		} catch (e) {
-			aiAnalysis = {
-				ok: false,
-				error: 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.'
-			};
 		} finally {
 			isLoadingAI = false;
 		}

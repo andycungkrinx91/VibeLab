@@ -3,6 +3,7 @@
 	import MotionShell from '$lib/components/MotionShell.svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import AppTutorial from '$lib/components/AppTutorial.svelte';
+	import { requestSecurityAI } from '$lib/utils/ai-client';
 
 	type PatchStatus = 'detected' | 'triaged' | 'scheduled' | 'patched' | 'verified';
 
@@ -84,29 +85,25 @@
 	}
 
 	async function generatePlan() {
+		if (isLoadingAI) return;
 		isLoadingAI = true;
 		aiPlan = null;
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'patch-monitor',
-					action: 'generate-patch-plan',
-					input: { patchItems, currentDate: new Date().toISOString() }
-				})
+			aiPlan = await requestSecurityAI({
+				app: 'patch-monitor',
+				action: 'generate-patch-plan',
+				input: { patchItems, currentDate: new Date().toISOString() }
 			});
-			const data = await res.json();
-			if (data.ok) {
-				aiPlan = data;
-			} else {
-				aiPlan = data;
-			}
-		} catch (e) {
+		} catch {
 			aiPlan = {
 				ok: false,
-				error: 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.',
-				summary: 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.'
+				app: 'patch-monitor',
+				action: 'generate-patch-plan',
+				result: {},
+				summary: 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.',
+				recommendations: [],
+				warnings: [],
+				error: 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.'
 			};
 		} finally {
 			isLoadingAI = false;
@@ -134,9 +131,10 @@
 		<div class="flex flex-wrap justify-end gap-2">
 			<button
 				onclick={generatePlan}
+				disabled={isLoadingAI}
 				class="btn-shimmer rounded border border-border bg-bg-base px-4 py-2 font-bold text-text-base transition-colors hover:text-accent"
 			>
-				AI Plan
+				{isLoadingAI ? 'Menyusun...' : 'AI Plan'}
 			</button>
 			<button
 				onclick={() => (isAdding = !isAdding)}
@@ -158,7 +156,7 @@
 				>
 			</div>
 			<p class="mb-3 text-sm text-text-base">{aiPlan.summary}</p>
-			<ul class="grid grid-cols-1 gap-2 md:grid-cols-2">
+			<ul class="max-h-[44vh] overflow-y-auto pr-1 grid grid-cols-1 gap-2 md:grid-cols-2">
 				{#each aiPlan.result.dailyPlan || aiPlan.recommendations as plan}
 					<li class="flex items-start rounded border border-border/50 bg-bg-base p-2 text-sm">
 						<span class="mr-2 text-accent">✓</span>

@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { askSecurityAI } from '$lib/server/gemini';
+import { askSecurityAI, getAIHealth } from '$lib/server/gemini';
 
 const ALLOWED_ACTIONS: Record<string, string[]> = {
 	'threat-runner': ['generate-threat-mission', 'summarize-incident'],
@@ -26,71 +26,45 @@ const ALLOWED_ACTIONS: Record<string, string[]> = {
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
+		const aiHealth = getAIHealth();
+		const activeProviderConfig =
+			aiHealth.activeProvider === 'openai-compatible'
+				? aiHealth.providers.openaiCompatible
+				: aiHealth.activeProvider === 'openai'
+					? aiHealth.providers.openai
+					: aiHealth.providers.gemini;
+		const activeModel = activeProviderConfig.textModel;
+		const baseError = (message: string, app = '', action = '') => ({
+			ok: false,
+			provider: aiHealth.activeProvider,
+			providerLabel: aiHealth.providerLabel,
+			model: activeModel,
+			app,
+			action,
+			result: {},
+			summary: message,
+			recommendations: [],
+			warnings: [],
+			error: message
+		});
+
 		const body = await request.json().catch(() => null);
 		if (!body || typeof body !== 'object') {
-			return json(
-				{
-					ok: false,
-					error: 'Permintaan tidak valid.',
-					app: '',
-					action: '',
-					result: {},
-					summary: '',
-					recommendations: [],
-					warnings: []
-				},
-				{ status: 400 }
-			);
+			return json(baseError('Permintaan tidak valid.'), { status: 400 });
 		}
 
 		const { app, action, input } = body;
 
 		if (!app || typeof app !== 'string') {
-			return json(
-				{
-					ok: false,
-					error: 'Aplikasi tidak valid.',
-					app: '',
-					action: '',
-					result: {},
-					summary: '',
-					recommendations: [],
-					warnings: []
-				},
-				{ status: 400 }
-			);
+			return json(baseError('Aplikasi tidak valid.'), { status: 400 });
 		}
 
 		if (!action || typeof action !== 'string') {
-			return json(
-				{
-					ok: false,
-					error: 'Aksi tidak valid.',
-					app,
-					action: '',
-					result: {},
-					summary: '',
-					recommendations: [],
-					warnings: []
-				},
-				{ status: 400 }
-			);
+			return json(baseError('Aksi tidak valid.', app), { status: 400 });
 		}
 
 		if (!ALLOWED_ACTIONS[app]?.includes(action)) {
-			return json(
-				{
-					ok: false,
-					error: 'Kombinasi aplikasi dan aksi tidak diizinkan.',
-					app,
-					action,
-					result: {},
-					summary: '',
-					recommendations: [],
-					warnings: []
-				},
-				{ status: 403 }
-			);
+			return json(baseError('Kombinasi aplikasi dan aksi tidak diizinkan.', app, action), { status: 403 });
 		}
 
 		let prompt = '';
@@ -164,29 +138,27 @@ export const POST: RequestHandler = async ({ request }) => {
 					prompt = `Buatlah pesan eskalasi gaya Slack atau pembaruan stakeholder (stakeholder update) mengenai status deadline patch ini dalam Bahasa Indonesia. Hasilkan field 'message' (string) di dalam objek 'result'.`;
 				}
 				break;
-			default:
-				return json(
-					{
-						ok: false,
-						error: 'Aplikasi tidak dikenal.',
-						app,
-						action,
-						result: {},
-						summary: '',
-						recommendations: [],
-						warnings: []
-					},
-					{ status: 400 }
-				);
+		default:
+				return json(baseError('Aplikasi tidak dikenal.', app, action), { status: 400 });
 		}
 
 		const aiResponse = await askSecurityAI(app, action, input, prompt);
 		return json(aiResponse);
 	} catch (err) {
 		console.error('[AI API] request failed');
+		const aiHealth = getAIHealth();
+		const activeProviderConfig =
+			aiHealth.activeProvider === 'openai-compatible'
+				? aiHealth.providers.openaiCompatible
+				: aiHealth.activeProvider === 'openai'
+					? aiHealth.providers.openai
+					: aiHealth.providers.gemini;
 		return json(
 			{
 				ok: false,
+				provider: aiHealth.activeProvider,
+				providerLabel: aiHealth.providerLabel,
+				model: activeProviderConfig.textModel,
 				app: 'unknown',
 				action: 'unknown',
 				result: {},

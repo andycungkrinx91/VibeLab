@@ -2,6 +2,7 @@
 	import MotionShell from '$lib/components/MotionShell.svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import AppTutorial from '$lib/components/AppTutorial.svelte';
+	import { requestSecurityAI } from '$lib/utils/ai-client';
 
 	let nama = $state('');
 	let role = $state('');
@@ -43,31 +44,24 @@
 		aiBio = null;
 		aiError = '';
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'analyst-portfolio-builder',
-					action: 'generate-security-bio',
-					input: {
-						nama,
-						role,
-						skills: splitByComma(skills),
-						tools: splitByComma(tools),
-						certifications: splitByComma(certifications),
-						achievements: splitByComma(achievements),
-						links: splitByLine(links)
-					}
-				})
+			const data = await requestSecurityAI({
+				app: 'analyst-portfolio-builder',
+				action: 'generate-security-bio',
+				input: {
+					nama,
+					role,
+					skills: splitByComma(skills),
+					tools: splitByComma(tools),
+					certifications: splitByComma(certifications),
+					achievements: splitByComma(achievements),
+					links: splitByLine(links)
+				}
 			});
-			const data = await res.json();
-			if (data.ok && data.result.bio) {
-				aiBio = data.result.bio;
-			} else {
-				aiBio = data.summary || data.error || 'Gagal membuat bio.';
-			}
+			aiBio = data.ok
+				? ((data.result.bio as string) || data.summary)
+				: data.error || data.summary;
 		} catch {
-			aiBio = 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.';
+			aiBio = 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.';
 		} finally {
 			isLoadingBio = false;
 		}
@@ -78,27 +72,22 @@
 		aiImprovedProjects = null;
 		aiError = '';
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'analyst-portfolio-builder',
-					action: 'improve-security-projects',
-					input: {
-						projects: projects.split('\n').filter((p) => p.trim() !== ''),
-						targetRole: role,
-						tone: 'professional'
-					}
-				})
+			const data = await requestSecurityAI({
+				app: 'analyst-portfolio-builder',
+				action: 'improve-security-projects',
+				input: {
+					projects: projects.split('\n').filter((p) => p.trim() !== ''),
+					targetRole: role,
+					tone: 'professional'
+				}
 			});
-			const data = await res.json();
-			if (data.ok && data.result.improvedProjects) {
-				aiImprovedProjects = data.result.improvedProjects;
-			} else {
-				aiImprovedProjects = [data.summary || data.error || 'Gagal meningkatkan deskripsi proyek.'];
-			}
+			aiImprovedProjects = data.ok
+				? Array.isArray(data.result.improvedProjects)
+					? (data.result.improvedProjects as string[])
+					: [data.summary]
+				: [data.error || data.summary];
 		} catch {
-			aiImprovedProjects = ['Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.'];
+			aiImprovedProjects = ['Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.'];
 		} finally {
 			isLoadingProjects = false;
 		}
@@ -109,27 +98,18 @@
 		aiReview = null;
 		aiError = '';
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'analyst-portfolio-builder',
-					action: 'review-analyst-profile',
-					input: {
-						profile: { nama, role, skills, tools, certifications, achievements, projects },
-						targetRole: role,
-						experienceLevel: 'Mid-Level'
-					}
-				})
+			const data = await requestSecurityAI({
+				app: 'analyst-portfolio-builder',
+				action: 'review-analyst-profile',
+				input: {
+					profile: { nama, role, skills, tools, certifications, achievements, projects },
+					targetRole: role,
+					experienceLevel: 'Mid-Level'
+				}
 			});
-			const data = await res.json();
-			if (data.ok && data.result.review) {
-				aiReview = data.result.review;
-			} else {
-				aiReview = data.summary || data.error || 'Gagal mereview profil.';
-			}
+			aiReview = data.ok ? ((data.result.review as string) || data.summary) : data.error || data.summary;
 		} catch {
-			aiReview = 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.';
+			aiReview = 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.';
 		} finally {
 			isLoadingReview = false;
 		}
@@ -141,39 +121,36 @@
 		aiAtsRecommendations = null;
 		aiError = '';
 		try {
-			const res = await fetch('/api/ai/security', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					app: 'analyst-portfolio-builder',
-					action: 'generate-ats-cv',
-					input: {
-						nama,
-						role,
-						skills: splitByComma(skills),
-						tools: splitByComma(tools),
-						certifications: splitByComma(certifications),
-						projects: splitByLine(projects),
-						achievements: splitByComma(achievements),
-						links: splitByLine(links)
-					}
-				})
+			const data = await requestSecurityAI({
+				app: 'analyst-portfolio-builder',
+				action: 'generate-ats-cv',
+				input: {
+					nama,
+					role,
+					skills: splitByComma(skills),
+					tools: splitByComma(tools),
+					certifications: splitByComma(certifications),
+					projects: splitByLine(projects),
+					achievements: splitByComma(achievements),
+					links: splitByLine(links)
+				}
 			});
-			const data = await res.json();
 			if (data.ok) {
-				const summary = data.result.atsSummary || data.summary || 'CV ATS siap digunakan.';
-				const sections = Array.isArray(data.result.sections) ? data.result.sections : [];
-				const bullets = Array.isArray(data.result.bullets) ? data.result.bullets : [];
+				const summary = (data.result.atsSummary as string) || data.summary || 'CV ATS siap digunakan.';
+				const sections = Array.isArray(data.result.sections) ? (data.result.sections as string[]) : [];
+				const bullets = Array.isArray(data.result.bullets) ? (data.result.bullets as string[]) : [];
 				const body = [summary, '', ...sections, '', ...bullets.map((bullet: string) => `- ${bullet}`)]
 					.filter(Boolean)
 					.join('\n');
 				aiAtsCv = body;
-				aiAtsRecommendations = data.result.recommendations || [];
+				aiAtsRecommendations = Array.isArray(data.result.recommendations)
+					? (data.result.recommendations as string[])
+					: data.recommendations;
 			} else {
-				aiAtsCv = data.summary || data.error || 'Gagal membuat CV ATS.';
+				aiAtsCv = data.error || data.summary;
 			}
 		} catch {
-			aiAtsCv = 'Fitur AI gagal sementara, tetapi aplikasi tetap bisa digunakan dengan data lokal.';
+			aiAtsCv = 'Ada masalah dengan AI kali ini. Mohon maaf atas gangguannya.';
 		} finally {
 			isLoadingAts = false;
 		}
@@ -414,7 +391,7 @@
 
 				<!-- AI Output Display -->
 				{#if aiAtsCv || aiImprovedProjects || aiReview}
-					<div class="space-y-4 rounded-lg border border-border bg-bg-base p-4 text-sm">
+					<div class="max-h-[55vh] space-y-4 overflow-y-auto rounded-lg border border-border bg-bg-base p-4 text-sm">
 						{#if aiAtsCv}
 							<div>
 								<div class="mb-2 flex items-center justify-between gap-2">
@@ -426,7 +403,7 @@
 										Export CV
 									</button>
 								</div>
-								<pre class="max-w-full overflow-x-auto whitespace-pre-wrap rounded border border-border/50 bg-bg-panel p-3 text-sm leading-relaxed text-text-base">{aiAtsCv}</pre>
+							<pre class="max-h-[28vh] max-w-full overflow-auto whitespace-pre-wrap rounded border border-border/50 bg-bg-panel p-3 text-sm leading-relaxed text-text-base">{aiAtsCv}</pre>
 								{#if aiAtsRecommendations && aiAtsRecommendations.length > 0}
 									<ul class="mt-3 space-y-2">
 										{#each aiAtsRecommendations as rec}
