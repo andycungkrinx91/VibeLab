@@ -1,0 +1,119 @@
+Sonnet Prompt: Mobile Frontend Bug Fix & Polish Pass
+
+Task:
+Fix frontend/mobile bugs and polish mobile view for VibeSec Lab.
+
+Goal:
+Make the app feel stable and polished on mobile, especially Threat Runner gameplay, without touching backend/env/API architecture.
+
+Do not:
+- rebuild from scratch
+- redesign the whole app
+- add new routes
+- add major features
+- change Gemini env/API key logic
+- modify server-side Gemini helper unless absolutely required
+- change production adapter
+- create new theme system
+- create duplicate ThemeSwitcher
+
+Preserve:
+- all routes
+- ThemeSwitcher
+- global Theme Engine
+- all 10 themes
+- Gemini server-side API
+- production start
+- app category tags
+- Tutorial sections
+- top-left back buttons
+- Threat Runner gameplay/audio
+- Risk Dashboard header scanner
+- ATS CV export
+
+Focus only on:
+1. mobile layout bugs
+2. Threat Runner mobile gameplay usability
+3. touch controls
+4. responsive game arena
+5. mobile HUD readability
+6. button/card spacing
+7. overflow issues
+8. frontend AI loading/error UX
+9. duplicate AI click prevention
+10. polish that improves mobile demo
+
+Threat Runner mobile requirements:
+- game arena fits mobile width
+- no horizontal overflow
+- robot/player stays visible at bottom
+- threats/projectiles/tokens scale with arena size
+- HUD stacks cleanly on small screens
+- touch controls are visible and tappable
+- left/right/shoot controls work on mobile
+- holding left/right moves continuously if practical
+- shoot button fires reliably
+- controls do not scroll the page accidentally
+- sound toggle remains usable
+- audio does not autoplay
+- restart/game over still works
+- cleanup event listeners/timers if obvious
+
+Mobile UI requirements:
+- / loads cleanly on mobile
+- /apps grid stacks cleanly
+- app cards are readable and tappable
+- app page headers do not overflow
+- back button remains visible
+- ThemeSwitcher remains usable
+- forms and tables do not overflow badly
+- primary buttons are tappable
+- AI panels are readable
+- Tutorial sections remain readable at bottom
+
+Frontend AI UX:
+- disable AI button while loading
+- prevent duplicate request spam
+- show loading state clearly
+- show friendly Indonesian error state
+- do not crash if response.result is missing
+- do not crash if response.recommendations is missing
+- keep UI usable after AI failure
+- do not expose raw provider errors in UI
+
+Theme rules:
+- use existing theme tokens/CSS variables
+- no hardcoded green-only fixes
+- mobile polish must work across themes
+- electric border/glow should not overpower small screens
+
+Accessibility:
+- keep focus states
+- keep tap targets usable
+- respect prefers-reduced-motion
+- do not rely only on sound or color
+
+Spot-check pages:
+- /
+- /apps
+- /apps/threat-runner
+- /apps/risk-dashboard
+- /apps/cvss-calculator
+- /apps/secureops-habit-tracker
+- /apps/analyst-portfolio-builder
+
+Run:
+npm run check
+npm run build
+
+Fix only frontend/mobile bugs caused or found in this pass.
+
+Return:
+1. Files changed
+2. Mobile bugs fixed
+3. Threat Runner mobile fixes
+4. Frontend AI UX fixes
+5. Theme/mobile verification
+6. npm check result
+7. npm build result
+8. Remaining risks
